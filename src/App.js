@@ -5,7 +5,7 @@ import './App.css';
 function App() {
   return (
     <div className="App">
-      This is a starter
+      This is an online multi-player game!
     </div>
   );
 }
