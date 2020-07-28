@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "antiques-game",
     "public": "build",
     "ignore": [
       "firebase.json",

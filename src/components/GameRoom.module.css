@@ -1,0 +1,8 @@
+.GameRoomContainer {
+  background-color: beige;
+}
+
+.PlayerSelfie {
+  width: 30px;
+  border-radius: 50%;
+}
