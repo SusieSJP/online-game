@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+
 import styles from './GameRoom.module.css';
 
 class GameRoom extends Component {
@@ -9,11 +11,15 @@ class GameRoom extends Component {
   render() {
     return (
       <div className={styles.GameRoomContainer}>
-        <div className={styles.PlayerSelfie}>1</div>
-        <div className={styles.PlayerSelfie}>2</div>
+        <div className={styles.Row}>
+          <div className={styles.PlayerSelfie}>1</div>
+          <div className={styles.PlayerSelfie}>2</div>
+        </div>
+
       </div>
     )
   }
 }
 
+// export default connect(mapPropsToState, mapDispatchToState)(GameRoom);
 export default GameRoom;

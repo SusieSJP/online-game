@@ -1,10 +1,33 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { startCreateRoom, startLoadRoom } from '../redux/action';
+
+import { rolesGenerator, roomIdGenerator } from '../utilities';
 import styles from './RoomSelect.module.css';
 
 class RoomSelect extends Component {
-  constructor(props) {
-    super(props);
+  componentDidMount() {
+    this.props.startLoadRoom();
   }
+
+  handleSelect = (roomType) => {
+    // 1. create a random and unused room id and pwd
+    const newId = roomIdGenerator(this.props.roomPwdPairs).toString();
+    const newPwd = Math.floor(Math.random() * 90) + 10;
+    console.log(newId, newPwd)
+
+    // 2. allocate roles
+    const roles = rolesGenerator(roomType);
+    console.log("allocated roles:", roles);
+
+    // 3. update the database and the states
+    this.props.startCreateRoom({newId, newPwd, roles, roomType});
+
+    // // 4. redirect to the game room
+    this.props.history.push('/room/' + newId)
+  }
+
+
 
   render() {
     return (
@@ -12,7 +35,7 @@ class RoomSelect extends Component {
         <div className={styles.Card}>
           <div className={styles.Title}>
             <h3>普通6人局</h3>
-            <div className={styles.Button} onClick={() => this.props.handleSelect('普通6人')}>建房</div>
+            <div className={styles.Button} onClick={() => this.handleSelect('普通6人')}>建房</div>
           </div>
           <div className={styles.VSbackground}>
             <div className={styles.Group}>
@@ -30,7 +53,7 @@ class RoomSelect extends Component {
         <div className={styles.Card}>
           <div className={styles.Title}>
             <h3>普通8人局</h3>
-            <div className={styles.Button} onClick={() => this.props.handleSelect('普通8人')}>建房</div>
+            <div className={styles.Button} onClick={() => this.handleSelect('普通8人')}>建房</div>
           </div>
           <div className={styles.VSbackground}>
             <div className={styles.Group}>
@@ -50,4 +73,16 @@ class RoomSelect extends Component {
   }
 }
 
-export default RoomSelect;
+const mapStateToProps = (state, props) => {
+  return {
+    roomPwdPairs: state.rooms.roomPwdPairs
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    startLoadRoom: () => dispatch(startLoadRoom()),
+    startCreateRoom: (data) => dispatch(startCreateRoom(data))
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(RoomSelect);

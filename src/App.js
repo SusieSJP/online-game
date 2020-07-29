@@ -1,40 +1,50 @@
 import React, { Component } from 'react';
+import { Switch, Route } from 'react-router-dom';
+import { startLogin } from './redux/action';
+import { connect } from 'react-redux';
+
 import styles from './App.module.css';
 import GameMatch from './components/GameMatch';
+import RoomSelect from './components/RoomSelect';
 import Nav from './components/Nav';
-import { provider, auth } from './firebase/firebase';
+import GameRoom from './components/GameRoom';
+
 
 class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      curUser: null
-    }
-  }
-
-  handleSignIn = () => {
-    auth.signInWithPopup(provider).then((result) => {
-      console.log('curr user: ', result.user)
-      this.setState({
-        curUser: result.user.email
-      })
-    }).catch(error => console.log('error logging in with Google', error))
-  }
 
   render() {
     return (
       <div className={styles.App}>
         <div className={styles.BodyContainer}>
           <Nav />
-          {
-            this.state.curUser ?
-            <GameMatch user={this.state.curUser}/> :
-            <div className={styles.Button} onClick={this.handleSignIn}>Login with gmail</div>
-          }
+          <Switch>
+            <Route path="/" exact>
+              {
+                this.props.user ?
+                <GameMatch /> :
+                <div className={styles.Button} onClick={() => {console.log('clicked'); this.props.startLogin()}}>Login with Gmail</div>
+              }
+            </Route>
+
+            <Route path="/room-select" component={RoomSelect} />
+            <Route path="/room/:roomid" component={GameRoom} />
+          </Switch>
+
         </div>
       </div>
     );
   }
 }
 
-export default App;
+const mapStateToProps = (state, props) => {
+  return {
+    user: state.users.user
+  }
+}
+const mapDispatchToProps = (dispatch) => {
+  return {
+    startLogin: () => dispatch(startLogin())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
