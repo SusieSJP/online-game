@@ -5,6 +5,7 @@
   font-family: 'Ma Shan Zheng', cursive;
   background-color: black;
   align-items: center;
+  height: 100vh;
 }
 
 .BodyContainer {
@@ -24,6 +25,7 @@
   position: relative;
   font-size: 16px;
   font-family: 'Rowdies', cursive;
+  margin-top: 60%;
 }
 
 .Button:hover {

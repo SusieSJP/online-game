@@ -22,7 +22,7 @@ class App extends Component {
               {
                 this.props.user ?
                 <GameMatch /> :
-                <div className={styles.Button} onClick={() => {console.log('clicked'); this.props.startLogin()}}>Login with Gmail</div>
+                <div className={styles.Button} onClick={this.props.startLogin}>Login with Gmail</div>
               }
             </Route>
 

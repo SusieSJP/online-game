@@ -35,4 +35,13 @@
   padding: 2% 5%;
   font-size: 14px;
   text-align: center;
+  width: 160px;
+  margin-left: 4%;
+}
+
+.Subtitle > span {
+  letter-spacing: 2px;
+  font-family: 'Red Rose', cursive;
+  font-size: 14px;
+  margin-left: 4px;
 }

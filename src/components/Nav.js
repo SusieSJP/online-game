@@ -16,10 +16,10 @@ const Nav = (props) => {
       <h1 className={styles.Title}>古董局中局</h1>
       <div className={styles.RoomInfo}>
       {
-        props.roomid && <div className={styles.Subtitle}>房间号: {props.roomid}</div>
+        props.roomid && <div className={styles.Subtitle}>房间号: <span>{props.roomid}</span></div>
       }
       {
-        props.pwd && <div className={styles.Subtitle}>房间密码: {props.pwd}</div>
+        props.pwd && <div className={styles.Subtitle}>房间密码: <span>{props.pwd}</span></div>
       }
       </div>
 

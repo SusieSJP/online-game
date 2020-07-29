@@ -4,7 +4,10 @@ const roomInitState = {
   players: [],
   pwd: null,
   roles: [],
-  roomPwdPairs: {}
+  roomPwdPairs: {},
+  chips: [],
+  photos: [],
+  curNum: 0
 }
 
 export const roomReducer = (state = roomInitState, action) => {
@@ -20,7 +23,22 @@ export const roomReducer = (state = roomInitState, action) => {
         room: action.roomid,
         players: action.players,
         pwd: action.pwd,
-        roles: action.roles
+        roles: action.roles,
+        chips: action.chips,
+        photos: action.photos,
+        curNum: action.curNum
+      }
+    case 'LEAVE_ROOM':
+      return {
+        ...state,
+        room: action.room,
+        players: action.players,
+        pwd: action.pwd,
+        roles: action.roles,
+        chips: action.chips,
+        photos: action.photos,
+        curNum: action.curNum,
+        roomPwdPairs: action.roomPwdPairs
       }
     default:
       return state;
@@ -35,8 +53,8 @@ export const roomReducer = (state = roomInitState, action) => {
 const userInitState = {
   user: null, // user would be identified using email
   photo: null,
-  totalGames: 0,
-  winGames: 0,
+  totalGame: 0,
+  winGame: 0,
 }
 
 export const userReducer = (state = userInitState, action) => {
@@ -45,6 +63,9 @@ export const userReducer = (state = userInitState, action) => {
       return {
         ...state,
         user: action.userEmail,
+        photo: action.photoURL,
+        totalGame: action.totalGame,
+        winGame: action.winGame
       }
     default:
       return state

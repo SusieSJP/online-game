@@ -10,7 +10,7 @@ export default () => {
     // key is the root state name and the value is the reducer that manages that state
     combineReducers({
       rooms: roomReducer,
-      users: userReducer
+      users: userReducer,
     }),
     applyMiddleware(thunk)
   );

@@ -10,10 +10,83 @@
   justify-content: space-between;
 }
 
-.PlayerSelfie {
-  width: 40%;
-  border-radius: 50px;
-  height: 50px;
+.Player {
+  display: flex;
+  align-items: center;
+  width: 30%;
+  height: 120px;
+  margin-bottom: 10%;
+  position: relative;
+
+}
+
+.SelfieLeft {
+  height: 120px;
+  width: 120px;
+  border-radius: 50%;
+  background-color: white;
+  position: absolute;
+  top:0;
+  left:0;
+}
+
+.SelfieLeft > img {
+  height: 90%;
+  width: 90%;
+  border-radius: 50%;
+  margin: 5%;
+}
+
+.SelfieRight {
+  height: 120px;
+  width: 120px;
+  border-radius: 50%;
+  background-color: white;
+  position: absolute;
+  top:0;
+  right:0;
+}
+
+.NameTagLeft {
+  height: 60px;
   background-color: white;
   color: black;
+  font-size: 16px;
+  flex-grow: 1;
+  text-align: end;
+  margin-left: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: flex-end;
+  padding-right: 10px;
+}
+
+.NameTagRight {
+  height: 60px;
+  background-color: white;
+  color: black;
+  font-size: 16px;
+  flex-grow: 1;
+  margin-right: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: flex-start;
+  padding-left: 10px;
+}
+
+.Name {
+  margin: 0
+}
+
+.Chips {
+  display: flex;
+  margin: 2px 0;
+}
+.Chip {
+  height: 10px;
+  width: 10px;
+  background-color: green;
+  margin: 0 2px;
 }
