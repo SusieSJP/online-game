@@ -21,8 +21,9 @@ class App extends Component {
             <Route path="/" exact>
               {
                 this.props.user ?
-                <GameMatch /> :
-                <div className={styles.Button} onClick={this.props.startLogin}>Login with Gmail</div>
+                  <GameMatch /> :
+                  <div className={styles.Button} onClick={this.props.startLogin}>Login with Gmail</div>
+                // <GameMatch />
               }
             </Route>
 

@@ -47,7 +47,7 @@ export const startLogin = () => {
 ********* room actions ***********
 */
 
-// 1. load active room
+// 1. load all rooms
 export const loadRoom = (rooms) => ({
   type: 'LOAD_ROOMS',
   rooms
@@ -62,8 +62,32 @@ export const startLoadRoom = () => {
         activeRooms[doc.id] = doc.data().pwd
       });
 
-      console.log('loaded active rooms pairs:', activeRooms);
+      console.log('loaded all rooms pairs:', activeRooms);
       dispatch(loadRoom(activeRooms));
+
+    }).catch((error) => {console.log("error getting rooms data: ", error)})
+  }
+}
+
+// 1. load all available rooms
+export const loadAvailableRoom = (rooms) => ({
+  type: 'LOAD_AVAILABLE_ROOMS',
+  rooms
+})
+
+export const startLoadAvailableRoom = () => {
+  return (dispatch) => {
+    let roomsRef = database.collection('rooms');
+    roomsRef.get().then((querySnapshot) => {
+      let activeRooms = {};
+      querySnapshot.forEach((doc) => {
+        if (!doc.data().isFull) {
+          activeRooms[doc.id] = doc.data().pwd
+        }
+      });
+
+      console.log('loaded active rooms pairs:', activeRooms);
+      dispatch(loadAvailableRoom(activeRooms));
 
     }).catch((error) => {console.log("error getting rooms data: ", error)})
   }
@@ -78,7 +102,6 @@ export const createRoom = (roomid, pwd, roles, players, chips, photos) => ({
   players,
   chips,
   photos,
-  curNum: 1
 })
 
 export const startCreateRoom = ({newId, newPwd, roles, roomType} = {}) => {
@@ -96,7 +119,6 @@ export const startCreateRoom = ({newId, newPwd, roles, roomType} = {}) => {
 
     console.log(
       {
-        isStarted: false,
         players,
         pwd: newPwd,
         roles,
@@ -106,7 +128,7 @@ export const startCreateRoom = ({newId, newPwd, roles, roomType} = {}) => {
       })
 
     database.collection('rooms').doc(newId).set({
-      isStarted: false,
+      isFull: false,
       players,
       pwd: newPwd,
       roles,
@@ -139,15 +161,87 @@ export const startLeaveRoom = () => {
   return (dispatch, getState) => {
     let remainingPlayers = getState().rooms.curNum - 1;
     let curRoom = getState().rooms.room;
+    let curUser = getState().users.user;
+    let userPhoto = getState().users.photo;
 
-    if (remainingPlayers) {
-      // if there is still someone in the room
-      dispatch(leaveRoom());
-    } else {
-      // delete the room
-      database.collection('rooms').doc(curRoom).delete().then(() => {
+    let newPlayers = getState().rooms.players.map((email) => {
+      if (email === curUser) {
+        return ""
+      } else { return email}
+    });
+
+    let newPhotos = getState().rooms.photos.map((photo) => {
+      if (photo === userPhoto) {
+        return ""
+      } else { return photo}
+    })
+    // decrease the number of players in the room + remove players
+    database.collection('rooms').doc(curRoom).update({
+      curNum: remainingPlayers,
+      photos: newPhotos,
+      players: newPlayers
+    }).then(() => {
+      if (remainingPlayers) {
+        // if there is still someone in the room
         dispatch(leaveRoom());
+      } else {
+        // delete the room
+        database.collection('rooms').doc(curRoom).delete().then(() => {
+          dispatch(leaveRoom());
+        })
+      }
+    })
+  }
+}
+
+// 4. enter room
+export const enterRoom = (data) => {
+  return {
+    type: 'ENTER_ROOM',
+    ...data
+  }
+}
+
+export const startEnterRoom = (roomid, pwd) => {
+  return (dispatch, getState) => {
+    let docRef = database.collection('rooms').doc(roomid);
+    docRef.get().then((doc) => {
+      // valid room/pwd pairs -> add player to players
+      let curUser = getState().users.user;
+      let userPhoto = getState().users.photo;
+
+      let newPlayers = doc.data().players.slice();
+      let newPhotos = doc.data().photos.slice();
+
+      for (let i = 0; i < doc.data().players.length; i++) {
+        if (doc.data().players[i] === "") {
+          newPlayers[i] = curUser;
+          newPhotos[i] = userPhoto;
+          break;
+        }
+      }
+
+      let newCurNum = doc.data().curNum + 1;
+      let isFullNow = newCurNum === doc.data().players.length ? true : false;
+
+      let localRoom = {
+        room: doc.id,
+        ...doc.data(),
+        players: newPlayers,
+        curNum: newCurNum,
+        photos: newPhotos,
+        isFull: isFullNow
+      }
+
+      // update the database
+      docRef.update({
+        players: newPlayers,
+        curNum: newCurNum,
+        photos: newPhotos,
+        isFull: isFullNow
+      }).then(() => { dispatch(enterRoom(localRoom))}).catch((error) => {
+        console.log('error updating the player when entering the room: ', error)
       })
-    }
+    }).catch((error) => {console.log('error finding the room to enter: ', error)})
   }
 }

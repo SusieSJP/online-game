@@ -5,9 +5,11 @@ const roomInitState = {
   pwd: null,
   roles: [],
   roomPwdPairs: {},
+  availableRooms: {},
   chips: [],
   photos: [],
-  curNum: 0
+  curNum: 0,
+  isFull: false
 }
 
 export const roomReducer = (state = roomInitState, action) => {
@@ -16,6 +18,11 @@ export const roomReducer = (state = roomInitState, action) => {
       return {
         ...state,
         roomPwdPairs: action.rooms
+      }
+    case 'LOAD_AVAILABLE_ROOMS':
+      return {
+        ...state,
+        availableRooms: action.rooms
       }
     case 'CREATE_ROOM':
       return {
@@ -26,7 +33,8 @@ export const roomReducer = (state = roomInitState, action) => {
         roles: action.roles,
         chips: action.chips,
         photos: action.photos,
-        curNum: action.curNum
+        curNum: 1,
+        isFull: false
       }
     case 'LEAVE_ROOM':
       return {
@@ -38,7 +46,20 @@ export const roomReducer = (state = roomInitState, action) => {
         chips: action.chips,
         photos: action.photos,
         curNum: action.curNum,
-        roomPwdPairs: action.roomPwdPairs
+        roomPwdPairs: action.roomPwdPairs,
+        isFull: false
+      }
+    case 'ENTER_ROOM':
+      return {
+        ...state,
+        players: action.players,
+        photos: action.photos,
+        curNum: action.curNum,
+        isFull: action.isFull,
+        room: action.room,
+        pwd: action.pwd,
+        chips: action.chips,
+        roles: action.roles
       }
     default:
       return state;

@@ -77,7 +77,8 @@
 }
 
 .Name {
-  margin: 0
+  margin: 0;
+  font-family: 'Red Rose', cursive;
 }
 
 .Chips {

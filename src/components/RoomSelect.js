@@ -6,6 +6,7 @@ import { rolesGenerator, roomIdGenerator } from '../utilities';
 import styles from './RoomSelect.module.css';
 
 class RoomSelect extends Component {
+
   componentDidMount() {
     this.props.startLoadRoom();
   }
@@ -81,8 +82,8 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    startLoadRoom: () => dispatch(startLoadRoom()),
-    startCreateRoom: (data) => dispatch(startCreateRoom(data))
+    startCreateRoom: (data) => dispatch(startCreateRoom(data)),
+    startLoadRoom: () => dispatch(startLoadRoom())
   }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(RoomSelect);
