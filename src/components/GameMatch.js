@@ -15,11 +15,12 @@ class GameMatch extends Component {
   }
 
   componentDidMount() {
-    this.props.startLoadAvailableRoom();
+    console.log('game match mount!')
   }
 
   handleClick = (event) => {
     console.log('game match props:', this.props);
+    this.props.startLoadAvailableRoom();
     let request = event.target.innerText;
     switch (request) {
       case '创建房间':
@@ -39,7 +40,7 @@ class GameMatch extends Component {
   }
 
   handleCloseModal = () => {
-    this.setState({ showModal: false })
+    this.setState({ showModal: false, errorMsg: "" })
   }
 
   handleSearchRoom = (room, pwd) => {
@@ -49,7 +50,7 @@ class GameMatch extends Component {
     if (!(room in this.props.availableRooms) || this.props.availableRooms[room] != pwd) {
       console.log('cannot enter room!', !(room in this.props.availableRooms), this.props.availableRooms[room] != pwd)
       this.setState({
-        errorMsg: "Sorry, the room is either full or the room info is wrong. Please Try again :("
+        errorMsg: "抱歉，房间已满或信息有误，请重新输入 :("
       })
     } else {
       // enter the room and close the modal

@@ -3,26 +3,46 @@
   width: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
 }
 
 .Row {
   display: flex;
   justify-content: space-between;
+  width: 100%;
 }
 
 .Player {
   display: flex;
   align-items: center;
-  width: 30%;
-  height: 120px;
-  margin-bottom: 10%;
+  width: 35%;
+  height: 140px;
+  margin-bottom: 8%;
   position: relative;
+}
 
+.HostLeft {
+  position: absolute;
+  top: -50px;
+  left: 30px;
+  width: 80px;
+  z-index: 1;
+}
+
+
+.HostRight {
+  position: absolute;
+  top: -50px;
+  right: 30px;
+  width: 80px;
+  z-index: 1;
 }
 
 .SelfieLeft {
-  height: 120px;
-  width: 120px;
+  height: 140px;
+  width: 140px;
   border-radius: 50%;
   background-color: white;
   position: absolute;
@@ -38,8 +58,8 @@
 }
 
 .SelfieRight {
-  height: 120px;
-  width: 120px;
+  height: 140px;
+  width: 140px;
   border-radius: 50%;
   background-color: white;
   position: absolute;
@@ -47,38 +67,88 @@
   right:0;
 }
 
+.SelfieRight > img {
+  height: 90%;
+  width: 90%;
+  border-radius: 50%;
+  margin: 5%;
+}
+
+.GameInfoLeft {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  align-items: flex-end;
+  justify-content: center;
+  height: 120px;
+  margin-left: 70px; /* the selfie radius */
+}
+
+.GameInfoRight {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  align-items: flex-start;
+  justify-content: center;
+  height: 120px;
+  margin-right: 70px; /* the selfie radius */
+}
+
 .NameTagLeft {
-  height: 60px;
+  height: 50%;
   background-color: white;
   color: black;
-  font-size: 16px;
-  flex-grow: 1;
   text-align: end;
   margin-left: 30px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 10px;
+  width: 100%
+}
+
+.NameTagRight {
+  height: 50px;
+  background-color: white;
+  color: black;
+  text-align: end;
+  margin-right: 30px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding-left: 10px;
+  width: 100%
+}
+
+.TagInfoLeft {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   align-items: flex-end;
-  padding-right: 10px;
+  margin-right: 10px;
 }
 
-.NameTagRight {
-  height: 60px;
-  background-color: white;
-  color: black;
-  font-size: 16px;
-  flex-grow: 1;
-  margin-right: 30px;
+
+.TagInfoRight {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   align-items: flex-start;
-  padding-left: 10px;
+  margin-left: 10px;
 }
 
 .Name {
-  margin: 0;
+  margin: 0 0 2px;
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 20px;
+}
+
+.Num {
+  display: inline-block;
   font-family: 'Red Rose', cursive;
+  font-size: 48px;
 }
 
 .Chips {
@@ -86,8 +156,128 @@
   margin: 2px 0;
 }
 .Chip {
-  height: 10px;
-  width: 10px;
-  background-color: green;
+  height: 20px;
+  width: 20px;
+  /* background-color: green; */
   margin: 0 2px;
+}
+
+.Button {
+  background-color: white;
+  border-radius: 50px;
+  padding: 3% 5%;
+  font-size: 14px;
+  text-align: center;
+  width: 60px;
+  margin-left: 4%;
+  letter-spacing: 2px;
+  font-family: 'Ma Shan Zheng', cursive;
+}
+
+.StateButtonReady {
+  background-color: green;
+  color: white;
+  border-radius: 50px;
+  padding: 3% 5%;
+  font-size: 14px;
+  text-align: center;
+  width: 60px;
+  margin-left: 4%;
+  letter-spacing: 2px;
+  font-family: 'Ma Shan Zheng', cursive;
+}
+
+.ButtonArea {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0;
+  width: 100%;
+}
+
+.ButtonReady {
+  background-color: green;
+  border: solid 3px white;
+  border-radius: 50px;
+  padding: 8px 10px;
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  width: 80px;
+  letter-spacing: 2px;
+  font-family: 'Ma Shan Zheng', cursive;
+  margin: 0 10px;
+}
+
+.ButtonNoReady {
+  background-color: darkgray;
+  border: solid 3px white;
+  border-radius: 50px;
+  padding: 8px 10px;
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  width: 80px;
+  letter-spacing: 2px;
+  font-family: 'Ma Shan Zheng', cursive;
+  margin: 0 10px;
+}
+
+.StartButton {
+  background-color: green;
+  border: solid 3px white;
+  border-radius: 50px;
+  padding: 8px 10px;
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  width: 80px;
+  letter-spacing: 2px;
+  font-family: 'Ma Shan Zheng', cursive;
+  margin: 0 10px;
+}
+
+.Hidden {
+  display: none;
+}
+
+.StartButton:hover, .ButtonReady:hover {
+  background-color: rgb(5, 150, 5);
+  cursor: pointer;
+}
+
+.ButtonNoReady:hover {
+  background-color: rgb(175, 167, 167);
+  cursor: pointer
+}
+
+
+.StartButton:disabled {
+  background-color: darkgray;
+  cursor: not-allowed;
+}
+
+.Loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+.LoadingText {
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  font-family: 'Ma Shan Zheng', cursive;
+  color: white;
+  font-size: 36px;
+  display: block;
+  font-weight: bolder;
+  background-color: rgba(255,255,255, 0.2);
+  padding: 15px 30px;
 }

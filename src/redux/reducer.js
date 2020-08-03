@@ -1,7 +1,8 @@
 // room reducer
 const roomInitState = {
   room: null,
-  players: [],
+  players: [], // email identifiers
+  names:[],
   pwd: null,
   roles: [],
   roomPwdPairs: {},
@@ -9,7 +10,12 @@ const roomInitState = {
   chips: [],
   photos: [],
   curNum: 0,
-  isFull: false
+  isFull: false,
+  gameStates: {},
+  host: null,
+  canStart: false,
+  started: false,
+  curRound: 0
 }
 
 export const roomReducer = (state = roomInitState, action) => {
@@ -29,12 +35,16 @@ export const roomReducer = (state = roomInitState, action) => {
         ...state,
         room: action.roomid,
         players: action.players,
+        names: action.names,
         pwd: action.pwd,
         roles: action.roles,
         chips: action.chips,
         photos: action.photos,
         curNum: 1,
-        isFull: false
+        isFull: false,
+        gameStates: action.gameStates,
+        host: action.host,
+        started: false
       }
     case 'LEAVE_ROOM':
       return {
@@ -47,7 +57,10 @@ export const roomReducer = (state = roomInitState, action) => {
         photos: action.photos,
         curNum: action.curNum,
         roomPwdPairs: action.roomPwdPairs,
-        isFull: false
+        isFull: false,
+        gameStates: [],
+        host: null,
+        started: false
       }
     case 'ENTER_ROOM':
       return {
@@ -59,7 +72,34 @@ export const roomReducer = (state = roomInitState, action) => {
         room: action.room,
         pwd: action.pwd,
         chips: action.chips,
-        roles: action.roles
+        roles: action.roles,
+        host: action.host,
+        roomType: action.roomType,
+        names: action.names,
+        gameStates: action.gameStates,
+        started: false
+      }
+    case 'GET_READY':
+      return {
+        ...state,
+        gameStates: action.gameStates,
+        canStart: action.canStart
+      }
+    case 'NOT_READY':
+      return {
+        ...state,
+        gameStates: action.gameStates,
+        canStart: action.canStart
+      }
+    case 'GET_START':
+      return {
+        ...state,
+        started: true
+      }
+    case 'UPDATE_GAME_STATES':
+      return {
+        ...state,
+        ...action.data
       }
     default:
       return state;
@@ -73,6 +113,7 @@ export const roomReducer = (state = roomInitState, action) => {
 // ************ user reducer
 const userInitState = {
   user: null, // user would be identified using email
+  name: "玩家",
   photo: null,
   totalGame: 0,
   winGame: 0,
@@ -86,7 +127,8 @@ export const userReducer = (state = userInitState, action) => {
         user: action.userEmail,
         photo: action.photoURL,
         totalGame: action.totalGame,
-        winGame: action.winGame
+        winGame: action.winGame,
+        name: action.name
       }
     default:
       return state

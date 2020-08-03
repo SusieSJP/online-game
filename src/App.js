@@ -15,15 +15,15 @@ class App extends Component {
   render() {
     return (
       <div className={styles.App}>
+        <Nav />
+
         <div className={styles.BodyContainer}>
-          <Nav />
           <Switch>
             <Route path="/" exact>
               {
                 this.props.user ?
                   <GameMatch /> :
                   <div className={styles.Button} onClick={this.props.startLogin}>Login with Gmail</div>
-                // <GameMatch />
               }
             </Route>
 
@@ -32,6 +32,7 @@ class App extends Component {
           </Switch>
 
         </div>
+
       </div>
     );
   }

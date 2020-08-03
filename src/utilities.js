@@ -36,3 +36,7 @@ export const rolesGenerator = (roomType) => {
 
   return res;
 }
+
+export const randomSelectOne = (len) => {
+  return Math.floor(Math.random() * len);
+}

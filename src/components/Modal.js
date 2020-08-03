@@ -29,6 +29,9 @@ const InputModal = (props) => {
             <label>房间密码:</label>
             <input ref={ pwdInput } className={styles.Input} type="text" />
           </div>
+          <div className={styles.Row}>
+            <p className={styles.Notes}>{props.errorMsg}</p>
+          </div>
 
           <button type="button" className={styles.Button} onClick={() => props.searchRoom(roomInput.current.value, pwdInput.current.value)}>搜索</button>
         </form>
