@@ -1,4 +1,5 @@
-import { database, auth, provider } from '../firebase/firebase';
+import { database, auth, provider, storage } from '../firebase/firebase';
+import { zodiacGenerator } from '../utilities';
 
 
 /*
@@ -17,8 +18,26 @@ export const userLogin = (userEmail, photoURL, totalGame, winGame, name) => {
   }
 }
 
-export const startLogin = () => {
+export const setDefaultPhoto = (url) => {
+  return {
+    type: 'SET_DEFAULT_PHOTO',
+    url
+  }
+}
+
+export const startSetDefaultPhoto = () => {
+  console.log('set default photo action')
   return (dispatch) => {
+    storage.ref('defaultPhotos/photo1.svg')
+      .getDownloadURL().then(url => {
+        dispatch(setDefaultPhoto(url))
+    })
+
+  }
+}
+
+export const startLogin = () => {
+  return (dispatch, getState) => {
     auth.signInWithPopup(provider).then((result) => {
       console.log('user login: ', result.user);
 
@@ -29,10 +48,11 @@ export const startLogin = () => {
           dispatch(userLogin(doc.id, doc.data().photo, doc.data().totalGame, doc.data().winGame, doc.data().name))
         } else {
           console.log('new user registered');
+
           docRef.set({
             email: result.user.email,
             name: "玩家",
-            photo: result.user.photoURL,
+            photo: result.user.photoURL ? result.user.photoURL : getState().users.defaultPhoto,
             totalGame: 0,
             winGame: 0
           }).then(() => {
@@ -61,7 +81,11 @@ export const startLoadRoom = () => {
     roomsRef.get().then((querySnapshot) => {
       let activeRooms = {};
       querySnapshot.forEach((doc) => {
-        activeRooms[doc.id] = doc.data().pwd
+        if (Object.values(doc.data().players).every(el => el === "")) {
+          roomsRef.doc(doc.id).delete();
+        } else {
+          activeRooms[doc.id] = doc.data().pwd
+        }
       });
 
       console.log('loaded all rooms pairs:', activeRooms);
@@ -84,8 +108,9 @@ export const startLoadAvailableRoom = () => {
     roomsRef.get().then((querySnapshot) => {
       let activeRooms = {};
       querySnapshot.forEach((doc) => {
-        console.log(doc.id, doc.data())
-        if (!doc.data().isFull) {
+        if (Object.values(doc.data().players).every(el => el === "")) {
+          roomsRef.doc(doc.id).delete();
+        } else if (Object.values(doc.data().players).indexOf("") >= 0) {
           console.log('active one!')
           activeRooms[doc.id] = doc.data().pwd
         }
@@ -99,17 +124,12 @@ export const startLoadAvailableRoom = () => {
 }
 
 //2. create new room
-export const createRoom = (roomid, pwd, roles, players, chips, photos, names, gameStates) => ({
+export const createRoom = (roomid, pwd, roles, zodiac) => ({
   type: 'CREATE_ROOM',
   roomid,
   pwd,
   roles,
-  players,
-  chips,
-  photos,
-  names,
-  gameStates,
-  host: 0
+  zodiac
 })
 
 export const startCreateRoom = ({newId, newPwd, roles, roomType} = {}) => {
@@ -117,19 +137,24 @@ export const startCreateRoom = ({newId, newPwd, roles, roomType} = {}) => {
     let curUser = getState().users.user;
     let curName = getState().users.name;
     let curUserPhotoURL = getState().users.photo;
-    console.log('photo url from action:', curUserPhotoURL);
 
-    let players = new Array(roles.length).fill("");
-    let names = new Array(roles.length).fill("玩家");
-    let photos = new Array(roles.length).fill("");
-    let chips = new Array(roles.length).fill(6);
-    let gameStates = Object.fromEntries(players.map((el, index) => [index, "未准备"]));
+    let dummyArr = new Array(roomType).fill(1);
+
+    let players = Object.fromEntries(dummyArr.map((el, index) => [index, ""]));
+    let names = Object.fromEntries(dummyArr.map((el, index) => [index, "玩家"]));
+    let photos = Object.fromEntries(dummyArr.map((el, index) => [index, ""]));
+    let chips = Object.fromEntries(dummyArr.map((el, index) => [index, 2]));
+    let gameStates = Object.fromEntries(dummyArr.map((el, index) => [index, "未准备"]));
+    // can eval = 1, randomly cannot = 2, attacked = 3
+    let canEval = Object.fromEntries(dummyArr.map((el, index) => [index, 1]));
+
+    const zodiac = zodiacGenerator();
 
     players[0] = curUser;
     names[0] = curName;
     photos[0] = curUserPhotoURL;
 
-    console.log(
+    console.log('data to create new room:',
       {
         players,
         names,
@@ -139,26 +164,25 @@ export const startCreateRoom = ({newId, newPwd, roles, roomType} = {}) => {
         chips,
         photos,
         newId,
-        gameStates
+        gameStates,
+        zodiac
       })
 
     database.collection('rooms').doc(newId).set({
-      isFull: false,
       players,
       names,
       pwd: newPwd,
       roles,
-      roomType,
       chips,
       photos,
-      curNum: 1,
-      host: 0,
       gameStates,
       started: false,
-      curRound: 0
+      canStart: false,
+      zodiac,
+      canEval
     }).then(() => {
       console.log('finish add new room')
-      dispatch(createRoom(newId, newPwd, roles, players, chips, photos, names, gameStates))
+      dispatch(createRoom(newId, newPwd, roles, zodiac))
     })
   }
 }
@@ -166,52 +190,21 @@ export const startCreateRoom = ({newId, newPwd, roles, roomType} = {}) => {
 // 3. leave Room => the last one leave room should also clear room
 export const leaveRoom = () => {
   return {
-    type: 'LEAVE_ROOM',
-    room: null,
-    players: [],
-    pwd: null,
-    roles: [],
-    roomPwdPairs: {},
-    chips: [],
-    photos: [],
-    curNum: 0
+    type: 'LEAVE_ROOM'
   }
 }
 
 export const startLeaveRoom = () => {
   return (dispatch, getState) => {
-    let remainingPlayers = getState().rooms.curNum - 1;
     let curRoom = getState().rooms.room;
-    let curUser = getState().users.user;
-    let curUserIndex = getState().rooms.players.indexOf(curUser);
-    let userPhoto = getState().users.photo;
-    let curHost = getState().rooms.host;
+    let playerIndex = getState().rooms.playerIndex;
 
-    let newPlayers = getState().rooms.players.map((email) => {
-      if (email === curUser) {
-        return ""
-      } else { return email}
-    });
-
-    // still have other players -> change the host
-    let newHost = curHost;
-    if (curHost === curUserIndex) {
-      newHost = newPlayers.findIndex((element) => element !== "")
-    }
-
-    let newPhotos = getState().rooms.photos.map((photo) => {
-      if (photo === userPhoto) {
-        return ""
-      } else { return photo}
-    })
     // decrease the number of players in the room + remove players
     database.collection('rooms').doc(curRoom).update({
-      ['gameStates.' + curUserIndex]: "未准备",
-      curNum: remainingPlayers,
-      photos: newPhotos,
-      players: newPlayers,
-      host: newHost,
-      isFull: false,
+      ['gameStates.' + playerIndex]: "未准备",
+      ['players.' + playerIndex]: "",
+      ['photos.' + playerIndex]: "",
+      ['names.' + playerIndex]: "玩家",
       canStart: false,
       started: false
     }).then(() => {
@@ -231,46 +224,32 @@ export const enterRoom = (data) => {
 export const startEnterRoom = (roomid, pwd) => {
   return (dispatch, getState) => {
     let docRef = database.collection('rooms').doc(roomid);
-    docRef.get().then((doc) => {
-      // valid room/pwd pairs -> add player to players
-      let curUser = getState().users.user;
-      let userPhoto = getState().users.photo;
+    const curUser = getState().users.user;
+    const userPhoto = getState().users.photo;
+    const userName = getState().users.name;
 
-      let newPlayers = doc.data().players.slice();
-      let newPhotos = doc.data().photos.slice();
-
-      for (let i = 0; i < doc.data().players.length; i++) {
-        if (doc.data().players[i] === "") {
-          newPlayers[i] = curUser;
-          newPhotos[i] = userPhoto;
-          break;
-        }
-      }
-
-      let newCurNum = doc.data().curNum + 1;
-      let isFullNow = newCurNum === doc.data().players.length ? true : false;
-
-      let localRoom = {
-        room: doc.id,
-        ...doc.data(),
-        players: newPlayers,
-        curNum: newCurNum,
-        photos: newPhotos,
-        isFull: isFullNow,
-        curRound: 0
-      }
-      console.log(localRoom)
-
-      // update the database
-      docRef.update({
-        players: newPlayers,
-        curNum: newCurNum,
-        photos: newPhotos,
-        isFull: isFullNow
-      }).then(() => { dispatch(enterRoom(localRoom))}).catch((error) => {
-        console.log('error updating the player when entering the room: ', error)
-      })
-    }).catch((error) => {console.log('error finding the room to enter: ', error)})
+    return database.runTransaction((transaction) => {
+      let playerIndex, roles, zodiac;
+      return transaction.get(docRef).then(doc => {
+        roles = doc.data().roles;
+        zodiac = doc.data().zodiac;
+        playerIndex = Object.values(doc.data().players).findIndex(el => el === "");
+        transaction.update(docRef, {
+          ['players.' + playerIndex]: curUser,
+          ['photos.' + playerIndex]: userPhoto,
+          ['names.'+ playerIndex]: userName
+        });
+      }).then(() => {
+        console.log('user enter the room successfully with playerIndex:', playerIndex);
+        dispatch(enterRoom({
+          room: roomid,
+          pwd: pwd,
+          playerIndex: playerIndex,
+          roles,
+          zodiac
+        }))
+      }).catch(error => console.log('error finding the room to enter: ', error))
+    })
   }
 }
 
@@ -279,57 +258,28 @@ export const startEnterRoom = (roomid, pwd) => {
 // ******** game
 
 //1. get ready
-export const getReady = (newStates, canStart) => {
-  return {
-    type: 'GET_READY',
-    gameStates: newStates,
-    canStart
-  }
-}
-
 export const startGetReady = () => {
   return (dispatch, getState) => {
     const roomid = getState().rooms.room;
     const docRef = database.collection('rooms').doc(roomid);
-    const curUser = getState().users.user;
-    const userIndex =  getState().rooms.players.indexOf(curUser);
+    const userIndex =  getState().rooms.playerIndex;
 
     docRef.update({
       ['gameStates.' + userIndex]: "已准备"
     })
-    // .then(() => {
-    //   dispatch(getReady(newStates, canStart))
-    // })
   }
 }
 
 //2. get unready
-export const notReady = (newStates) => {
-  return {
-    type: 'NOT_READY',
-    gameStates: newStates,
-    canStart: false
-  }
-}
-
 export const startNotReady = () => {
-
   return (dispatch, getState) => {
     const roomid = getState().rooms.room;
     const docRef = database.collection('rooms').doc(roomid);
-
-    const curUser = getState().users.user;
-    let newStates = {...getState().rooms.gameStates};
-    const userIndex =  getState().rooms.players.indexOf(curUser);
-
-    newStates[userIndex] = "未准备";
-
+    const userIndex =  getState().rooms.playerIndex;
 
     docRef.update({
       ['gameStates.' + userIndex]: "未准备",
       canStart: false
-    }).then(() => {
-      dispatch(getReady(newStates))
     })
   }
 }
@@ -345,32 +295,47 @@ export const getStart = () => {
 export const startGetStart = () => {
   return (dispatch, getState) => {
     const roomid = getState().rooms.room;
+    const roles = getState().rooms.roles;
     const docRef = database.collection('rooms').doc(roomid);
 
     docRef.update({
-      started: true
+      started: true,
+      gameStates: Object.fromEntries(roles.map((el, index) => [index, "未鉴宝"]))
     }).then(() => { dispatch(getStart())})
   }
 }
 
-// 4. confirmStart
-export const confirmStart = () => {
+// 4. set the first person to evaluate
+export const setFirstToEval = () => {
+  return (dispatch, getState) => {
+    const roomid = getState().rooms.room;
+    const playerNum = getState().rooms.roles.length;
+    const docRef = database.collection('rooms').doc(roomid);
+    // const index = Math.floor(Math.random(playerNum));
+
+    docRef.update({
+      ['gameStates.' + 0]: "鉴宝中",
+    })
+  }
+}
+
+// 5. complete eval
+export const completeEval = () => {
 
 }
 
-export const startConfirmStart = () => {
+export const startCompleteEval = (nextNo) => {
   return (dispatch, getState) => {
     const roomid = getState().rooms.room;
+    const playerNum = getState().rooms.roles.length;
+    const playerIndex = getState().rooms.playerIndex;
     const docRef = database.collection('rooms').doc(roomid);
-
-    const curUser = getState().users.user;
-    const userIndex =  getState().rooms.players.indexOf(curUser);
+    // const index = Math.floor(Math.random(playerNum));
 
     docRef.update({
-      ['gameStates.' + userIndex]: "未鉴宝"
+      ['gameStates.' + playerIndex]: "已鉴宝",
+      ['gameStates.' + nextNo]: "未鉴宝",
     })
-
-
   }
 }
 
@@ -384,32 +349,29 @@ export const startNewRound = (roundNo, lastNo) => {
 
 
 
-
-
-
 export const updateGameStates = (data) => {
+  console.log('update the game state in redux');
   return {
     type: 'UPDATE_GAME_STATES',
-    data
+    ...data
   }
 }
 
-export const listenGameStates = (roomid) => {
-  console.log('listen game states',roomid)
-  return (dispatch, getState) => {
-    const docRef = database.collection('rooms').doc(roomid);
-    docRef.onSnapshot((doc) => {
-      if (Object.values(doc.data().gameStates).indexOf("未准备") === -1) {
-        docRef.update({
-          canStart: true
-        }).then(() => dispatch(updateGameStates({canStart: true})))
-      } else if (doc.data().remainingPlayers === 0) {
-        docRef.delete();
-      } else {
-        dispatch(updateGameStates({gameStates: doc.data().gameStates}))
-      }
-      }
-    )
-  }
 
-}
+// export const listenGameStates = (roomid) => {
+//   console.log('listen game states',roomid);
+//   const docRef = database.collection('rooms').doc(roomid);
+//   return (dispatch) => {
+//     docRef.onSnapshot((doc) => {
+//       console.log('listen for game state change', doc.data())
+//       if (Object.values(doc.data().gameStates).indexOf("未准备") === -1) {
+//         docRef.update({
+//           canStart: true
+//         })
+//       }
+
+//       dispatch(updateGameStates(doc.data()))
+//     })
+//   }
+
+// }

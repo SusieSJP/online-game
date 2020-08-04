@@ -16,7 +16,7 @@ Modal.setAppElement('#root');
 const RoleModal = (props) => {
   let roleImg;
   switch (props.role) {
-    case '要不然':
+    case '药不然':
       roleImg = yaoburan;
       break;
     case '黄烟烟':

@@ -12,7 +12,7 @@ export const rolesGenerator = (roomType) => {
   let res;
 
   switch (roomType) {
-    case '普通6人':
+    case 6:
       res = standard6.slice();
       for (let i = 5; i > 0; i--) {
         const j = Math.floor(Math.random() * i);
@@ -21,7 +21,7 @@ export const rolesGenerator = (roomType) => {
         res[j] = temp;
       };
       break;
-    case '普通8人':
+    case 8:
       res = standard8.slice();
       for (let i = 7; i > 0; i--) {
         const j = Math.floor(Math.random() * i);
@@ -37,6 +37,25 @@ export const rolesGenerator = (roomType) => {
   return res;
 }
 
-export const randomSelectOne = (len) => {
-  return Math.floor(Math.random() * len);
+export const zodiacGenerator = () => {
+  const dummyArr = [true, true, false, false];
+  const res = {
+    1: shuffleArray(dummyArr),
+    2: shuffleArray(dummyArr),
+    3: shuffleArray(dummyArr)
+  }
+  console.log(res)
+  return res
+  // return shuffleArray(dummyArr).concat(shuffleArray(dummyArr)).concat(shuffleArray(dummyArr));
+}
+
+const shuffleArray = (array) => {
+  let res = array.slice();
+  for (let i = array.length-1; i>0; i--) {
+    const j = Math.floor(Math.random() * i);
+    const temp = res[i];
+    res[i] = res[j];
+    res[j] = temp;
+  }
+  return res;
 }

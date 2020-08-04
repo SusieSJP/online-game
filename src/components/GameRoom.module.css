@@ -55,6 +55,16 @@
   width: 90%;
   border-radius: 50%;
   margin: 5%;
+  position: absolute;
+}
+
+.Eval {
+  position: absolute;
+  height: 90%;
+  width: 90%;
+  border-radius: 50%;
+  margin: 5%;
+  z-index: 10;
 }
 
 .SelfieRight {
@@ -72,6 +82,7 @@
   width: 90%;
   border-radius: 50%;
   margin: 5%;
+  position: absolute;
 }
 
 .GameInfoLeft {
@@ -174,8 +185,22 @@
   font-family: 'Ma Shan Zheng', cursive;
 }
 
-.StateButtonReady {
+.ButtonGreen {
   background-color: green;
+  color: white;
+  border-radius: 50px;
+  padding: 3% 5%;
+  font-size: 14px;
+  text-align: center;
+  width: 60px;
+  margin-left: 4%;
+  letter-spacing: 2px;
+  font-family: 'Ma Shan Zheng', cursive;
+}
+
+
+.ButtonGrey {
+  background-color: grey;
   color: white;
   border-radius: 50px;
   padding: 3% 5%;

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { startLogin } from './redux/action';
+import { startLogin, startSetDefaultPhoto } from './redux/action';
 import { connect } from 'react-redux';
 
 import styles from './App.module.css';
@@ -11,6 +11,15 @@ import GameRoom from './components/GameRoom';
 
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+
+  }
+
+  componentDidMount() {
+    console.log(this.props)
+    this.props.startSetDefaultPhoto();
+  }
 
   render() {
     return (
@@ -45,7 +54,8 @@ const mapStateToProps = (state, props) => {
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    startLogin: () => dispatch(startLogin())
+    startLogin: () => dispatch(startLogin()),
+    startSetDefaultPhoto: () => dispatch(startSetDefaultPhoto())
   }
 }
 

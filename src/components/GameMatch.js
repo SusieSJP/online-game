@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { startLoadAvailableRoom, startEnterRoom } from '../redux/action';
+import { startLoadAvailableRoom, startEnterRoom, startLoadRoom } from '../redux/action';
 import { withRouter } from 'react-router';
 
 import InputModal from './Modal';
@@ -20,16 +20,18 @@ class GameMatch extends Component {
 
   handleClick = (event) => {
     console.log('game match props:', this.props);
-    this.props.startLoadAvailableRoom();
+
     let request = event.target.innerText;
     switch (request) {
       case '创建房间':
         console.log('user click to create room');
+        this.props.startLoadRoom();
         // redirect to room select
         this.props.history.push('/room-select');
         break;
       case '搜索房间':
         // pop up window
+        this.props.startLoadAvailableRoom();
         this.setState({
           showModal: true
         })
@@ -55,7 +57,7 @@ class GameMatch extends Component {
     } else {
       // enter the room and close the modal
       this.handleCloseModal();
-      this.props.startEnterRoom(room);
+      this.props.startEnterRoom(room, pwd);
       this.props.history.push('/room/' + room);
     }
   }
@@ -86,7 +88,8 @@ const mapStateToProps = (state, props) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     startLoadAvailableRoom: () => dispatch(startLoadAvailableRoom()),
-    startEnterRoom: (roomid, pwd) => dispatch(startEnterRoom(roomid, pwd))
+    startEnterRoom: (roomid, pwd) => dispatch(startEnterRoom(roomid, pwd)),
+    startLoadRoom: () => dispatch(startLoadRoom())
   }
 }
 

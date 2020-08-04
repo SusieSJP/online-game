@@ -6,11 +6,6 @@ import { rolesGenerator, roomIdGenerator } from '../utilities';
 import styles from './RoomSelect.module.css';
 
 class RoomSelect extends Component {
-
-  componentDidMount() {
-    this.props.startLoadRoom();
-  }
-
   handleSelect = (roomType) => {
     // 1. create a random and unused room id and pwd
     const newId = roomIdGenerator(this.props.roomPwdPairs).toString();
@@ -36,7 +31,7 @@ class RoomSelect extends Component {
         <div className={styles.Card}>
           <div className={styles.Title}>
             <h3>普通6人局</h3>
-            <div className={styles.Button} onClick={() => this.handleSelect('普通6人')}>建房</div>
+            <div className={styles.Button} onClick={() => this.handleSelect(6)}>建房</div>
           </div>
           <div className={styles.VSbackground}>
             <div className={styles.Group}>
@@ -54,7 +49,7 @@ class RoomSelect extends Component {
         <div className={styles.Card}>
           <div className={styles.Title}>
             <h3>普通8人局</h3>
-            <div className={styles.Button} onClick={() => this.handleSelect('普通8人')}>建房</div>
+            <div className={styles.Button} onClick={() => this.handleSelect(8)}>建房</div>
           </div>
           <div className={styles.VSbackground}>
             <div className={styles.Group}>

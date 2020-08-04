@@ -1,6 +1,6 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
-import { roomReducer, userReducer } from './reducer';
+import { roomReducer, userReducer, gameReducer } from './reducer';
 
 
 // Store creation
@@ -11,6 +11,7 @@ export default () => {
     combineReducers({
       rooms: roomReducer,
       users: userReducer,
+      game: gameReducer
     }),
     applyMiddleware(thunk)
   );
