@@ -5,7 +5,8 @@ import styles from './GameRoom.module.css';
 
 import {
     startLeaveRoom, startGetReady, startNotReady, startGetStart,
-    updateGameStates, setFirstToEval, startAttack, resetCanEval, setNextToEval } from '../redux/action';
+    updateGameStates, setFirstToEval, startAttack, resetCanEval,
+    setNextToEval, setTFChanged, setChatOrder } from '../redux/action';
 import InfoBoard from './InfoBoard';
 import RoleModal from './RoleModal';
 import EvalModal from './EvalModal';
@@ -15,6 +16,7 @@ import spinner from '../assets/spinner.svg';
 import chip from '../assets/chip.svg';
 import hat from '../assets/hat.svg';
 import check from '../assets/checking.svg';
+import chat from '../assets/chat.svg';
 
 
 class GameRoom extends Component {
@@ -28,6 +30,9 @@ class GameRoom extends Component {
       loading: false,
       isFetching: true,
       roundStarting: false,
+      nextRoundStartNum: null,
+      chatStarting: false,
+      chatDone: false,
     }
 
     this.startAudio = new Audio(game_start);
@@ -104,7 +109,7 @@ class GameRoom extends Component {
 
     setTimeout(() => {
       this.setState({ roundStarting: false });
-      this.props.setFirstToEval();
+      this.props.setFirstToEval(1);
     }, 1500)
   }
 
@@ -118,14 +123,38 @@ class GameRoom extends Component {
     }
   }
 
-  handleNext = (index) => {
-    let actualIndex = index < this.props.room.playerIndex ? index : index+1;
-    this.props.setNextToEval(actualIndex);
+  handleNext = (index, tfChanged) => {
     console.log('close evaluation');
     this.setState({ showEval: false })
     if (this.props.game.canEval[this.props.room.playerIndex] !== 1) {
       this.props.resetCanEval()
     }
+    if (tfChanged) {
+      this.props.setTFChanged()
+    }
+
+    if (index) {
+      let actualIndex = index < this.props.room.playerIndex ? index : index+1;
+      console.log('set next to evaluate!')
+      this.props.setNextToEval(actualIndex);
+    } else {
+      // all players have evaluated
+      this.setState({ chatStarting: true });
+      this.startAudio.play();
+      this.props.setChatOrder(this.props.room.playerIndex);
+
+      setTimeout(() => {
+        this.setState({ chatStarting: false });
+      }, 1500)
+    }
+
+  }
+
+  handleChatDone = () => {
+    this.setState({
+      chatDone: true
+    })
+    this.props.setChatDone()
   }
 
   createItems = () => {
@@ -140,7 +169,9 @@ class GameRoom extends Component {
         '未准备': styles.Button,
         '未鉴宝': styles.Button,
         '鉴宝中': styles.ButtonGreen,
-        '已鉴宝': styles.ButtonGrey
+        '已鉴宝': styles.ButtonGrey,
+        '发言中': styles.ButtonGreen,
+        '已发言': styles.ButtonGrey
       }
 
       items.push(
@@ -153,6 +184,7 @@ class GameRoom extends Component {
             <div className={styles.SelfieLeft}>
               <img src={this.props.game.photos[i]} alt=""></img>
               { this.props.game.gameStates[i] === "鉴宝中" && <img className={styles.Eval} src={check}></img>}
+              { this.props.game.gameStates[i] === "发言中" && <img className={styles.Eval} src={chat}></img>}
             </div>
             <div className={styles.GameInfoLeft}>
               <div className={stateButtonStyle[this.props.game.gameStates[i]]}>
@@ -237,7 +269,15 @@ class GameRoom extends Component {
             }
           </div>
           {
-            (this.state.loading || this.state.roundStarting) &&
+            this.props.game.gameStates[this.props.room.playerIndex] === "发言中" &&
+            <div className={styles.ButtonArea}>
+              <button
+                className={this.state.chatDone ? styles.ButtonNoReady : styles.ButtonReday}
+                onClick={this.handleChatDone}>结束发言</button>
+            </div>
+          }
+          {
+            (this.state.loading || this.state.roundStarting || this.state.chatStarting) &&
             <img className={styles.Loading} src={loading}/>
           }
           {
@@ -247,6 +287,10 @@ class GameRoom extends Component {
           {
             this.state.roundStarting &&
             <div className={styles.LoadingText}>开始第 {this.props.room.curRound} 轮</div>
+          }
+          {
+            this.state.chatStarting &&
+            <div className={styles.LoadingText}>开始发言</div>
           }
 
           <RoleModal
@@ -270,6 +314,8 @@ class GameRoom extends Component {
             handleNext={this.handleNext}
             tfChanged={this.props.game.tfChanged}
             gameStates={this.props.game.gameStates}
+            loseEvalHuang={this.props.game.loseEvalHuang}
+            loseEvalMuhu={this.props.game.loseEvalMuhu}
            />
           }
 
@@ -295,10 +341,12 @@ const mapDispatchToProps = (dispatch) => {
     startNotReady: () => dispatch(startNotReady()),
     startGetStart: () => dispatch(startGetStart()),
     updateGameStates: (data) => dispatch(updateGameStates(data)),
-    setFirstToEval: () => dispatch(setFirstToEval()),
+    setFirstToEval: (nextRound) => dispatch(setFirstToEval(nextRound)),
     startAttack: (indice, num) => dispatch(startAttack(indice, num)),
     resetCanEval: () => dispatch(resetCanEval()),
-    setNextToEval: (index) => dispatch(setNextToEval(index))
+    setNextToEval: (index) => dispatch(setNextToEval(index)),
+    setTFChanged: () => dispatch(setTFChanged()),
+    setChatOrder: (index) => dispatch(setChatOrder(index)),
   }
 }
 

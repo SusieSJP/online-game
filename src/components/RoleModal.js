@@ -50,11 +50,11 @@ const RoleModal = (props) => {
         <div className={styles.Role}>{props.role}</div>
         {
           props.role === "药不然" &&
-          <div className={styles.Notes}>您的队友老朝奉为 {props.roles.findIndex("老朝奉")} 号</div>
+          <div className={styles.Notes}>您的队友老朝奉为 {props.roles.findIndex(el => el === "老朝奉")+1} 号</div>
         }
         {
           props.role === "老朝奉" &&
-          <div className={styles.Notes}>您的队友药不然为 {props.roles.findIndex("药不然")} 号</div>
+          <div className={styles.Notes}>您的队友药不然为 {props.roles.findIndex(el => el === "药不然")+1} 号</div>
         }
         <button className={styles.Button} onClick={props.closeModal}>确认</button>
       </Modal>

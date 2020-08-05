@@ -3,9 +3,9 @@ import styles from './EvalModal.module.css';
 
 import Modal from 'react-modal';
 import rat from '../assets/rat.svg';
-import cow from '../assets/cow2.svg';
+import cow from '../assets/cow.svg';
 import tiger from '../assets/tiger.svg';
-import rabbit from '../assets/rabbit2.svg';
+import rabbit from '../assets/rabbit1.svg';
 import dragon from '../assets/dragon.svg';
 import snake from '../assets/snake.svg';
 import horse from '../assets/horse.svg';
@@ -32,7 +32,8 @@ class EvalModal extends Component {
       actionIndex: null,
       nextIndex: null,
       actionConfirmed: false,
-      nextConfirmed: false
+      nextConfirmed: false,
+      tfChanged: false
     }
   }
 
@@ -123,16 +124,39 @@ class EvalModal extends Component {
     this.props.handleAttack(index);
   }
 
-  handleNext = (index) => {
+  handleNext = () => {
+    if (Object.values(this.props.gameStates).indexOf("未鉴宝") >= 0 && !this.state.nextIndex) {
+      this.setState({
+        errorMsg: "请选择下一位玩家进行鉴宝"
+      })
+    } else {
+      this.setState({
+        nextConfirmed: true
+      });
+      this.props.handleNext(this.state.nextIndex, this.state.tfChanged)
+    }
+
+  }
+
+  handleSwitchChange = (event) => {
+    console.log('change switch',event.target.checked)
     this.setState({
-      nextConfirmed: true
-    });
-    this.props.handleNext(index)
+      tfChanged: event.target.checked
+    })
   }
 
   buildImgSet = () => {
     const evalNum = this.props.role === "许愿" ? 2 : this.props.role === "方震" ? 0 : 1;
     const action = this.props.role === "方震" ? "查验" : this.props.role === "药不然" ? "偷袭" : "";
+    let canEval = this.props.canEval;
+
+    if (this.props.role === "黄烟烟" && canEval === 1 && this.props.loseEvalHuang === this.props.curRound) {
+      canEval = 2
+    };
+    if (this.props.role === "木户加奈" && canEval === 1 && this.props.loseEvalMuhu === this.props.curRound) {
+      canEval = 2
+    };
+
     let otherPlayers = Object.values(this.props.photos).slice();
     otherPlayers.splice(this.props.playerIndex, 1);
 
@@ -148,7 +172,7 @@ class EvalModal extends Component {
       <div className={styles.ImgContainer}>
         {
           evalNum > 0 &&
-          <div className={(this.props.canEval === 1 && !this.state.evalConfirmed) ? styles.GroupCard : styles.GroupCardDisabled} key={"card-1"}>
+          <div className={(this.props.canEval !== 1 || this.state.evalConfirmed) ? styles.GroupCardDisabled : styles.GroupCard} key={"card-1"}>
             <h1>请选择{evalNum}个兽首进行查验</h1>
             <div className={styles.ImgSet} key={"cardDiv-1"}>
             {
@@ -184,8 +208,8 @@ class EvalModal extends Component {
             }
             <button className={styles.Button} onClick={this.handleEvalResult} disabled={this.state.evalConfirmed}>确认</button>
             {
-              this.props.canEval !== 1 &&
-              <div className={styles.DisabledMsg}>{this.props.canEval === 2 ? "您这轮技能随机失效，不能查验" : "您被药不然偷袭了，不能查验"}</div>
+              canEval !== 1 &&
+              <div className={styles.DisabledMsg}>{canEval === 2 ? "您本轮技能失效，不能查验" : "您被药不然偷袭了，不能查验"}</div>
             }
           </div>
         }
@@ -193,13 +217,13 @@ class EvalModal extends Component {
         {
           action !== "" &&
           <div className={styles.GroupCard} key={"card-2"}>
-            { action && <h1>请选择1位玩家进行{action}</h1> }
+            <h1>请选择1位玩家进行{action}</h1>
             <div className={styles.ImgSet} key={"cardDiv-2"}>
             {
               otherPlayers.map((el, index) => {
                 let actualIndex = index < this.props.playerIndex ? index : index+1;
                 return (
-                  <div key={"player-"+index} className={this.state.isSelected[index] ? styles.EvalImgSelected : styles.EvalImg} onClick={() => this.handleSelect(index)}>
+                  <div key={"player-"+index} className={this.state.isSelected[index] ? styles.EvalImgSelected : styles.EvalNextImg} onClick={() => this.handleSelect(index)}>
                     <img src={el}></img>
                     <div className={styles.PlayerIndex}>{actualIndex + 1}</div>
                   </div>
@@ -209,6 +233,19 @@ class EvalModal extends Component {
             }
             </div>
             <button className={styles.Button} onClick={() => this.handleAttack(this.state.actionIndex)} disabled={this.state.actionConfirmed}>确认</button>
+          </div>
+        }
+
+        {
+          this.props.role === "老朝奉" && Object.values(this.props.gameStates).indexOf("未鉴宝") >= 0 &&
+          <div className={styles.GroupCard}>
+            <h1>请选择是否发动技能</h1>
+            <div className={styles.ImgSet}>
+              <span className={styles.Option}>不发动</span>
+              <input className={`${styles.tgl} ${styles.tgllight}`} id="switch" onChange={this.handleSwitchChange} type="checkbox"/>
+              <label for="switch" className={styles.tglbtn}></label>
+              <span className={styles.Option}>发动</span>
+            </div>
           </div>
         }
 
@@ -224,7 +261,7 @@ class EvalModal extends Component {
                 return (
                   <div
                     key={"nextPlayer-"+{index}}
-                    className={this.props.gameStates[actualIndex] === "已鉴宝" ? styles.EvalImgDisabled : this.state.isNext[index] ? styles.EvalImgSelected : styles.EvalImg}
+                    className={this.props.gameStates[actualIndex] === "已鉴宝" ? styles.EvalImgDisabled : this.state.isNext[index] ? styles.EvalImgSelected : styles.EvalNextImg}
                     onClick={() => this.handleSelectNext(index)}
                     >
                       <img src={el}></img>
@@ -253,7 +290,7 @@ class EvalModal extends Component {
         >
           <div className={styles.Title}>您的身份是：{this.props.role}</div>
           { this.buildImgSet() }
-          <button className={styles.Button} onClick={() => this.handleNext(this.state.nextIndex)} disabled={this.state.nextConfirmed}>确认并结束</button>
+          <button className={styles.Button} onClick={this.handleNext} disabled={this.state.nextConfirmed}>确认并结束</button>
         </Modal>
       </div>
     );

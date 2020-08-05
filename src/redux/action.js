@@ -152,6 +152,9 @@ export const startCreateRoom = ({newId, newPwd, roles, roomType} = {}) => {
     let gameStates = Object.fromEntries(dummyArr.map((el, index) => [index, "未准备"]));
     // can eval = 1, randomly cannot = 2, attacked = 3
     let canEval = Object.fromEntries(dummyArr.map((el, index) => [index, 1]));
+    // random cannot eval for huang and muhu
+    let loseEvalHuang = Math.floor(Math.random()*3) + 1;
+    let loseEvalMuhu = Math.floor(Math.random()*3) + 1;
 
     const zodiac = zodiacGenerator();
 
@@ -185,7 +188,9 @@ export const startCreateRoom = ({newId, newPwd, roles, roomType} = {}) => {
       canStart: false,
       zodiac,
       canEval,
-      tfChanged: false
+      tfChanged: false,
+      loseEvalHuang,
+      loseEvalMuhu
     }).then(() => {
       console.log('finish add new room')
       dispatch(redirectTo(newId))
@@ -236,12 +241,15 @@ export const startEnterRoom = (roomid, pwd) => {
     const userName = getState().users.name;
 
     return database.runTransaction((transaction) => {
-      let playerIndex, roles, zodiac, tfChanged;
+      let playerIndex, roles, zodiac, tfChanged, loseEvalHuang, loseEvalMuhu;
       return transaction.get(docRef).then(doc => {
         roles = doc.data().roles;
         zodiac = doc.data().zodiac;
         playerIndex = Object.values(doc.data().players).findIndex(el => el === "");
         tfChanged = doc.data().tfChanged;
+        loseEvalHuang = doc.data().loseEvalHuang;
+        loseEvalMuhu = doc.data().loseEvalMuhu;
+
         transaction.update(docRef, {
           ['players.' + playerIndex]: curUser,
           ['photos.' + playerIndex]: userPhoto,
@@ -255,7 +263,9 @@ export const startEnterRoom = (roomid, pwd) => {
           playerIndex: playerIndex,
           roles,
           zodiac,
-          tfChanged
+          tfChanged,
+          loseEvalHuang,
+          loseEvalMuhu
         }))
       }).catch(error => console.log('error finding the room to enter: ', error))
     })
@@ -315,16 +325,24 @@ export const startGetStart = () => {
 }
 
 // 4. set the first person to evaluate
-export const setFirstToEval = () => {
+export const setFirstToEval = (nextRound) => {
   return (dispatch, getState) => {
     const roomid = getState().rooms.room;
-    const playerNum = getState().rooms.roles.length;
     const docRef = database.collection('rooms').doc(roomid);
-    // const index = Math.floor(Math.random(playerNum));
+
+    let index;
+    const playerNum = getState().rooms.roles.length;
+    if (nextRound === 1) {
+      // index = Math.floor(Math.random()*playerNum);
+    } else {
+      index = getState().game.evalOrder[playerNum - 1];
+    }
+
 
     docRef.update({
       ['gameStates.' + 0]: "鉴宝中",
-      evalOrder: [1]
+      evalOrder: [1],
+      tfChanged: false
     })
   }
 }
@@ -335,8 +353,7 @@ export const setNextToEval = (index) => {
     const playerIndex = getState().rooms.playerIndex;
     const docRef = database.collection('rooms').doc(roomid);
 
-    return database.runTransaction(transaction => {
-      return transaction.get(docRef).then(doc => {
+    docRef.get().then(doc => {
         let newEvalOrder = doc.data().evalOrder.slice();
         newEvalOrder.push(index+1);
 
@@ -346,8 +363,7 @@ export const setNextToEval = (index) => {
           evalOrder: newEvalOrder
         })
 
-      })
-    }).catch((error) => { console.log('push evalorder failed:', error)})
+      }).catch((error) => { console.log('push evalorder failed:', error)})
   }
 }
 
@@ -383,9 +399,53 @@ export const resetCanEval = () => {
   }
 }
 
+export const setTFChanged = () => {
+  console.log('set TF changed at action')
+  return (dispatch, getState) => {
+    const roomid = getState().rooms.room;
+    const docRef = database.collection('rooms').doc(roomid);
+    docRef.update({
+      tfChanged: true
+    })
+  }
+}
+
+
+export const setChatOrder = (index) => {
+  return (dispatch, getState) => {
+    const roomid = getState().rooms.room;
+    const docRef = database.collection('rooms').doc(roomid);
+    const playerNum = getState().rooms.roles.length;
+
+    let order = [...Array(playerNum).keys()].revserse();
+    const cutPos = playerNum - index;
+    let newOrder = order.slice(cutPos).concat(order.slice(0, cutPos));
+
+    docRef.update({
+      chatOrder: newOrder,
+      ['gameStates.' + newOrder[0]]: "发言中",
+      curChatIndex: 0
+    })
+  }
+}
+
+export const setChatDone = () => {
+  return (dispatch, getState) => {
+    const roomid = getState().rooms.room;
+    const docRef = database.collection('rooms').doc(roomid);
+    const curChatIndex = getState().game.curChatIndex;
+    const order = getState().game.chatOrder;
+
+    docRef.update({
+      ['gameStates.' + order[curChatIndex+1]]: "发言中",
+      ['gameStates.' + order[curChatIndex]]: "已发言",
+      curChatIndex: curChatIndex + 1
+    })
+  }
+}
 
 export const updateGameStates = (data) => {
-  console.log('update the game state in redux');
+  console.log('update the game state in redux', data);
   return {
     type: 'UPDATE_GAME_STATES',
     ...data

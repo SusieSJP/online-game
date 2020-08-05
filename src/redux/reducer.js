@@ -112,7 +112,13 @@ export const gameReducer = (state = gameInitState, action) => {
         chips: action.chips,
         started: action.started,
         names: action.names,
-        canEval: action.canEval
+        canEval: action.canEval,
+        tfChanged: action.tfChanged,
+        loseEvalHuang: action.loseEvalHuang,
+        loseEvalMuhu: action.loseEvalMuhu,
+        evalOrder: action.evalOrder,
+        chatOrder: action.chatOrder ? action.chatOrder : null,
+        curChatIndex: action.curChatIndex ? action.curChatIndex : null
       }
     default:
       return state

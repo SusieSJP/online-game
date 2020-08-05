@@ -112,6 +112,77 @@
   align-items: center;
 }
 
+.tgl {
+  display: none;
+}
+
+.tgl, .tgl:after, .tgl:before, .tgl *, .tgl *:after, .tgl *:before, .tgl + .tgl-btn {
+  box-sizing: border-box;
+}
+
+.tgl::-moz-selection, .tgl:after::-moz-selection, .tgl:before::-moz-selection, .tgl *::-moz-selection, .tgl *:after::-moz-selection, .tgl *:before::-moz-selection, .tgl + .tgl-btn::-moz-selection {
+  background: none;
+}
+.tgl::selection, .tgl:after::selection, .tgl:before::selection, .tgl *::selection, .tgl *:after::selection, .tgl *:before::selection, .tgl + .tgl-btn::selection {
+  background: none;
+}
+.tgl + .tglbtn {
+  outline: 0;
+  display: block;
+  width: 4em;
+  height: 2em;
+  position: relative;
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+.tgl + .tglbtn:after, .tgl + .tglbtn:before {
+  position: relative;
+  display: block;
+  content: "";
+  width: 50%;
+  height: 100%;
+}
+.tgl + .tglbtn:after {
+  left: 0;
+}
+.tgl + .tglbtn:before {
+  display: none;
+}
+.tgl:checked + .tglbtn:after {
+  left: 50%;
+}
+
+.tgllight + .tglbtn {
+  background:  #bdbdbd;
+  border-radius: 2em;
+  padding: 2px;
+  -webkit-transition: all .4s ease;
+  transition: all .4s ease;
+}
+.tgllight + .tglbtn:after {
+  border-radius: 50%;
+  background: #fff;
+  -webkit-transition: all .2s ease;
+  transition: all .2s ease;
+}
+.tgllight:checked + .tglbtn {
+  background: #4caf50;
+}
+
+.Option {
+  border: none;
+  text-align: center;
+  font-size: 18px;
+  font-family: 'Ma Shan Zheng', cursive;
+  margin: 5px;
+  padding: 8px 20px;
+}
+
+
+/* for zodiac animals */
 .EvalImg {
   width: 90px;
   height: 90px;
@@ -142,7 +213,7 @@
   transform: translate(-50%,-50%);
 }
 
-.EvalImgChecked, .EvalImgSelected {
+.EvalImgChecked {
   width: 90px;
   height: 90px;
   border-radius: 50%;
@@ -152,16 +223,38 @@
   position: relative
 }
 
+.EvalImgChecked > img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+
+/* for selecting players */
+
 .EvalNextImg {
-  width: 110px;
-  height: 110px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   background-color: transparent;
   margin: 10px;
   position: relative;
 }
 
-.EvalImg > img:hover {
+.EvalNextImg > img {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+
+.EvalNextImg > img:hover {
   width: 120px;
   height: 120px;
   border-radius: 50%;
@@ -171,16 +264,39 @@
   transform: translate(-50%,-50%);
 }
 
-
 .EvalImgSelected {
-  width: 110px;
-  height: 110px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   background-color: transparent;
   border: solid 4px lightgray;
   margin: 10px;
   position: relative
 }
+
+.EvalImgSelected > img, .EvalImgDisabled > img {
+  width: 100px;
+  height:100px;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+
+.EvalImgDisabled {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: lightgray;
+  margin: 10px;
+  position: relative;
+  pointer-events: none;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+
 
 .EvalTrue {
   width: 90px;
@@ -203,7 +319,7 @@
   position: relative
 }
 
-.EvalImgChecked > img, .EvalTrue > img, .EvalFalse > img, .EvalImgSelected > img, .EvalImgDisabled > img {
+.EvalTrue > img, .EvalFalse > img {
   width: 90px;
   height: 90px;
   border-radius: 50%;
@@ -211,39 +327,6 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%,-50%);
-}
-
-.EvalNextImg > img {
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%,-50%);
-}
-
-.EvalImgSelected > img {
-  width: 100px;
-  height:100px;
-  border-radius: 50%;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%,-50%);
-}
-
-.EvalImgDisabled {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  background-color: lightgray;
-  border: solid 2px lightgray;
-  margin: 10px;
-  position: relative;
-  pointer-events: none;
-  box-shadow: none;
-  cursor: not-allowed;
 }
 
 .PlayerIndex {
@@ -254,7 +337,7 @@
   border-radius: 50%;
   background-color: rgba(255,255,255,0.3);
   color: rgb(163, 157, 157);
-  font-size: 18px;
+  font-size: 36px;
   font-family: 'Red Rose', cursive;
   font-weight: bolder;
   display: flex;
@@ -293,9 +376,7 @@
 
 
 .Button {
-  padding: 5px 10px;
   background-color: white;
-  border: none;
   border-radius: 50px;
   text-align: center;
   transition: all 0.2s;
