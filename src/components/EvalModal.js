@@ -3,10 +3,17 @@ import styles from './EvalModal.module.css';
 
 import Modal from 'react-modal';
 import rat from '../assets/rat.svg';
-import cow from '../assets/cow.svg';
+import cow from '../assets/cow2.svg';
 import tiger from '../assets/tiger.svg';
-import rabbit from '../assets/rabbit1.svg';
-
+import rabbit from '../assets/rabbit2.svg';
+import dragon from '../assets/dragon.svg';
+import snake from '../assets/snake.svg';
+import horse from '../assets/horse.svg';
+import goat from '../assets/goat.svg';
+import monkey from '../assets/monkey.svg';
+import chicken from '../assets/chicken.svg';
+import dog from '../assets/dog.svg';
+import pig from '../assets/pig.svg';
 
 // Make sure to bind modal to your appElement (http://reactcommunity.org/react-modal/accessibility/)
 Modal.setAppElement('#root');
@@ -16,25 +23,39 @@ class EvalModal extends Component {
     super(props);
 
     this.state = {
-      isChecked: [false, false, false, false],
-      isSelected: [false, false, false, false, false],
+      isChecked: [false, false, false, false], // for zodiac
+      isSelected: [false, false, false, false, false], // for players to take action
+      isNext: [false, false, false, false, false],
       showResult: ["","","",""],
       evalConfirmed: false,
       errorMsg: "",
       actionIndex: null,
-      actionConfirmed: false
+      nextIndex: null,
+      actionConfirmed: false,
+      nextConfirmed: false
     }
   }
 
   handleCheck = (index) => {
-    if ((this.props.role === "许愿") && (this.state.isChecked.filter((el) => el === true).length === 2)) {
-      this.setState({
-        errorMsg: "您已选择查验2个兽首，请先取消对应兽首，再做更改"
-      })
+    if (this.props.role === "许愿") {
+      if (!this.state.isChecked[index] && this.state.isChecked.filter((el) => el === true).length === 2) {
+        this.setState({
+          errorMsg: "您已选择查验2个兽首，请先取消对应兽首，再做更改"
+        })
+      } else {
+        this.setState(prevState => {
+          let newChecked = prevState.isChecked.slice();
+          newChecked[index] = !prevState.isChecked[index];
+          return {
+            isChecked: newChecked,
+            errorMsg: ""
+          }
+        })
+      }
     } else {
-      this.setState(prevState => {
-        let newChecked = prevState.isChecked.slice();
-        newChecked[index] = !prevState.isChecked[index];
+      this.setState(() => {
+        let newChecked = [false, false, false, false];
+        newChecked[index] = true
         return {
           isChecked: newChecked,
           errorMsg: ""
@@ -45,84 +66,181 @@ class EvalModal extends Component {
 
   handleSelect = (index) => {
     console.log("handle select to action", index)
+    this.setState(() => {
+      let newSelected = [false, false, false, false, false];
+      newSelected[index] = true
+      return {
+        isSelected: newSelected,
+        errorMsg: "",
+        actionIndex: index
+      }
+    })
   }
 
   handleEvalResult = () => {
-    if (this.props.canEval === 2 || this.props.canEval === 3) {
-      this.props.closeEval();
+    // 1. check how many zodiac player checked
+    let checkedNum = this.state.isChecked.filter(el => el === true).length;
+    if ((this.props.role === "许愿" && checkedNum !== 2) || (this.props.role !== "许愿" && checkedNum !== 1)) {
+      this.setState({
+        errorMsg: "请您查验对应数量的兽首，调整后再次点击确认"
+      })
     } else {
-      let res = [];
-      for (let i=0; i<4; i++) {
-        if (this.state.isChecked[i]) {
-          res.push(this.props.zodiacGroup[i]);
+      let newRes = this.state.isChecked.map((el, index) => {
+        if (!el) {
+          return ""
+        } else if (this.props.role === "药不然" || this.props.role === "老朝奉" || !this.props.tfChanged) {
+          return this.props.zodiacGroup[index]
         } else {
-          res.push("")
+          return !this.props.zodiacGroup[index]
         }
-      }
-
-      this.setState({ showResult: res})
+      });
+      console.log('zodiac eval result:',newRes)
+      this.setState({
+        showResult: newRes,
+        errMsg: "",
+        evalConfirmed: true
+      })
     }
-
   }
 
+  handleSelectNext = (index) => {
+    console.log("handle select next", index)
+    this.setState(() => {
+      let newIsNext = [false, false, false, false, false];
+      newIsNext[index] = true
+      return {
+        isNext: newIsNext,
+        errorMsg: "",
+        nextIndex: index
+      }
+    })
+  }
+
+  handleAttack = (index) => {
+    this.setState({
+      actionConfirmed: true
+    });
+    this.props.handleAttack(index);
+  }
+
+  handleNext = (index) => {
+    this.setState({
+      nextConfirmed: true
+    });
+    this.props.handleNext(index)
+  }
 
   buildImgSet = () => {
-    let imgSet;
     const evalNum = this.props.role === "许愿" ? 2 : this.props.role === "方震" ? 0 : 1;
     const action = this.props.role === "方震" ? "查验" : this.props.role === "药不然" ? "偷袭" : "";
+    let otherPlayers = Object.values(this.props.photos).slice();
+    otherPlayers.splice(this.props.playerIndex, 1);
 
-    if (this.props.curRound === 1) {
-      imgSet = (
-        <div className={styles.ImgContainer}>
-          <div className={evalNum === 0 ? styles.GroupCardDisabled : styles.GroupCard}>
-            <h1>请选择{evalNum}个兽首进行查验</h1>
-            <div className={styles.ImgSet} >
-              <div className={this.state.isChecked[0] ? styles.EvalImgChecked : styles.EvalImg} onClick={() => this.handleCheck(0)}><img src={rat}></img></div>
-              <div className={this.state.isChecked[1] ? styles.EvalImgChecked : styles.EvalImg} onClick={() => this.handleCheck(1)}><img src={cow}></img></div>
-              <div className={this.state.isChecked[2] ? styles.EvalImgChecked : styles.EvalImg} onClick={() => this.handleCheck(2)}><img src={tiger}></img></div>
-              <div className={this.state.isChecked[3] ? styles.EvalImgChecked : styles.EvalImg} onClick={() => this.handleCheck(3)}><img src={rabbit}></img></div>
-            </div>
-            <button className={styles.Button} onClick={this.handleEvalResult} disabled={this.state.evalConfirm}>确认</button>
-          </div>
-
-          <div className={!action === 0 ? styles.GroupCardDisabled : styles.GroupCard}>
-            { action && <h1>请选择1位玩家进行{action}</h1> }
-            <div className={styles.ImgSet} >
-              <div className={this.state.isSelected[0] ? styles.EvalImgSelected : styles.EvalImg} onClick={() => this.handleSelect(0)}><img src={rat}></img></div>
-              <div className={this.state.isSelected[1] ? styles.EvalImgSelected : styles.EvalImg} onClick={() => this.handleSelect(1)}><img src={cow}></img></div>
-              <div className={this.state.isSelected[2] ? styles.EvalImgSelected : styles.EvalImg} onClick={() => this.handleSelect(2)}><img src={tiger}></img></div>
-              <div className={this.state.isSelected[3] ? styles.EvalImgSelected : styles.EvalImg} onClick={() => this.handleSelect(3)}><img src={rabbit}></img></div>
-              <div className={this.state.isSelected[4] ? styles.EvalImgSelected : styles.EvalImg} onClick={() => this.handleSelect(4)}><img src={rabbit}></img></div>
-            </div>
-            <button className={styles.Button} onClick={() => this.props.handleAttack(this.state.actionIndex)} disabled={this.state.actionConfirm}>确认</button>
-          </div>
-
-          <div className={styles.GroupCard}>
-            <h1>请选择下一位玩家进行鉴宝</h1>
-            <div className={styles.ImgSet} >
-              <div className={this.state.isSelected[0] ? styles.EvalImgSelected : styles.EvalImg} onClick={() => this.handleSelect(0)}><img src={rat}></img></div>
-              <div className={this.state.isSelected[1] ? styles.EvalImgSelected : styles.EvalImg} onClick={() => this.handleSelect(1)}><img src={cow}></img></div>
-              <div className={this.state.isSelected[2] ? styles.EvalImgSelected : styles.EvalImg} onClick={() => this.handleSelect(2)}><img src={tiger}></img></div>
-              <div className={this.state.isSelected[3] ? styles.EvalImgSelected : styles.EvalImg} onClick={() => this.handleSelect(3)}><img src={rabbit}></img></div>
-              <div className={this.state.isSelected[4] ? styles.EvalImgSelected : styles.EvalImg} onClick={() => this.handleSelect(4)}><img src={rabbit}></img></div>
-            </div>
-            <button className={styles.Button} onClick={() => this.props.handleAttack(this.state.actionIndex)} disabled={this.state.actionConfirm}>确认</button>
-          </div>
-        </div>
-
-      )
+    const zodiacImg = {
+      1: [rat, cow, tiger, rabbit],
+      2: [dragon, snake, horse, goat],
+      3: [monkey, chicken, dog, pig]
     }
-    return imgSet;
-  }
 
-  buildResSet = () => {
+    // console.log(zodiacImg, this.props.curRound)
+
     return (
-      <div className={styles.ResSet}>
-        <div className={this.showResult[0] ? styles.True : styles.False}></div>
+      <div className={styles.ImgContainer}>
+        {
+          evalNum > 0 &&
+          <div className={(this.props.canEval === 1 && !this.state.evalConfirmed) ? styles.GroupCard : styles.GroupCardDisabled} key={"card-1"}>
+            <h1>请选择{evalNum}个兽首进行查验</h1>
+            <div className={styles.ImgSet} key={"cardDiv-1"}>
+            {
+              zodiacImg[this.props.curRound].map((zodiac, index) => {
+                let ImgBgStyles;
+                if (!this.state.isChecked[index]) {
+                  ImgBgStyles = styles.EvalImg;
+                } else if (this.state.evalConfirmed) {
+                  if (this.state.showResult[index]) {
+                    ImgBgStyles = styles.EvalTrue;
+                  } else {
+                    ImgBgStyles = styles.EvalFalse;
+                  }
+                } else {
+                  ImgBgStyles = styles.EvalImgChecked
+                }
+
+                return (
+                  <div key={"zodiac-"+{index}} className={ ImgBgStyles } onClick={() => this.handleCheck(index)}>
+                    <img src={zodiac}></img>
+                    {
+                      this.state.evalConfirmed && this.state.isChecked[index] &&
+                      <div className={this.state.showResult[index] ? styles.True : styles.False}>{this.state.showResult[index] ? "真" : "假"}</div>
+                    }
+                  </div>
+                )
+              })
+            }
+            </div>
+            {
+              this.state.errorMsg &&
+              <div className={styles.ErrorMsg}>{this.state.errorMsg}</div>
+            }
+            <button className={styles.Button} onClick={this.handleEvalResult} disabled={this.state.evalConfirmed}>确认</button>
+            {
+              this.props.canEval !== 1 &&
+              <div className={styles.DisabledMsg}>{this.props.canEval === 2 ? "您这轮技能随机失效，不能查验" : "您被药不然偷袭了，不能查验"}</div>
+            }
+          </div>
+        }
+
+        {
+          action !== "" &&
+          <div className={styles.GroupCard} key={"card-2"}>
+            { action && <h1>请选择1位玩家进行{action}</h1> }
+            <div className={styles.ImgSet} key={"cardDiv-2"}>
+            {
+              otherPlayers.map((el, index) => {
+                let actualIndex = index < this.props.playerIndex ? index : index+1;
+                return (
+                  <div key={"player-"+index} className={this.state.isSelected[index] ? styles.EvalImgSelected : styles.EvalImg} onClick={() => this.handleSelect(index)}>
+                    <img src={el}></img>
+                    <div className={styles.PlayerIndex}>{actualIndex + 1}</div>
+                  </div>
+                )
+
+              })
+            }
+            </div>
+            <button className={styles.Button} onClick={() => this.handleAttack(this.state.actionIndex)} disabled={this.state.actionConfirmed}>确认</button>
+          </div>
+        }
+
+        {
+          Object.values(this.props.gameStates).indexOf("未鉴宝") >= 0 &&
+          <div className={styles.GroupCard} key={"card-3"}>
+            <h1>请选择下一位玩家进行鉴宝</h1>
+            <div className={styles.ImgSet} key={"cardDiv-3"}>
+            {
+              otherPlayers.map((el, index) => {
+                let actualIndex = index < this.props.playerIndex ? index : index+1;
+                console.log("nextPlayer-",index)
+                return (
+                  <div
+                    key={"nextPlayer-"+{index}}
+                    className={this.props.gameStates[actualIndex] === "已鉴宝" ? styles.EvalImgDisabled : this.state.isNext[index] ? styles.EvalImgSelected : styles.EvalImg}
+                    onClick={() => this.handleSelectNext(index)}
+                    >
+                      <img src={el}></img>
+                      <div className={styles.PlayerIndex}>{actualIndex + 1}</div>
+                  </div>
+                )
+              })
+            }
+            </div>
+          </div>
+        }
+
       </div>
+
     )
   }
-
 
   render() {
     return (
@@ -135,7 +253,7 @@ class EvalModal extends Component {
         >
           <div className={styles.Title}>您的身份是：{this.props.role}</div>
           { this.buildImgSet() }
-
+          <button className={styles.Button} onClick={() => this.handleNext(this.state.nextIndex)} disabled={this.state.nextConfirmed}>确认并结束</button>
         </Modal>
       </div>
     );

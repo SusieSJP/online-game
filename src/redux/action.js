@@ -132,6 +132,11 @@ export const createRoom = (roomid, pwd, roles, zodiac) => ({
   zodiac
 })
 
+export const redirectTo = (redirectTo) => ({
+  type: 'REDIRECT',
+  redirectTo
+})
+
 export const startCreateRoom = ({newId, newPwd, roles, roomType} = {}) => {
   return (dispatch, getState) => {
     let curUser = getState().users.user;
@@ -179,9 +184,11 @@ export const startCreateRoom = ({newId, newPwd, roles, roomType} = {}) => {
       started: false,
       canStart: false,
       zodiac,
-      canEval
+      canEval,
+      tfChanged: false
     }).then(() => {
       console.log('finish add new room')
+      dispatch(redirectTo(newId))
       dispatch(createRoom(newId, newPwd, roles, zodiac))
     })
   }
@@ -229,11 +236,12 @@ export const startEnterRoom = (roomid, pwd) => {
     const userName = getState().users.name;
 
     return database.runTransaction((transaction) => {
-      let playerIndex, roles, zodiac;
+      let playerIndex, roles, zodiac, tfChanged;
       return transaction.get(docRef).then(doc => {
         roles = doc.data().roles;
         zodiac = doc.data().zodiac;
         playerIndex = Object.values(doc.data().players).findIndex(el => el === "");
+        tfChanged = doc.data().tfChanged;
         transaction.update(docRef, {
           ['players.' + playerIndex]: curUser,
           ['photos.' + playerIndex]: userPhoto,
@@ -246,7 +254,8 @@ export const startEnterRoom = (roomid, pwd) => {
           pwd: pwd,
           playerIndex: playerIndex,
           roles,
-          zodiac
+          zodiac,
+          tfChanged
         }))
       }).catch(error => console.log('error finding the room to enter: ', error))
     })
@@ -315,38 +324,64 @@ export const setFirstToEval = () => {
 
     docRef.update({
       ['gameStates.' + 0]: "鉴宝中",
+      evalOrder: [1]
     })
   }
 }
 
-// 5. complete eval
-export const completeEval = () => {
-
-}
-
-export const startCompleteEval = (nextNo) => {
+export const setNextToEval = (index) => {
   return (dispatch, getState) => {
     const roomid = getState().rooms.room;
-    const playerNum = getState().rooms.roles.length;
     const playerIndex = getState().rooms.playerIndex;
     const docRef = database.collection('rooms').doc(roomid);
-    // const index = Math.floor(Math.random(playerNum));
+
+    return database.runTransaction(transaction => {
+      return transaction.get(docRef).then(doc => {
+        let newEvalOrder = doc.data().evalOrder.slice();
+        newEvalOrder.push(index+1);
+
+        docRef.update({
+          ['gameStates.' + index]: "鉴宝中",
+          ['gameStates.' + playerIndex]: "已鉴宝",
+          evalOrder: newEvalOrder
+        })
+
+      })
+    }).catch((error) => { console.log('push evalorder failed:', error)})
+  }
+}
+
+
+// 5. startAttack
+export const startAttack = (indice, num) => {
+  return (dispatch, getState) => {
+    const roomid = getState().rooms.room;
+    const docRef = database.collection('rooms').doc(roomid);
+
+    if (num === 1) {
+      docRef.update({
+        ['canEval.' + indice[0]]: 3
+      })
+    } else {
+      docRef.update({
+        ['canEval.' + indice[0]]: 3,
+        ['canEval.' + indice[1]]: 3,
+      })
+    }
+  }
+}
+
+export const resetCanEval = () => {
+  return (dispatch, getState) => {
+    const roomid = getState().rooms.room;
+    const docRef = database.collection('rooms').doc(roomid);
+    const playerIndex = getState().rooms.playerIndex;
 
     docRef.update({
-      ['gameStates.' + playerIndex]: "已鉴宝",
-      ['gameStates.' + nextNo]: "未鉴宝",
+      ['canEval.' + playerIndex]: 1,
     })
   }
 }
-
-// 4. startRound
-export const startNewRound = (roundNo, lastNo) => {
-
-  if (roundNo === 1) {
-
-  }
-}
-
 
 
 export const updateGameStates = (data) => {
@@ -357,21 +392,3 @@ export const updateGameStates = (data) => {
   }
 }
 
-
-// export const listenGameStates = (roomid) => {
-//   console.log('listen game states',roomid);
-//   const docRef = database.collection('rooms').doc(roomid);
-//   return (dispatch) => {
-//     docRef.onSnapshot((doc) => {
-//       console.log('listen for game state change', doc.data())
-//       if (Object.values(doc.data().gameStates).indexOf("未准备") === -1) {
-//         docRef.update({
-//           canStart: true
-//         })
-//       }
-
-//       dispatch(updateGameStates(doc.data()))
-//     })
-//   }
-
-// }

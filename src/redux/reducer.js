@@ -26,7 +26,8 @@ const roomInitState = {
   roomPwdPairs: {},
   availableRooms: {},
   curRound: 0,
-  zodiac: {}
+  zodiac: {},
+  redirectTo: null
 }
 
 export const roomReducer = (state = roomInitState, action) => {
@@ -40,6 +41,11 @@ export const roomReducer = (state = roomInitState, action) => {
       return {
         ...state,
         availableRooms: action.rooms
+      }
+    case 'REDIRECT':
+      return {
+        ...state,
+        redirectTo: action.redirectTo
       }
     case 'CREATE_ROOM':
       return {

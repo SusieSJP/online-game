@@ -18,12 +18,16 @@ class RoomSelect extends Component {
 
     // 3. update the database and the states
     this.props.startCreateRoom({newId, newPwd, roles, roomType});
-
-    // // 4. redirect to the game room
-    this.props.history.push('/room/' + newId)
   }
 
+  componentDidUpdate() {
+    if (this.props.redirectTo) {
+      // // 4. redirect to the game room
+      console.log('redirect!')
+      this.props.history.push('/room/' + this.props.redirectTo)
+    }
 
+  }
 
   render() {
     return (
@@ -71,7 +75,8 @@ class RoomSelect extends Component {
 
 const mapStateToProps = (state, props) => {
   return {
-    roomPwdPairs: state.rooms.roomPwdPairs
+    roomPwdPairs: state.rooms.roomPwdPairs,
+    redirectTo: state.rooms.redirectTo
   };
 };
 

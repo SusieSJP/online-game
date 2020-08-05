@@ -53,12 +53,44 @@
 }
 
 .GroupCardDisabled {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  width: 90%;
+  margin: 10px;
   pointer-events: none;
   box-shadow: none;
-  background-color: lightgrey;
+  background-color: rgb(229, 226, 226);
+  position: relative;
+  cursor: not-allowed;
 }
 
-.GroupCard > h1 {
+.DisabledMsg {
+  position: absolute;
+  margin: 10%;
+  flex-grow: 1;
+  background: rgba(0,0,0,0.3);
+  color: white;
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 36px;
+  font-weight: bolder;
+  text-align: center;
+  letter-spacing: 2px;
+}
+
+.ErrorMsg {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 16px;
+  text-align: center;
+  color: black;
+  padding: 10px;
+  background-color: whitesmoke;
+  margin-bottom: 15px;
+}
+
+.GroupCard > h1, .GroupCardDisabled > h1 {
   color: Black;
   font-family: 'Ma Shan Zheng', cursive;
   font-size: 24px;
@@ -86,13 +118,28 @@
   border-radius: 50%;
   background-color: transparent;
   border: solid 2px lightgray;
-  margin: 10px
+  margin: 10px;
+  position: relative;
 }
 
 .EvalImg > img {
   width: 120px;
   height: 120px;
   border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+
+.EvalImg > img:hover {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
 }
 
 .EvalImgChecked, .EvalImgSelected {
@@ -102,18 +149,146 @@
   background-color: lightgray;
   border: solid 2px lightgray;
   margin: 10px;
+  position: relative
 }
 
-.EvalImgChecked > img {
+.EvalNextImg {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background-color: transparent;
+  margin: 10px;
+  position: relative;
+}
+
+.EvalImg > img:hover {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+
+
+.EvalImgSelected {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background-color: transparent;
+  border: solid 4px lightgray;
+  margin: 10px;
+  position: relative
+}
+
+.EvalTrue {
   width: 90px;
   height: 90px;
   border-radius: 50%;
+  background-color:rgba(0, 128, 0, 0.281);
+  border: solid 2px rgba(0, 128, 0, 0.281);
+  margin: 10px;
+  position: relative
+}
+
+
+.EvalFalse {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background-color: rgba(255, 0, 0, 0.233);
+  border: solid 2px rgba(255, 0, 0, 0.233);
+  margin: 10px;
+  position: relative
+}
+
+.EvalImgChecked > img, .EvalTrue > img, .EvalFalse > img, .EvalImgSelected > img, .EvalImgDisabled > img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+
+.EvalNextImg > img {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+
+.EvalImgSelected > img {
+  width: 100px;
+  height:100px;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+
+.EvalImgDisabled {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background-color: lightgray;
+  border: solid 2px lightgray;
+  margin: 10px;
+  position: relative;
+  pointer-events: none;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.PlayerIndex {
+  position: absolute;
+  width: 90%;
+  height: 90%;
+  margin: 5%;
+  border-radius: 50%;
+  background-color: rgba(255,255,255,0.3);
+  color: rgb(163, 157, 157);
+  font-size: 18px;
+  font-family: 'Red Rose', cursive;
+  font-weight: bolder;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .True {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
+  position: absolute;
+  width: 30%;
+  height: 30%;
+  color: green;
+  font-size: x-large;
+  font-family: 'Ma Shan Zheng', cursive;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: -15px;
+  right: -15px;
+}
+
+
+.False {
+  position: absolute;
+  width: 30%;
+  height: 30%;
+  font-size: x-large;
+  font-family: 'Ma Shan Zheng', cursive;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: -15px;
+  right: -15px;
+  color: darkred;
 }
 
 
@@ -127,18 +302,25 @@
   position: relative;
   font-size: 18px;
   font-family: 'Ma Shan Zheng', cursive;
-  margin: 30px 10px 0 10px;
+  margin: 5px 0 15px;
   padding: 8px 20px;
   border: solid 2px grey;
 }
 
-.Button:hover {
+.Button:hover:enabled {
   cursor: pointer;
   transform: translateY(-5px);
   box-shadow: 0 5px 20px rgba(0,0,0,0.5);
 }
 
-.Button:active, .Button:focus {
+.Button:active:enabled, .Button:focus {
   outline: none;
   border: none;
+}
+
+.Button:disabled {
+  cursor: not-allowed;
+  background-color: grey;
+  border: solid 2px grey;
+  color: white;
 }

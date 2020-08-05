@@ -3,7 +3,9 @@ import { connect } from 'react-redux';
 import { database } from '../firebase/firebase';
 import styles from './GameRoom.module.css';
 
-import { startLeaveRoom, startGetReady, startNotReady, startGetStart, updateGameStates, setFirstToEval } from '../redux/action';
+import {
+    startLeaveRoom, startGetReady, startNotReady, startGetStart,
+    updateGameStates, setFirstToEval, startAttack, resetCanEval, setNextToEval } from '../redux/action';
 import InfoBoard from './InfoBoard';
 import RoleModal from './RoleModal';
 import EvalModal from './EvalModal';
@@ -25,7 +27,7 @@ class GameRoom extends Component {
       showEval: false, // evalutaion modal
       loading: false,
       isFetching: true,
-      roundStarting: false
+      roundStarting: false,
     }
 
     this.startAudio = new Audio(game_start);
@@ -67,8 +69,15 @@ class GameRoom extends Component {
       this.setState({ loading: true })
       setTimeout(() => {
         this.setState({ showModal: true, loading: false})
-      }, 3000)
+      }, 1500)
     }
+
+    if (prevProps.game.gameStates && this.props.game.gameStates[this.props.room.playerIndex] === "鉴宝中" && prevProps.game.gameStates[this.props.room.playerIndex] === "未鉴宝") {
+      setTimeout(() => {
+        this.setState({ showEval: true })
+      }, 1000)
+    }
+
   }
 
   handleReady = () => {
@@ -94,17 +103,29 @@ class GameRoom extends Component {
     this.startAudio.play();
 
     setTimeout(() => {
-      this.setState({ showEval: true, roundStarting: false });
+      this.setState({ roundStarting: false });
       this.props.setFirstToEval();
     }, 1500)
   }
 
-  handleCloseEval = (nextNo) => {
-    console.log('close evaluation', nextNo);
+  handleAttack = (index) => {
+    let actualIndex = index < this.props.room.playerIndex ? index : index+1;
+    if (this.props.room.roles[actualIndex] === "方震") {
+      let involvedIndex = this.props.room.roles.findIndex(el => el === "许愿");
+      this.props.startAttack([actualIndex, involvedIndex], 2);
+    } else {
+      this.props.startAttack([actualIndex], 1);
+    }
   }
 
-  handleAttack = (index) => {
-    console.log('click to atack', index)
+  handleNext = (index) => {
+    let actualIndex = index < this.props.room.playerIndex ? index : index+1;
+    this.props.setNextToEval(actualIndex);
+    console.log('close evaluation');
+    this.setState({ showEval: false })
+    if (this.props.game.canEval[this.props.room.playerIndex] !== 1) {
+      this.props.resetCanEval()
+    }
   }
 
   createItems = () => {
@@ -232,18 +253,26 @@ class GameRoom extends Component {
             showModal={this.state.showModal}
             closeModal={this.handleCloseModal}
             role={this.props.room.roles[this.props.room.playerIndex]}
+            roles={this.props.room.roles}
           />
-          <EvalModal
-           showEval={this.state.showEval}
-           closeEval={this.handleCloseEval}
-           curRound={this.props.room.curRound}
-           playerIndex = {this.props.room.playerIndex}
-           role={this.props.room.roles[this.props.room.playerIndex]}
-           zodiacGorup={this.props.room.zodiac[this.props.room.curRound]}
-           canEval={this.props.game.canEval[this.props.room.playerIndex]}
-           photos={this.props.game.photos}
-           handleAttack={this.handleAttack}
-          />
+
+          {
+            this.props.room.curRound > 0 &&
+            <EvalModal
+            showEval={this.state.showEval}
+            curRound={this.props.room.curRound}
+            playerIndex = {this.props.room.playerIndex}
+            role={this.props.room.roles[this.props.room.playerIndex]}
+            zodiacGroup={this.props.room.zodiac[this.props.room.curRound]}
+            canEval={this.props.game.canEval[this.props.room.playerIndex]}
+            photos={this.props.game.photos}
+            handleAttack={this.handleAttack}
+            handleNext={this.handleNext}
+            tfChanged={this.props.game.tfChanged}
+            gameStates={this.props.game.gameStates}
+           />
+          }
+
         </div>
 
 
@@ -267,6 +296,9 @@ const mapDispatchToProps = (dispatch) => {
     startGetStart: () => dispatch(startGetStart()),
     updateGameStates: (data) => dispatch(updateGameStates(data)),
     setFirstToEval: () => dispatch(setFirstToEval()),
+    startAttack: (indice, num) => dispatch(startAttack(indice, num)),
+    resetCanEval: () => dispatch(resetCanEval()),
+    setNextToEval: (index) => dispatch(setNextToEval(index))
   }
 }
 
