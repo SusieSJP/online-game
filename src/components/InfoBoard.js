@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { CSSTransition } from 'react-transition-group';
+import Modal from 'react-modal';
+
 import styles from './InfoBoard.module.css';
 import unknown from '../assets/unknown.svg';
 import chip from '../assets/chip.svg';
@@ -21,15 +23,10 @@ class InfoBoard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      totalRound: 0,
-      current: 0,
+      totalRound: this.props.curRound,
+      current: this.props.curRound-1,
       isNext: true
     }
-
-    this.setState({
-      totalRound: this.props.curRound,
-      current: this.props.curRound - 1
-    })
   }
 
   handlePrev = () => {
@@ -59,6 +56,32 @@ class InfoBoard extends Component {
   render() {
     let index = this.state.current;
     let isNext = this.state.isNext;
+    let chipRes = this.props.chipRes ? this.props.chipRes : {
+      0: {
+        0: [0,0,0,0],
+        1: [0,0,0,0],
+        2: [0,0,0,0],
+        3: [0,0,0,0],
+        4: [0,0,0,0],
+        5: [0,0,0,0],
+      },
+      1: {
+        0: [0,0,0,0],
+        1: [0,0,0,0],
+        2: [0,0,0,0],
+        3: [0,0,0,0],
+        4: [0,0,0,0],
+        5: [0,0,0,0],
+      },
+      2: {
+        0: [0,0,0,0],
+        1: [0,0,0,0],
+        2: [0,0,0,0],
+        3: [0,0,0,0],
+        4: [0,0,0,0],
+        5: [0,0,0,0],
+      }
+    }
 
     const zodiacImg = {
       1: [rat, cow, tiger, rabbit],
@@ -66,41 +89,102 @@ class InfoBoard extends Component {
       3: [monkey, chicken, dog, pig]
     }
 
+    console.log('props to info board: ', this.props)
+
     return (
-      <div className={styles.Container}>
-        <div className={styles.Carousel}>
-          <CSSTransition
-            transitionName={{
-              enter: isNext ? styles.EnterNext : styles.EnterPrev,
-              enterActive: styles.EnterActive,
-              leave: styles.Leave,
-              leaveActive: isNext ? styles.LeaveActiveNext : styles.LeaveActivePrev
-            }}
-          >
-            <div className={styles.Slide} key={index}>
-              <h1>第 {this.props.curRound} 轮公共信息</h1>
-              <div className={styles.Info}>
-                <div className={styles.InfoGroup}>
-                  <div className={styles.InfoCard}>
-                    <h1>本轮鉴宝顺序</h1>
-                    <div className={styles.Order}>
+      <Modal
+        isOpen={this.props.showInfo}
+        className={styles.Container}
+        requestClose={this.props.handleCloseInfo}
+        overlayClassName={styles.Overlay}
+        contentLabel="Info"
+        closeTimeoutMS={500}
+      >
+        {
+          Array.from(this.props.curRound).map((index) => {
+            return (
+              <div key={'infogroup-'+index} id={'info-'+index} className={styles.InfoGroup}>
+                <h1>第 {this.props.curRound} 轮公共信息</h1>
+                <div className={styles.InfoCard}>
+                  <h1>本轮鉴宝顺序</h1>
+                  <div className={styles.Order}>
+                    {
+                      this.props.evalOrder.map((el, index) => {
+                        return (
+                          <div key={'img-'+index} className={styles.PlayerPhoto}>
+                            <img src={this.props.photos[el-1]} alt="" className={styles.Img}></img>
+                            <div className={styles.PlayerIndex}>{el}</div>
+                          </div>
+                        )
+                      })
+                    }
+                  </div>
+                </div>
+
+                <div className={styles.InfoCard}>
+                    <h1>本轮投票情况</h1>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>&nbsp;</th>
+                          {
+                            zodiacImg[index+1].map((el, i) => {
+                              return (
+                                <th key={'table-zodiac-'+i}><img src={el}/></th>
+                              )
+                            })
+                          }
+                        </tr>
+                      </thead>
+                      <tbody>
                       {
-                        this.props.evalOrder.map((el, index) => {
+                        Object.keys(chipRes[index]).map((el) => {
                           return (
-                            <div key={'img-'+index} className={styles.PlayerPhoto}>
-                              <img src={this.props.photos[el-1]} className={styles.Img}></img>
-                              <div className={styles.PlayerIndex}>{el}</div>
-                            </div>
+                            <tr key={'chip-res-'+el}>
+                                <td><img src={this.props.photos[el]} alt=""/></td>
+                                {
+                                  chipRes[index][el].map((num, i) => {
+                                    return (
+                                      <td key={'chip-row-'+i}>
+                                      {
+                                        <div className={styles.Chips}>
+                                        {
+                                          num ?
+                                          Array(num).fill(1).map((x, y) => {
+                                            return (
+                                              <img key={'chip-num-'+y} className={styles.Chip} src={chip}></img>
+                                            )
+                                          }) :
+                                          0
+                                        }
+                                        </div>
+                                      }
+                                      </td>
+                                    )
+                                  })
+                                }
+                            </tr>
                           )
                         })
                       }
-                    </div>
+                      <tr>
+                        {
+                          this.props.chipTotalRes &&
+                          this.props.chipTotalRes[index].map((total, ind) => {
+                            return (
+                              <td  key={'chip-total-'+ind}>{total}</td>
+                            )
+                          })
+                        }
+                      </tr>
+                      </tbody>
+                    </table>
                   </div>
 
                   <div className={styles.InfoCard}>
                     <h1>本轮入选兽首</h1>
                     {
-                      this.props.voted ?
+                      this.props.voted[index] ?
                       <div className={styles.Order}>
                         <div className={styles.EvalImgChecked}><img src={this.props.votedZodiac[index][0]}/></div>
                         <div className={this.props.zodiacRes[index][1] ? styles.EvalTrue : styles.EvalFalse }>
@@ -116,93 +200,14 @@ class InfoBoard extends Component {
                       </div>
                     }
                   </div>
-                </div>
 
-                <div className={styles.InfoCard}>
-                  <h1>本轮投票情况</h1>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th><img src=""/></th>
-                        {
-                          zodiacImg[index+1].map((el, index) => {
-                            return (
-                              <th key={'table-zodiac-'+index}><img src={el}/></th>
-                            )
-                          })
-                        }
-                      </tr>
-                    </thead>
-                    <tbody>
-                     {
-                       Object.keys(this.props.chipRes[index]).map((el) => {
-                         return (
-                           <tr key={'chip-res-'+el}>
-                              <td>{el}</td>
-                              {
-                                this.chipRes[index][el].map((num, i) => {
-                                  return (
-                                    <td key={'chip-row-'+i}>
-                                    {
-                                      <div className={styles.Chips}>
-                                      {
-                                        Array(num).fill(1).map((x, y) => {
-                                          return (
-                                            <img key={'chip-num-'+y} className={styles.Chip} src={chip}></img>
-                                          )
-                                        })
-                                      }
-                                      </div>
-                                    }
-                                    </td>
-                                  )
-                                })
-                              }
-                           </tr>
-                         )
-                       })
-                     }
-                    <tr>
-                      {
-                        this.props.chipTotalRes[index].map((total, ind) => {
-                          return (
-                            <td  key={'chip-total-'+ind}>{total}</td>
-                          )
-                        })
-                      }
-                    </tr>
-                    </tbody>
-                  </table>
-                </div>
+
+
               </div>
 
-            </div>
-          </CSSTransition>
-          <button className={styles.ButtonPrev} onClick={this.handlePrev}><span></span></button>
-          <button className={styles.ButtonNext} onClick={this.handleNext}><span></span></button>
-          <div className={styles.Goto}>
-            <ul>
-            {
-              Array.from(this.state.totalRound).map((el, index) => {
-                return (
-                  <li key={'carousel-'+index}>
-                    <button
-                      className={this.state.current === index ? styles.Active : ''}
-                      onClick={() => this.handleGoto(index)}
-                    ></button>
-                  </li>
-                )
-              })
-            }
-            </ul>
+            )})}
+      </Modal>
 
-          </div>
-
-        </div>
-
-
-
-      </div>
     )
   }
 

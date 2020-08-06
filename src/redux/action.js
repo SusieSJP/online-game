@@ -424,7 +424,6 @@ export const setChatOrder = (index) => {
     docRef.update({
       chatOrder: newOrder,
       ['gameStates.' + newOrder[0]]: "发言中",
-      curChatIndex: 0
     })
   }
 }
@@ -439,7 +438,6 @@ export const setChatDone = () => {
     docRef.update({
       ['gameStates.' + order[curChatIndex+1]]: "发言中",
       ['gameStates.' + order[curChatIndex]]: "已发言",
-      curChatIndex: curChatIndex + 1
     })
   }
 }

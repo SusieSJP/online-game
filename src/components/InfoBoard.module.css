@@ -1,62 +1,56 @@
 .Container {
-  background-color: lightgray;
-  width: 80%;
-  padding-top: 20px;
-  padding-bottom: 20px;
+  background-color: whitesmoke;
+  height: 80vh;
+  z-index: 10;
+  /* padding-top: 20px;
+  padding-bottom: 20px; */
   margin: 0 0 50px;
   text-align: center;
-  margin-bottom: 50px;
-  border-radius: 50px;
-}
-
-.Carousel {
-  position: relative;
-  width: 100%;
-  height: 25vh;
-  overflow: hidden;
-}
-
-.Slide {
-  position: absolute;
-  top: 0;
+  overflow-y: auto;
+  position: fixed;
+  top: 10vh;
   left: 0;
-  height: 100%;
-  width: 100%;
-  z-index: 1;
-  display: -webkit-box;
+  width: 50vw;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  justify-content: center
+  border: none;
+  outline: none;
 }
 
-.Slide > h1 {
+.Overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.7);
+}
+
+.Container > h1 {
   color: Black;
   font-family: 'Ma Shan Zheng', cursive;
   font-size: 24px;
   letter-spacing: 1px;
 }
 
-.Info {
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  width: 80%;
-  flex-grow: 1;
-}
-
 .InfoGroup {
+  width: 95%;
+  background-color: white;
+  padding: 5px;
+  box-shadow: 0 10px 6px -6px whitesmoke;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
-  flex-direction: column;
+  margin: 10px;
 }
 
 .InfoCard {
-  width: 30%;
+  width: 95%;
   background-color: white;
   padding: 5px;
-  box-shadow: 0 10px 6px -6px #777;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -69,6 +63,7 @@
   font-family: 'Ma Shan Zheng', cursive;
   font-size: 16px;
   letter-spacing: 1px;
+  font-weight: lighter;
 }
 
 .Order {
@@ -78,30 +73,26 @@
 }
 
 .PlayerPhoto {
-  position: relative;
-  width: 60px;
   width: 60px;
   border-radius: 50%;
   margin: 10px;
+  position: relative;
 }
 
 .Img {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  position: absolute;
-  top:0;
-  left:0;
 }
 
 .PlayerIndex {
   position: absolute;
-  width: 90%;
-  height: 90%;
+  width: 60px;
+  height: 60px;
   margin: 5%;
   border-radius: 50%;
-  background-color: rgba(255,255,255,0.3);
-  color: rgb(163, 157, 157);
+  background-color: rgba(0,0,0,0.3);
+  color: white;
   font-size: 24px;
   font-family: 'Red Rose', cursive;
   font-weight: bolder;
@@ -111,8 +102,8 @@
 }
 
 .EvalImg {
-  width: 90px;
-  height: 90px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   background-color: transparent;
   margin: 10px;
@@ -200,12 +191,19 @@ table {
 th, td {
   padding: 0.25rem;
   text-align: center;
-  border-bottom: 1px solid grey;
-  border-top: 1px solid grey;
   width: 100px;
   overflow: hidden;
   display: inline-block;
   white-space: nowrap;
+}
+
+td > img, th > img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: lightgray;
+  margin: 5px;
+  position: relative;
 }
 
 thead {
@@ -219,13 +217,14 @@ tbody tr:nth-child(odd) {
 }
 tbody tr:hover {
   background: grey;
-  color: white
+  color: white;
+  cursor: pointer;
 }
 
 
 
 
-.ButtonPrev {
+.ButtonNext {
   position: absolute;
   z-index: 2;
   top: 0;
@@ -239,11 +238,11 @@ tbody tr:hover {
   -webkit-transition: background-color 300ms ease;
   transition: background-color 300ms ease;
   cursor: pointer;
-  left: 0;
-  padding-left: 12px;
+  right: 0;
+  padding-right: 12px;
   outline: none;
 }
-
+/*
 .ButtonPrev {
   position: absolute;
   z-index: 2;
@@ -265,28 +264,28 @@ tbody tr:hover {
 
 .ButtonPrev > span {
   display: inline-block;
-  width: 5px;
-  height: 5px;
+  width: 15px;
+  height: 15px;
   position: relative;
   box-sizing: border-box;
   opacity: 0.65;
-  border-bottom: 3px solid white;
-  border-left: 3px solid white;
+  border-bottom: 4px solid white;
+  border-left: 4px solid white;
   -webkit-transition: opacity 300ms ease;
   transition: opacity 300ms ease;
   -webkit-transform: rotate(45deg);
           transform: rotate(45deg);
-}
+} */
 
 .ButtonNext > span {
   display: inline-block;
-  width: 5px;
-  height: 5px;
+  width: 15px;
+  height: 15px;
   position: relative;
   box-sizing: border-box;
   opacity: 0.65;
-  border-bottom: 3px solid white;
-  border-left: 3px solid white;
+  border-bottom: 4px solid white;
+  border-left: 4px solid white;
   -webkit-transition: opacity 300ms ease;
   transition: opacity 300ms ease;
   -webkit-transform: rotate(-135deg);

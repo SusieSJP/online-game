@@ -8,6 +8,13 @@
   position: relative;
 }
 
+.InfoButton {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 15;
+}
+
 .Row {
   display: flex;
   justify-content: space-between;

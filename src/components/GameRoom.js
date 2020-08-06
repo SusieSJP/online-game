@@ -17,7 +17,7 @@ import chip from '../assets/chip.svg';
 import hat from '../assets/hat.svg';
 import check from '../assets/checking.svg';
 import chat from '../assets/chat.svg';
-
+import info from '../assets/info.png';
 
 class GameRoom extends Component {
   constructor(props) {
@@ -33,6 +33,7 @@ class GameRoom extends Component {
       nextRoundStartNum: null,
       chatStarting: false,
       chatDone: false,
+      showInfo: false
     }
 
     this.startAudio = new Audio(game_start);
@@ -157,6 +158,12 @@ class GameRoom extends Component {
     this.props.setChatDone()
   }
 
+  handleToggleInfo = () => {
+    this.setState((prevState) => {
+      return {showInfo: !prevState.showInfo}
+    })
+  }
+
   createItems = () => {
     const playerNum = Object.keys(this.props.game.players).length;
     let host = Object.values(this.props.game.players).findIndex(el => el !== "");
@@ -252,6 +259,10 @@ class GameRoom extends Component {
         <div className={styles.GameRoomContainer}>
           {
             this.props.room.curRound > 0 &&
+            <img className={styles.InfoButton} src={info} onClick={this.handleToggleInfo}></img>
+          }
+          {
+            this.props.room.curRound > 0 &&
             <InfoBoard
               curRound={this.props.room.curRound}
               evalOrder={this.props.game.evalOrder}
@@ -261,6 +272,7 @@ class GameRoom extends Component {
               zodiacRes={this.props.game.zodiacRes}
               chipRes={this.props.game.chipRes}
               chipTotalRes={this.props.game.chipTotalRes}
+              enter={this.state.showInfo}
             />
           }
           {this.createItems()}

@@ -98,7 +98,13 @@ export const roomReducer = (state = roomInitState, action) => {
 
 
 // ************ game reducer
-const gameInitState = {}
+const gameInitState = {
+  voted: {
+    0: false,
+    1: false,
+    2: false
+  }
+}
 
 export const gameReducer = (state = gameInitState, action) => {
   switch (action.type) {
@@ -116,9 +122,8 @@ export const gameReducer = (state = gameInitState, action) => {
         tfChanged: action.tfChanged,
         loseEvalHuang: action.loseEvalHuang,
         loseEvalMuhu: action.loseEvalMuhu,
-        evalOrder: action.evalOrder,
-        chatOrder: action.chatOrder ? action.chatOrder : null,
-        curChatIndex: action.curChatIndex ? action.curChatIndex : null
+        evalOrder: action.evalOrder ? action.evalOrder : [],
+        chatOrder: action.chatOrder ? action.chatOrder : [],
       }
     default:
       return state

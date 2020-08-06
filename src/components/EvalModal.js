@@ -281,7 +281,6 @@ class EvalModal extends Component {
 
   render() {
     return (
-      <div>
         <Modal
           isOpen={this.props.showEval}
           className={styles.Modal}
@@ -292,7 +291,6 @@ class EvalModal extends Component {
           { this.buildImgSet() }
           <button className={styles.Button} onClick={this.handleNext} disabled={this.state.nextConfirmed}>确认并结束</button>
         </Modal>
-      </div>
     );
   }
 
