@@ -9,6 +9,404 @@
   border-radius: 50px;
 }
 
+.Carousel {
+  position: relative;
+  width: 100%;
+  height: 25vh;
+  overflow: hidden;
+}
+
+.Slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+  display: -webkit-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center
+}
+
+.Slide > h1 {
+  color: Black;
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 24px;
+  letter-spacing: 1px;
+}
+
+.Info {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 80%;
+  flex-grow: 1;
+}
+
+.InfoGroup {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-direction: column;
+}
+
+.InfoCard {
+  width: 30%;
+  background-color: white;
+  padding: 5px;
+  box-shadow: 0 10px 6px -6px #777;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  margin: 10px;
+}
+
+.InfoCard > h1 {
+  color: Black;
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+
+.Order {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.PlayerPhoto {
+  position: relative;
+  width: 60px;
+  width: 60px;
+  border-radius: 50%;
+  margin: 10px;
+}
+
+.Img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  position: absolute;
+  top:0;
+  left:0;
+}
+
+.PlayerIndex {
+  position: absolute;
+  width: 90%;
+  height: 90%;
+  margin: 5%;
+  border-radius: 50%;
+  background-color: rgba(255,255,255,0.3);
+  color: rgb(163, 157, 157);
+  font-size: 24px;
+  font-family: 'Red Rose', cursive;
+  font-weight: bolder;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.EvalImg {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background-color: transparent;
+  margin: 10px;
+  position: relative;
+}
+
+
+.EvalImg > img, .EvalImgChecked > img, .EvalFalse > img, .EvalTrue > img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+
+
+.EvalImgChecked {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background-color: lightgray;
+  border: solid 2px lightgray;
+  margin: 10px;
+  position: relative
+}
+
+
+.EvalTrue {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background-color:rgba(0, 128, 0, 0.281);
+  border: solid 2px rgba(0, 128, 0, 0.281);
+  margin: 10px;
+  position: relative
+}
+
+
+.EvalFalse {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background-color: rgba(255, 0, 0, 0.233);
+  border: solid 2px rgba(255, 0, 0, 0.233);
+  margin: 10px;
+  position: relative
+}
+
+
+.True {
+  position: absolute;
+  width: 30%;
+  height: 30%;
+  color: green;
+  font-size: x-large;
+  font-family: 'Ma Shan Zheng', cursive;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: -15px;
+  right: -15px;
+}
+
+
+.False {
+  position: absolute;
+  width: 30%;
+  height: 30%;
+  font-size: x-large;
+  font-family: 'Ma Shan Zheng', cursive;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: -15px;
+  right: -15px;
+  color: darkred;
+}
+
+
+table {
+  border-collapse: collapse;
+}
+th, td {
+  padding: 0.25rem;
+  text-align: center;
+  border-bottom: 1px solid grey;
+  border-top: 1px solid grey;
+  width: 100px;
+  overflow: hidden;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+thead {
+  border-top: 2px solid grey;
+}
+tbody {
+  border-bottom: 2px solid grey;
+}
+tbody tr:nth-child(odd) {
+  background: lightgrey;
+}
+tbody tr:hover {
+  background: grey;
+  color: white
+}
+
+
+
+
+.ButtonPrev {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  height: 100%;
+  display: block;
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 0;
+  padding: 0 5px;
+  width: 10%;
+  overflow: hidden;
+  -webkit-transition: background-color 300ms ease;
+  transition: background-color 300ms ease;
+  cursor: pointer;
+  left: 0;
+  padding-left: 12px;
+  outline: none;
+}
+
+.ButtonPrev {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  height: 100%;
+  display: block;
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 0;
+  padding: 0 5px;
+  width: 10%;
+  overflow: hidden;
+  -webkit-transition: background-color 300ms ease;
+  transition: background-color 300ms ease;
+  cursor: pointer;
+  right: 0;
+  padding-right: 12px;
+  outline: none;
+}
+
+.ButtonPrev > span {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  position: relative;
+  box-sizing: border-box;
+  opacity: 0.65;
+  border-bottom: 3px solid white;
+  border-left: 3px solid white;
+  -webkit-transition: opacity 300ms ease;
+  transition: opacity 300ms ease;
+  -webkit-transform: rotate(45deg);
+          transform: rotate(45deg);
+}
+
+.ButtonNext > span {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  position: relative;
+  box-sizing: border-box;
+  opacity: 0.65;
+  border-bottom: 3px solid white;
+  border-left: 3px solid white;
+  -webkit-transition: opacity 300ms ease;
+  transition: opacity 300ms ease;
+  -webkit-transform: rotate(-135deg);
+          transform: rotate(-135deg);
+}
+
+
+.ButtonPrev:hover, .ButtonNext:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.ButtonPrev:hover > span, .ButtonNext:hover > span {
+  opacity: 0.95
+}
+
+.Leave {
+  -webkit-transform: translateX(0);
+          transform: translateX(0);
+}
+
+.EnterActive.EnterNext, .EnterActive.EnterPrev {
+  -webkit-transform: translateX(0);
+          transform: translateX(0);
+  -webkit-transition: -webkit-transform 500ms linear;
+  transition: -webkit-transform 500ms linear;
+  transition: transform 500ms linear;
+  transition: transform 500ms linear, -webkit-transform 500ms linear;
+}
+
+.EnterNext {
+  -webkit-transform: translateX(100%);
+          transform: translateX(100%);
+}
+
+.EnterPrev {
+  -webkit-transform: translateX(-100%);
+          transform: translateX(-100%);
+  -webkit-transition: -webkit-transform 500ms linear;
+  transition: -webkit-transform 500ms linear;
+  transition: transform 500ms linear;
+  transition: transform 500ms linear, -webkit-transform 500ms linear;
+}
+
+.LeaveActivePrev {
+  -webkit-transform: translateX(100%);
+          transform: translateX(100%);
+  -webkit-transition: -webkit-transform 500ms linear;
+  transition: -webkit-transform 500ms linear;
+  transition: transform 500ms linear;
+  transition: transform 500ms linear, -webkit-transform 500ms linear;
+}
+
+.LeaveActiveNext {
+  -webkit-transform: translateX(-100%);
+          transform: translateX(-100%);
+  -webkit-transition: -webkit-transform 500ms linear;
+  transition: -webkit-transform 500ms linear;
+  transition: transform 500ms linear;
+  transition: transform 500ms linear, -webkit-transform 500ms linear;
+}
+
+.Leave.LeaveActiveNext {
+  -webkit-transform: translateX(100%);
+  transform: translateX(100%);
+  -webkit-transition: -webkit-transform 500ms linear;
+  transition: -webkit-transform 500ms linear;
+  transition: transform 500ms linear;
+  transition: transform 500ms linear, -webkit-transform 500ms linear;
+}
+
+.Goto {
+  position: absolute;
+  z-index: 2;
+  bottom: 10px;
+  width: 50%;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+}
+
+.Goto > ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-pack: center;
+          justify-content: center;
+  height: 3px;
+}
+
+.Goto ul li {
+  width: 15%;
+  box-sizing: border-box;
+  height: inherit;
+  position: relative;
+}
+
+.Goto ul li:not(:last-of-type) {
+  margin-right: 5%;
+}
+
+.Goto ul li button {
+  border: none;
+  outline: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.5);
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  -webkit-transition: background-color 300ms ease;
+  transition: background-color 300ms ease;
+}
+
+.Gotoul li button.active {
+  background-color: rgba(255, 255, 255, 0.95);
+}
+
 .Button {
   padding: 5px 10px;
   background-color: white;

@@ -252,7 +252,16 @@ class GameRoom extends Component {
         <div className={styles.GameRoomContainer}>
           {
             this.props.room.curRound > 0 &&
-            <InfoBoard roundNo={this.props.room.curRound}/>
+            <InfoBoard
+              curRound={this.props.room.curRound}
+              evalOrder={this.props.game.evalOrder}
+              photos={this.props.game.photos}
+              voted={this.props.game.voted}
+              votedZodiac={this.props.game.votedZodiac}
+              zodiacRes={this.props.game.zodiacRes}
+              chipRes={this.props.game.chipRes}
+              chipTotalRes={this.props.game.chipTotalRes}
+            />
           }
           {this.createItems()}
           <div className={this.props.game.started ? `${styles.ButtonArea} ${styles.Hidden}` : styles.ButtonArea}>
