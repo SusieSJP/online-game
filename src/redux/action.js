@@ -341,7 +341,7 @@ export const setFirstToEval = (nextRound) => {
 
     docRef.update({
       ['gameStates.' + 0]: "鉴宝中",
-      evalOrder: [1],
+      ['evalOrder.'+ (nextRound-1)]: [1],
       tfChanged: false
     })
   }
@@ -352,18 +352,29 @@ export const setNextToEval = (index) => {
     const roomid = getState().rooms.room;
     const playerIndex = getState().rooms.playerIndex;
     const docRef = database.collection('rooms').doc(roomid);
+    const curRoundIndex = getState().rooms.curRound - 1;
+    const newEvalOrder = getState().game.evalOrder[curRoundIndex].slice();
 
-    docRef.get().then(doc => {
-        let newEvalOrder = doc.data().evalOrder.slice();
+    // docRef.get().then(doc => {
+    //     let newEvalOrder = doc.data().evalOrder.slice();
+    //     newEvalOrder.push(index+1);
+
+    //     docRef.update({
+    //       ['gameStates.' + index]: "鉴宝中",
+    //       ['gameStates.' + playerIndex]: "已鉴宝",
+    //       evalOrder: newEvalOrder
+    //     })
+
+    //   }).catch((error) => { console.log('push evalorder failed:', error)})
+
+
         newEvalOrder.push(index+1);
 
         docRef.update({
           ['gameStates.' + index]: "鉴宝中",
           ['gameStates.' + playerIndex]: "已鉴宝",
-          evalOrder: newEvalOrder
-        })
-
-      }).catch((error) => { console.log('push evalorder failed:', error)})
+          ['evalOrder.' + curRoundIndex]: newEvalOrder
+        }).catch((error) => { console.log('push evalorder failed:', error)})
   }
 }
 
@@ -424,6 +435,7 @@ export const setChatOrder = (index) => {
     docRef.update({
       chatOrder: newOrder,
       ['gameStates.' + newOrder[0]]: "发言中",
+      curChatIndex: 0
     })
   }
 }
@@ -438,7 +450,95 @@ export const setChatDone = () => {
     docRef.update({
       ['gameStates.' + order[curChatIndex+1]]: "发言中",
       ['gameStates.' + order[curChatIndex]]: "已发言",
+      curChatIndex: curChatIndex+1
+    }).catch(error => console.log('error set chat done, ', error))
+  }
+}
+
+export const startVote = () => {
+  return (dispatch, getState) => {
+    const roomid = getState().rooms.room;
+    const docRef = database.collection('rooms').doc(roomid);
+    const playerNum = getState().rooms.roles.length;
+
+    let newGameStates = {};
+    // every player has done chat
+    for (let i=0; i<playerNum; i++) {
+      newGameStates[i] = "投票中"
+    }
+    docRef.update({
+      gameStates: newGameStates,
+      chatOrder: [],
+      curChatIndex: null
+    }).catch(error => console.log('error start voting, ', error))
+
+  }
+}
+
+export const calVoteRes = (counter) => {
+  return (dispatch, getState) => {
+    const roomid = getState().rooms.room;
+    const docRef = database.collection('rooms').doc(roomid);
+    const curRoundIndex = getState().rooms.curRound - 1;
+    const playerIndex = getState().rooms.playerIndex;
+    const playerNum = getState().rooms.roles.length;
+
+    // return database.runTransaction(transaction => {
+    //   return transaction.get(docRef).then(doc => {
+    //     let newChipCount0 = doc.data().chipRes[curRoundIndex][0] + counter[0];
+    //     let newChipCount1 = doc.data().chipRes[curRoundIndex][1] + counter[1];
+    //     let newChipCount2 = doc.data().chipRes[curRoundIndex][2] + counter[2];
+    //     let newChipCount3 = doc.data().chipRes[curRoundIndex][3] + counter[3];
+
+    //     let isAllVoted = Object.values(doc.data().gameStates).filter(el => el === "已投票").length === playerNum - 1;
+
+    //     transaction.update({
+    //       ['gameStates.'+ playerIndex]: "已投票",
+    //       ['chipRes.' + curRoundIndex + '.0']: newChipCount0,
+    //       ['chipRes.' + curRoundIndex + '.1']: newChipCount1,
+    //       ['chipRes.' + curRoundIndex + '.2']: newChipCount2,
+    //       ['chipRes.' + curRoundIndex + '.3']: newChipCount3,
+    //       voted: isAllVoted
+    //     })
+    //   })
+    // })
+    // .catch(error => console.log('error calculating votes, ', error))
+    docRef.update({
+      ['gameStates.'+ playerIndex]: "已投票",
+      ['chipRes.' + curRoundIndex + '.' + playerIndex]: counter.slice(),
     })
+    .catch(error => console.log('error calculating votes, ', error))
+  }
+}
+
+export const setVoted = () => {
+  return (dispatch, getState) => {
+    const roomid = getState().rooms.room;
+    const docRef = database.collection('rooms').doc(roomid);
+    const curRoundIndex = getState().rooms.curRound - 1;
+    const chipRes = getState().game.chipRes;
+    const playerNum = getState().rooms.roles.length;
+    const zodiac = getState().rooms.zodiac;
+
+    let resArrArr = [[0,0],[1,0],[2,0],[3,0]];
+    for (let i=0; i<playerNum; i++) {
+      for (let j=0; j<4; j++) {
+        resArrArr[j][1] += chipRes[curRoundIndex][i][j];
+    }}
+    let chipTotalRes = [resArrArr[0][1], resArrArr[1][1], resArrArr[2][1], resArrArr[3][1]];
+
+    resArrArr.sort((a, b) => b[1] - a[1]);
+    let votedZodiac = [resArrArr[0][0], resArrArr[1][0]];
+    let zodiacRes = [zodiac[curRoundIndex][votedZodiac[0]], zodiac[curRoundIndex][votedZodiac[1]]];
+
+
+    docRef.update({
+      ['zodiacRes.'+ curRoundIndex]: zodiacRes,
+      ['votedZodiac.' + curRoundIndex]: votedZodiac,
+      ['chipTotalRes.' + curRoundIndex]: chipTotalRes,
+      ['voted.' + curRoundIndex]: true
+    })
+    .catch(error => console.log('error calculating votes, ', error))
   }
 }
 
