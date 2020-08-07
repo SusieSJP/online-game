@@ -158,7 +158,13 @@ class GameRoom extends Component {
     this.props.setChatDone()
   }
 
-  handleToggleInfo = () => {
+  handleShowInfo = () => {
+    this.setState((prevState) => {
+      return {showInfo: !prevState.showInfo}
+    })
+  }
+
+  handleCloseInfo = () => {
     this.setState((prevState) => {
       return {showInfo: !prevState.showInfo}
     })
@@ -259,7 +265,7 @@ class GameRoom extends Component {
         <div className={styles.GameRoomContainer}>
           {
             this.props.room.curRound > 0 &&
-            <img className={styles.InfoButton} src={info} onClick={this.handleToggleInfo}></img>
+            <img className={styles.InfoButton} src={info} onClick={this.handleShowInfo}></img>
           }
           {
             this.props.room.curRound > 0 &&
@@ -272,7 +278,8 @@ class GameRoom extends Component {
               zodiacRes={this.props.game.zodiacRes}
               chipRes={this.props.game.chipRes}
               chipTotalRes={this.props.game.chipTotalRes}
-              enter={this.state.showInfo}
+              showInfo={this.state.showInfo}
+              handleCloseInfo={this.handleCloseInfo}
             />
           }
           {this.createItems()}
@@ -324,19 +331,20 @@ class GameRoom extends Component {
           {
             this.props.room.curRound > 0 &&
             <EvalModal
-            showEval={this.state.showEval}
-            curRound={this.props.room.curRound}
-            playerIndex = {this.props.room.playerIndex}
-            role={this.props.room.roles[this.props.room.playerIndex]}
-            zodiacGroup={this.props.room.zodiac[this.props.room.curRound]}
-            canEval={this.props.game.canEval[this.props.room.playerIndex]}
-            photos={this.props.game.photos}
-            handleAttack={this.handleAttack}
-            handleNext={this.handleNext}
-            tfChanged={this.props.game.tfChanged}
-            gameStates={this.props.game.gameStates}
-            loseEvalHuang={this.props.game.loseEvalHuang}
-            loseEvalMuhu={this.props.game.loseEvalMuhu}
+              showEval={this.state.showEval}
+              curRound={this.props.room.curRound}
+              playerIndex = {this.props.room.playerIndex}
+              role={this.props.room.roles[this.props.room.playerIndex]}
+              zodiacGroup={this.props.room.zodiac[this.props.room.curRound]}
+              canEval={this.props.game.canEval[this.props.room.playerIndex]}
+              photos={this.props.game.photos}
+              handleAttack={this.handleAttack}
+              handleNext={this.handleNext}
+              tfChanged={this.props.game.tfChanged}
+              gameStates={this.props.game.gameStates}
+              loseEvalHuang={this.props.game.loseEvalHuang}
+              loseEvalMuhu={this.props.game.loseEvalMuhu}
+              roles={this.props.room.roles}
            />
           }
 

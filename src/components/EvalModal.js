@@ -27,6 +27,7 @@ class EvalModal extends Component {
       isSelected: [false, false, false, false, false], // for players to take action
       isNext: [false, false, false, false, false],
       showResult: ["","","",""],
+      playerRes: null,
       evalConfirmed: false,
       errorMsg: "",
       actionIndex: null,
@@ -118,8 +119,15 @@ class EvalModal extends Component {
   }
 
   handleAttack = (index) => {
+    let res = true;
+    let actualIndex = index < this.props.playerIndex ? index : index+1;
+    let actionRole = this.props.roles[actualIndex];
+    if (actionRole in ["药不然","老朝奉","郑国渠"]) {
+      res = false
+    }
     this.setState({
-      actionConfirmed: true
+      actionConfirmed: true,
+      playerRes: res
     });
     this.props.handleAttack(index);
   }
@@ -172,7 +180,7 @@ class EvalModal extends Component {
       <div className={styles.ImgContainer}>
         {
           evalNum > 0 &&
-          <div className={(this.props.canEval !== 1 || this.state.evalConfirmed) ? styles.GroupCardDisabled : styles.GroupCard} key={"card-1"}>
+          <div className={(canEval !== 1 || this.state.evalConfirmed) ? styles.GroupCardDisabled : styles.GroupCard} key={"card-1"}>
             <h1>请选择{evalNum}个兽首进行查验</h1>
             <div className={styles.ImgSet} key={"cardDiv-1"}>
             {
@@ -191,7 +199,7 @@ class EvalModal extends Component {
                 }
 
                 return (
-                  <div key={"zodiac-"+{index}} className={ ImgBgStyles } onClick={() => this.handleCheck(index)}>
+                  <div key={index} className={ ImgBgStyles } onClick={() => this.handleCheck(index)}>
                     <img src={zodiac}></img>
                     {
                       this.state.evalConfirmed && this.state.isChecked[index] &&
@@ -216,16 +224,20 @@ class EvalModal extends Component {
 
         {
           action !== "" &&
-          <div className={styles.GroupCard} key={"card-2"}>
+          <div className={(this.state.actionConfirmed || (this.props.role === "方震" && canEval === 3)) ? styles.GroupCardDisabled : styles.GroupCard} key={"card-2"}>
             <h1>请选择1位玩家进行{action}</h1>
             <div className={styles.ImgSet} key={"cardDiv-2"}>
             {
               otherPlayers.map((el, index) => {
                 let actualIndex = index < this.props.playerIndex ? index : index+1;
                 return (
-                  <div key={"player-"+index} className={this.state.isSelected[index] ? styles.EvalImgSelected : styles.EvalNextImg} onClick={() => this.handleSelect(index)}>
+                  <div key={index} className={this.state.isSelected[index] ? styles.EvalImgSelected : styles.EvalNextImg} onClick={() => this.handleSelect(index)}>
                     <img src={el}></img>
                     <div className={styles.PlayerIndex}>{actualIndex + 1}</div>
+                    {
+                      this.props.role === "方震" && this.state.actionConfirmed &&
+                      <div className={this.state.playerRes ? styles.True : styles.False}>{this.state.playerRes ? "好人" : "坏人"}</div>
+                    }
                   </div>
                 )
 
@@ -260,7 +272,7 @@ class EvalModal extends Component {
                 console.log("nextPlayer-",index)
                 return (
                   <div
-                    key={"nextPlayer-"+{index}}
+                    key={index}
                     className={this.props.gameStates[actualIndex] === "已鉴宝" ? styles.EvalImgDisabled : this.state.isNext[index] ? styles.EvalImgSelected : styles.EvalNextImg}
                     onClick={() => this.handleSelectNext(index)}
                     >

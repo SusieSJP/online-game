@@ -29,30 +29,6 @@ class InfoBoard extends Component {
     }
   }
 
-  handlePrev = () => {
-    let index = this.state.current < 1 ? this.state.totalRound - 1 : this.state.current - 1;
-    this.setState({
-      current: index,
-      isNext: false
-    })
-  }
-
-  handleNext = () => {
-    let index = this.state.currentdex === this.state.totalRound - 1 ? 0 : this.state.current + 1;
-    this.setState({
-      current: index,
-      isNext: true
-    })
-  }
-
-  handleGoto = (index) => {
-    let next = this.state.current < index;
-    this.setState({
-      current: index,
-      isNext: next
-    })
-  }
-
   render() {
     let index = this.state.current;
     let isNext = this.state.isNext;
@@ -95,23 +71,23 @@ class InfoBoard extends Component {
       <Modal
         isOpen={this.props.showInfo}
         className={styles.Container}
-        requestClose={this.props.handleCloseInfo}
+        onRequestClose={this.props.handleCloseInfo}
         overlayClassName={styles.Overlay}
         contentLabel="Info"
         closeTimeoutMS={500}
       >
         {
-          Array.from(this.props.curRound).map((index) => {
+          new Array(this.props.curRound).fill(1).map((index) => {
             return (
-              <div key={'infogroup-'+index} id={'info-'+index} className={styles.InfoGroup}>
-                <h1>第 {this.props.curRound} 轮公共信息</h1>
+              <div key={index} id={'info-'+index} className={styles.InfoGroup}>
+                <h1>第 {index+1} 轮公共信息</h1>
                 <div className={styles.InfoCard}>
-                  <h1>本轮鉴宝顺序</h1>
+                  <h1>第 {this.props.curRound} 轮鉴宝顺序</h1>
                   <div className={styles.Order}>
                     {
                       this.props.evalOrder.map((el, index) => {
                         return (
-                          <div key={'img-'+index} className={styles.PlayerPhoto}>
+                          <div key={index} className={styles.PlayerPhoto}>
                             <img src={this.props.photos[el-1]} alt="" className={styles.Img}></img>
                             <div className={styles.PlayerIndex}>{el}</div>
                           </div>
@@ -122,7 +98,7 @@ class InfoBoard extends Component {
                 </div>
 
                 <div className={styles.InfoCard}>
-                    <h1>本轮投票情况</h1>
+                    <h1>第 {index+1} 轮投票情况</h1>
                     <table>
                       <thead>
                         <tr>
@@ -141,7 +117,7 @@ class InfoBoard extends Component {
                         Object.keys(chipRes[index]).map((el) => {
                           return (
                             <tr key={'chip-res-'+el}>
-                                <td><img src={this.props.photos[el]} alt=""/></td>
+                                <td><img src={this.props.photos[el]} alt=""/>{index+1}</td>
                                 {
                                   chipRes[index][el].map((num, i) => {
                                     return (
@@ -182,7 +158,7 @@ class InfoBoard extends Component {
                   </div>
 
                   <div className={styles.InfoCard}>
-                    <h1>本轮入选兽首</h1>
+                    <h1>第 {index+1} 轮入选兽首</h1>
                     {
                       this.props.voted[index] ?
                       <div className={styles.Order}>

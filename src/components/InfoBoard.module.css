@@ -10,7 +10,7 @@
   position: fixed;
   top: 10vh;
   left: 0;
-  width: 50vw;
+  width: 65vw;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -36,15 +36,23 @@
 }
 
 .InfoGroup {
-  width: 95%;
+  width: 90%;
   background-color: white;
   padding: 5px;
-  box-shadow: 0 10px 6px -6px whitesmoke;
+  box-shadow: 0 10px 6px -6px #ccc;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
   margin: 10px;
+}
+
+.InfoGroup > h1 {
+  color: Black;
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 24px;
+  letter-spacing: 1px;
+  font-weight: bold;
 }
 
 .InfoCard {
@@ -56,12 +64,13 @@
   align-items: center;
   justify-content: space-evenly;
   margin: 10px;
+  border: dashed 1px darkgrey;
 }
 
 .InfoCard > h1 {
   color: Black;
   font-family: 'Ma Shan Zheng', cursive;
-  font-size: 16px;
+  font-size: 20px;
   letter-spacing: 1px;
   font-weight: lighter;
 }
@@ -73,32 +82,27 @@
 }
 
 .PlayerPhoto {
-  width: 60px;
+  width: 70px;
   border-radius: 50%;
   margin: 10px;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .Img {
   width: 60px;
   height: 60px;
   border-radius: 50%;
+  border: 1px solid lightgray;
 }
 
 .PlayerIndex {
-  position: absolute;
-  width: 60px;
-  height: 60px;
-  margin: 5%;
-  border-radius: 50%;
-  background-color: rgba(0,0,0,0.3);
-  color: white;
+  color: grey;
   font-size: 24px;
   font-family: 'Red Rose', cursive;
   font-weight: bolder;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  margin-top:3px;
 }
 
 .EvalImg {
@@ -187,9 +191,9 @@
 
 table {
   border-collapse: collapse;
+  margin-bottom: 10px;
 }
 th, td {
-  padding: 0.25rem;
   text-align: center;
   width: 100px;
   overflow: hidden;
@@ -197,7 +201,16 @@ th, td {
   white-space: nowrap;
 }
 
-td > img, th > img {
+th > img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: lightgray;
+  margin: 5px 10px;
+  position: relative;
+}
+
+td > img {
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -206,9 +219,14 @@ td > img, th > img {
   position: relative;
 }
 
-thead {
-  border-top: 2px solid grey;
+td {
+  color: grey;
+  font-size: 24px;
+  font-family: 'Red Rose', cursive;
+  font-weight: bolder;
+  /* margin-top:3px; */
 }
+
 tbody {
   border-bottom: 2px solid grey;
 }
