@@ -1,7 +1,7 @@
 import React from 'react';
 import Modal from 'react-modal';
 
-import styles from './InfoBoard.module.css';
+import styles from './VoteResModal.module.css';
 
 import rat from '../assets/rat.svg';
 import cow from '../assets/cow.svg';
@@ -32,14 +32,19 @@ const VoteResModal = (props) => {
         contentLabel="Res"
       >
           <h1 className={styles.Title}>投票结果</h1>
-          <div className={ styles.Unknown }>
-            <img src={zodiacImg[props.curRound][0]} alt=""></img>
+          <div className={styles.ResGroup}>
+
+            <div className={ styles.Unknown }>
+              <img src={zodiacImg[props.curRound][0]} alt=""></img>
+            </div>
+
+            <div className={ props.zodiacRes[1] ? styles.EvalTrue : styles.EvalFalse }>
+              <img src={zodiacImg[props.curRound][1]} alt=""></img>
+              <div className={props.zodiacRes[1] ? styles.True : styles.False}>{props.zodiacRes[1] ? "真" : "假"}</div>
+            </div>
+
           </div>
 
-          <div className={ props.zodiacRes[1] ? styles.EvalTrue : styles.EvalFalse }>
-            <img src={zodiacImg[props.curRound][1]} alt=""></img>
-            <div className={props.zodiacRes[1] ? styles.True : styles.False}>{props.zodiacRes[1] ? "真" : "假"}</div>
-          </div>
 
       </Modal>
 

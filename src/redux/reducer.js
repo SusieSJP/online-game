@@ -56,6 +56,13 @@ export const roomReducer = (state = roomInitState, action) => {
         roles: action.roles,
         zodiac: action.zodiac
       }
+    case 'REPLAY':
+      return {
+        ...state,
+        roles: action.roles,
+        zodiac: action.zodiac,
+        curRound: 0
+      }
     case 'LEAVE_ROOM':
       return {
         ...state,
@@ -89,7 +96,12 @@ export const roomReducer = (state = roomInitState, action) => {
       return {
         ...state,
         started: true,
-        curRound: 1
+        // curRound: 1
+      }
+    case 'SET_NEXT_ROUND':
+      return {
+        ...state,
+        curRound: action.nextRound
       }
     default:
       return state;
@@ -99,10 +111,18 @@ export const roomReducer = (state = roomInitState, action) => {
 
 // ************ game reducer
 const gameInitState = {
+  score: 0,
+  evalEnd: false,
+  recEnd: false,
+  recLaochaofeng: [],
+  recXuyuan: null,
+  recFangzhen: null,
+  finalRes: null,
+
   voted: {
     0: false,
     1: false,
-    2: false
+    2: false,
   },
   evalOrder: {
     0: [],
@@ -110,19 +130,40 @@ const gameInitState = {
     2: []
   },
   votedZodiac: {
-    0: [],
+    0: [1,2],
     1: [],
     2: []
   },
   zodiacRes: {
-    0: [],
+    0: [true, false],
     1: [],
     2: []
   },
   chipRes: {
-    0: {},
-    1: {},
-    2: {}
+    0: {
+      0: [0,0,0,0],
+      1: [0,0,0,0],
+      2: [0,0,0,0],
+      3: [0,0,0,0],
+      4: [0,0,0,0],
+      5: [0,0,0,0],
+    },
+    1: {
+      0: [0,0,0,0],
+      1: [0,0,0,0],
+      2: [0,0,0,0],
+      3: [0,0,0,0],
+      4: [0,0,0,0],
+      5: [0,0,0,0],
+    },
+    2: {
+      0: [0,0,0,0],
+      1: [0,0,0,0],
+      2: [0,0,0,0],
+      3: [0,0,0,0],
+      4: [0,0,0,0],
+      5: [0,0,0,0],
+    }
   },
   chipTotalRes: {
     0: [],
@@ -150,6 +191,15 @@ export const gameReducer = (state = gameInitState, action) => {
         evalOrder: action.evalOrder ? action.evalOrder : state.evalOrder,
         chatOrder: action.chatOrder ? action.chatOrder : [],
         curChatIndex: action.curChatIndex,
+        voted: action.voted ? action.voted : state.voted,
+        zodiacRes: action.zodiacRes ? action.zodiacRes : state.zodiacRes,
+        votedZodiac: action.votedZodiac ? action.votedZodiac : state.votedZodiac,
+        chipTotalRes: action.chipTotalRes ? action.chipTotalRes : state.chipTotalRes,
+        evalEnd: action.evalEnd ? action.evalEnd : state.evalEnd,
+        score: action.score ? action.score : state.score,
+        recFangzhen: action.recFangzhen ? action.recFangzhen : state.recFangzhen,
+        recLaochaofeng: action.recLaochaofeng ? action.recLaochaofeng : state.recLaochaofeng,
+        recXuyuan: action.recXuyuan ? action.recXuyuan : state.recXuyuan
       }
     default:
       return state

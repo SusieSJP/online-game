@@ -6,12 +6,15 @@ import styles from './GameRoom.module.css';
 import {
     startLeaveRoom, startGetReady, startNotReady, startGetStart,
     updateGameStates, setFirstToEval, startAttack, resetCanEval,
-    setNextToEval, setTFChanged, setChatOrder, startVote, setVoted, calVoteRes } from '../redux/action';
+    setNextToEval, setTFChanged, setChatOrder, startVote, setVoted, calVoteRes,
+    newGame, calFinalRes, calRecRes, evalEnd, setChatDone, startReplay } from '../redux/action';
 import InfoBoard from './InfoBoard';
 import RoleModal from './RoleModal';
 import EvalModal from './EvalModal';
 import VoteModal from './VoteModal';
 import VoteResModal from './VoteResModal';
+import RecModal from './RecModal';
+import ResModal from './ResModal';
 
 import game_start from '../assets/musics/game_start.wav';
 import loading from '../assets/loading.svg';
@@ -40,7 +43,12 @@ class GameRoom extends Component {
       voteStarting: false,
       showVote: false,
       resStarting: false,
-      showRes: false
+      showRes: false,
+      newRoundStarting: false,
+      finalVoteStarting: false,
+      showRecgonize: false,
+      finalResSstarting: false,
+      showFinalRes: false
     }
 
     this.startAudio = new Audio(game_start);
@@ -92,7 +100,7 @@ class GameRoom extends Component {
     }
 
     if (prevProps.game.gameStates &&
-        Object.values(this.props.game.gameStates).indexOf("投票中") === -1 && !prevProps.game.voted[this.props.curRound-1]) {
+        Object.values(this.props.game.gameStates).filter(el => el === "已投票").length === this.props.room.roles.length && !prevProps.game.voted[this.props.curRound-1]) {
           this.props.setVoted();
     }
 
@@ -105,6 +113,22 @@ class GameRoom extends Component {
           resStarting: false,
           showRes: true
         })
+      })
+    }
+
+    if (!prevProps.game.evalEnd && this.props.game.evalEnd) {
+      this.setState({ showRecgonize: true})
+    }
+
+    if (this.props.game.gameStates && Object.values(this.props.game.gameStates).filter(el => el === "已指认").length === this.props.room.roles.length && !this.props.game.recEnd) {
+      this.props.calFinalRes();
+      this.setState({ finalResSstarting: true })
+    }
+
+    if (this.props.game.finalRes && !prevProps.game.finalRes) {
+      this.setState ({
+        finalResSstarting: false,
+        showFinalRes: true
       })
     }
 
@@ -212,7 +236,45 @@ class GameRoom extends Component {
   }
 
   handleCloseRes = () => {
-    this.setState({ showRes: false })
+    if (this.props.room.curRound === 3) {
+      // time to end the game
+      this.setState({ showRes: false, finalVoteStarting: true});
+      setTimeout(() => {
+        this.setState({ finalVoteStarting: false});
+        this.props.evalEnd();
+      })
+
+    } else {
+      this.setState({ showRes: false, roundStarting: true });
+      this.props.startGetStart();
+
+      setTimeout(() => {
+        this.setState({ roundStarting: false });
+        this.props.setFirstToEval(this.props.room.curRound+1);
+      })
+    }
+  }
+
+  handleCloseRec = (recIndex) => {
+    console.log('call handleCloseRec')
+    let recRes = false;
+    let curRole = this.props.room.roles[this.props.room.playerIndex];
+    if (curRole === "药不然") {
+      recRes = this.props.room.roles[recIndex] === "方震";
+    } else if (curRole === "老朝奉") {
+      recRes = this.props.room.roles[recIndex] === "许愿"
+    } else {
+      recRes = this.props.room.roles[recIndex] === "老朝奉";
+    }
+
+    this.props.calRecRes(recRes, curRole);
+  }
+
+  handleCloseFinalRes = () => {
+    this.setState({
+      showFinalRes: false
+    })
+    this.props.newGame()
   }
 
   createItems = () => {
@@ -232,6 +294,8 @@ class GameRoom extends Component {
         '已发言': styles.ButtonGrey,
         "投票中": styles.ButtonGreen,
         "已投票": styles.ButtonGrey,
+        "已指认": styles.Button,
+        "等待中": styles.ButtonGreen
       }
 
       items.push(
@@ -275,6 +339,7 @@ class GameRoom extends Component {
             <div className={styles.SelfieRight}>
               <img src={this.props.game.photos[secondIndex]} alt=""></img>
               { this.props.game.gameStates[secondIndex] === "鉴宝中" && <img className={styles.Eval} src={check}></img>}
+              { this.props.game.gameStates[secondIndex] === "发言中" && <img className={styles.Eval} src={chat}></img>}
             </div>
             <div className={styles.GameInfoRight}>
               <div className={stateButtonStyle[this.props.game.gameStates[secondIndex]]}>
@@ -344,6 +409,17 @@ class GameRoom extends Component {
             }
           </div>
           {
+            Object.values(this.props.game.gameStates).filter(el => el === "等待中").length === this.props.room.roles.length &&
+            Object.values(this.props.game.players).findIndex(el => el !== "") === this.props.room.playerIndex &&
+            <div className={styles.ButtonArea}>
+              <button className={styles.StartButton}
+                  onClick={this.props.startReplay}
+                >
+                  开始新一局
+                </button>
+            </div>
+          }
+          {
             this.props.game.gameStates[this.props.room.playerIndex] === "发言中" &&
             <div className={styles.ButtonArea}>
               <button
@@ -361,7 +437,7 @@ class GameRoom extends Component {
           }
           {
             this.state.roundStarting &&
-            <div className={styles.LoadingText}>开始第 {this.props.room.curRound} 轮</div>
+            <div className={styles.LoadingText}>开始第 {this.props.room.curRound + 1} 轮</div>
           }
           {
             this.state.chatStarting &&
@@ -369,12 +445,22 @@ class GameRoom extends Component {
           }
           {
             this.state.voteStarting &&
-            <div className={styles.LoadingText}>开始投票</div>
+            <div className={styles.LoadingText}>开始兽首投票</div>
           }
           {
             this.state.resStarting &&
-            <div className={styles.LoadingText}>计算投票</div>
+            <div className={styles.LoadingText}>计算兽首投票</div>
           }
+          {
+            this.state.finalVoteStarting &&
+            <div className={styles.LoadingText}>开始指认</div>
+          }
+          {
+            this.state.finalResSstarting &&
+            <div className={styles.LoadingText}>正在计算得分</div>
+          }
+
+
 
           <RoleModal
             showModal={this.state.showModal}
@@ -402,20 +488,57 @@ class GameRoom extends Component {
               roles={this.props.room.roles}
            />
           }
-          <VoteModal
-            showVote={this.state.showVote}
-            closeVote={this.handleCloseVote}
-            curRound={this.props.room.curRound}
-            chips={this.props.game.chips[this.props.room.playerIndex]}
-          />
 
-          <VoteResModal
-            showVoteRes={this.state.showRes}
-            closeRes={this.handleCloseRes}
-            zodiacRes={this.props.game.zodiacRes[this.props.room.curRound-1]}
-            votedZodiac={this.props.game.votedZodiac[this.props.room.curRound-1]}
-            curRound={this.props.room.curRound}
+          {
+            this.props.room.curRound > 0 &&
+            <VoteModal
+                showVote={this.state.showVote}
+                closeVote={this.handleCloseVote}
+                curRound={this.props.room.curRound}
+                chips={this.props.game.chips[this.props.room.playerIndex]}
+            />
+          }
+
+          {
+            // this.props.room.curRound > 0 &&
+            <VoteResModal
+              // showRes={this.state.showRes}
+              showRes={true}
+              closeRes={this.handleCloseRes}
+              // zodiacRes={this.props.game.zodiacRes[this.props.room.curRound-1]}
+              zodiacRes={this.props.game.zodiacRes[0]}
+              votedZodiac={this.props.game.votedZodiac[0]}
+              curRound={1}
+              // votedZodiac={this.props.game.votedZodiac[this.props.room.curRound-1]}
+              // curRound={this.props.room.curRound}
+            />
+          }
+          <RecModal
+            showRec={this.state.showRecgonize}
+            // showRec={true}
+            closeRec={this.handleCloseRec}
+            roles={this.props.room.roles}
+            playerIndex={this.props.room.playerIndex}
+            photos={this.props.game.photos}
           />
+          {
+            this.props.game.finalRes &&
+            <ResModal
+              showRes={this.state.showFinalRes}
+              closeFinalRes={this.handleCloseFinalRes}
+              finalRes={this.props.game.finalRes}
+              zodiacRes={this.props.game.zodiacRes}
+              votedZodiac={this.props.game.votedZodiac}
+              recFangzhen={this.props.game.recFangzhen}
+              recXuyuan={this.props.game.recXuyuan}
+              recLaochaofeng={this.props.game.recLaochaofeng}
+              roles={this.props.room.roles}
+              photos={this.props.game.photos}
+            />
+          }
+
+      }
+
 
 
         </div>
@@ -449,6 +572,12 @@ const mapDispatchToProps = (dispatch) => {
     startVote: () => dispatch(startVote()),
     setVoted: () => dispatch(setVoted()),
     calVoteRes: (counter) => dispatch(calVoteRes(counter)),
+    newGame: () => dispatch(newGame()),
+    calFinalRes: () => dispatch(calFinalRes()),
+    calRecRes: (recRes, curRole) => dispatch(calRecRes(recRes, curRole)),
+    evalEnd: () => dispatch(evalEnd()),
+    setChatDone: () => dispatch(setChatDone()),
+    startReplay: () => dispatch(startReplay())
   }
 }
 

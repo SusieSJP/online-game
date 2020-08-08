@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { CSSTransition } from 'react-transition-group';
 import Modal from 'react-modal';
 
 import styles from './InfoBoard.module.css';
@@ -30,34 +29,7 @@ class InfoBoard extends Component {
   }
 
   render() {
-    let index = this.state.current;
-    let isNext = this.state.isNext;
-    let chipRes = this.props.chipRes ? this.props.chipRes : {
-      0: {
-        0: [0,0,0,0],
-        1: [0,0,0,0],
-        2: [0,0,0,0],
-        3: [0,0,0,0],
-        4: [0,0,0,0],
-        5: [0,0,0,0],
-      },
-      1: {
-        0: [0,0,0,0],
-        1: [0,0,0,0],
-        2: [0,0,0,0],
-        3: [0,0,0,0],
-        4: [0,0,0,0],
-        5: [0,0,0,0],
-      },
-      2: {
-        0: [0,0,0,0],
-        1: [0,0,0,0],
-        2: [0,0,0,0],
-        3: [0,0,0,0],
-        4: [0,0,0,0],
-        5: [0,0,0,0],
-      }
-    }
+    let chipRes = this.props.chipRes;
 
     const zodiacImg = {
       1: [rat, cow, tiger, rabbit],
@@ -74,10 +46,10 @@ class InfoBoard extends Component {
         onRequestClose={this.props.handleCloseInfo}
         overlayClassName={styles.Overlay}
         contentLabel="Info"
-        closeTimeoutMS={500}
       >
         {
-          new Array(this.props.curRound).fill(1).map((index) => {
+          new Array(this.props.curRound).fill(1).map((el, index) => {
+            console.log('evalorder for round', index+1, ': ',this.props.evalOrder[index])
             return (
               <div key={index} id={'info-'+index} className={styles.InfoGroup}>
                 <h1>第 {index+1} 轮公共信息</h1>
@@ -85,11 +57,11 @@ class InfoBoard extends Component {
                   <h1>第 {this.props.curRound} 轮鉴宝顺序</h1>
                   <div className={styles.Order}>
                     {
-                      this.props.evalOrder.map((el, index) => {
+                      this.props.evalOrder[index].map((el, index) => {
                         return (
                           <div key={index} className={styles.PlayerPhoto}>
-                            <img src={this.props.photos[el-1]} alt="" className={styles.Img}></img>
-                            <div className={styles.PlayerIndex}>{el}</div>
+                            <img src={this.props.photos[el]} alt="" className={styles.Img}></img>
+                            <div className={styles.PlayerIndex}>{el+1}</div>
                           </div>
                         )
                       })
@@ -115,9 +87,10 @@ class InfoBoard extends Component {
                       <tbody>
                       {
                         Object.keys(chipRes[index]).map((el) => {
+                          console.log(el)
                           return (
                             <tr key={'chip-res-'+el}>
-                                <td><img src={this.props.photos[el]} alt=""/>{index+1}</td>
+                                <td><img src={this.props.photos[el]} alt=""/><span>{parseInt(el)+1}</span></td>
                                 {
                                   chipRes[index][el].map((num, i) => {
                                     return (
@@ -131,7 +104,7 @@ class InfoBoard extends Component {
                                               <img key={'chip-num-'+y} className={styles.Chip} src={chip}></img>
                                             )
                                           }) :
-                                          0
+                                          "-"
                                         }
                                         </div>
                                       }

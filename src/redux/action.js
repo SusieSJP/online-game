@@ -1,5 +1,5 @@
 import { database, auth, provider, storage } from '../firebase/firebase';
-import { zodiacGenerator } from '../utilities';
+import { zodiacGenerator, rolesGenerator } from '../utilities';
 
 
 /*
@@ -186,7 +186,7 @@ export const startCreateRoom = ({newId, newPwd, roles, roomType} = {}) => {
       gameStates,
       started: false,
       canStart: false,
-      zodiac,
+      zodiac, // object of mapping round to true false
       canEval,
       tfChanged: false,
       loseEvalHuang,
@@ -198,6 +198,62 @@ export const startCreateRoom = ({newId, newPwd, roles, roomType} = {}) => {
     })
   }
 }
+
+export const replay = (roles, zodiac) => ({
+  type: 'REPLAY',
+  roles,
+  zodiac
+})
+
+
+export const startReplay = () => {
+  return (dispatch, getState) => {
+    let playerNum = getState().rooms.roles.length;
+    let newRoles = rolesGenerator(playerNum);
+    let roomid = getState().rooms.room;
+
+    let dummyArr = new Array(playerNum).fill(1);
+
+    let chips = Object.fromEntries(dummyArr.map((el, index) => [index, 2]));
+    let gameStates = Object.fromEntries(dummyArr.map((el, index) => [index, "未准备"]));
+    // can eval = 1, randomly cannot = 2, attacked = 3
+    let canEval = Object.fromEntries(dummyArr.map((el, index) => [index, 1]));
+    // random cannot eval for huang and muhu
+    let loseEvalHuang = Math.floor(Math.random()*3) + 1;
+    let loseEvalMuhu = Math.floor(Math.random()*3) + 1;
+
+    const zodiac = zodiacGenerator();
+
+
+    console.log('data to play new game:',
+      {
+        newRoles,
+        chips,
+        canEval,
+        loseEvalHuang,
+        loseEvalMuhu,
+        gameStates,
+        zodiac
+      })
+
+    database.collection('rooms').doc(roomid).update({
+      roles: newRoles,
+      chips,
+      gameStates,
+      started: false,
+      canStart: false,
+      zodiac, // object of mapping round to true false
+      canEval,
+      tfChanged: false,
+      loseEvalHuang,
+      loseEvalMuhu
+    }).then(() => {
+      console.log('finish start new game')
+      dispatch(replay(newRoles, zodiac))
+    })
+  }
+}
+
 
 // 3. leave Room => the last one leave room should also clear room
 export const leaveRoom = () => {
@@ -316,15 +372,28 @@ export const startGetStart = () => {
     const roomid = getState().rooms.room;
     const roles = getState().rooms.roles;
     const docRef = database.collection('rooms').doc(roomid);
+    let newChips = {...getState().game.chips};
+    Object.keys(newChips).forEach((key) => {
+      newChips[key] += 2
+    })
+
 
     docRef.update({
       started: true,
-      gameStates: Object.fromEntries(roles.map((el, index) => [index, "未鉴宝"]))
+      gameStates: Object.fromEntries(roles.map((el, index) => [index, "未鉴宝"])),
+      chips: newChips
     }).then(() => { dispatch(getStart())})
   }
 }
 
 // 4. set the first person to evaluate
+export const setNextRound = (nextRound) => {
+  return {
+    type: 'SET_NEXT_ROUND',
+    nextRound
+  }
+}
+
 export const setFirstToEval = (nextRound) => {
   return (dispatch, getState) => {
     const roomid = getState().rooms.room;
@@ -334,16 +403,19 @@ export const setFirstToEval = (nextRound) => {
     const playerNum = getState().rooms.roles.length;
     if (nextRound === 1) {
       // index = Math.floor(Math.random()*playerNum);
+      index = 0;
+      console.log('first to eval at round 1: ', index)
     } else {
-      index = getState().game.evalOrder[playerNum - 1];
+      index = getState().game.evalOrder[nextRound-1][playerNum - 1];
+      console.log('first to eval at round 2 or 3: ', index)
     }
 
 
     docRef.update({
-      ['gameStates.' + 0]: "鉴宝中",
-      ['evalOrder.'+ (nextRound-1)]: [1],
+      ['gameStates.' + index]: "鉴宝中",
+      ['evalOrder.'+ (nextRound-1)]: [index],
       tfChanged: false
-    })
+    }).then(() => dispatch(setNextRound(nextRound)));
   }
 }
 
@@ -368,7 +440,7 @@ export const setNextToEval = (index) => {
     //   }).catch((error) => { console.log('push evalorder failed:', error)})
 
 
-        newEvalOrder.push(index+1);
+        newEvalOrder.push(index);
 
         docRef.update({
           ['gameStates.' + index]: "鉴宝中",
@@ -481,7 +553,9 @@ export const calVoteRes = (counter) => {
     const docRef = database.collection('rooms').doc(roomid);
     const curRoundIndex = getState().rooms.curRound - 1;
     const playerIndex = getState().rooms.playerIndex;
-    const playerNum = getState().rooms.roles.length;
+    // const playerNum = getState().rooms.roles.length;
+    const chips = getState().game.chips[playerIndex];
+    let chipUsed = counter.reduce((acc,curr) => acc+curr);
 
     // return database.runTransaction(transaction => {
     //   return transaction.get(docRef).then(doc => {
@@ -505,7 +579,8 @@ export const calVoteRes = (counter) => {
     // .catch(error => console.log('error calculating votes, ', error))
     docRef.update({
       ['gameStates.'+ playerIndex]: "已投票",
-      ['chipRes.' + curRoundIndex + '.' + playerIndex]: counter.slice(),
+      ['chipRes.' + curRoundIndex + '.' + playerIndex]: counter,
+      ['chips.' + playerIndex]: chips-chipUsed
     })
     .catch(error => console.log('error calculating votes, ', error))
   }
@@ -520,27 +595,115 @@ export const setVoted = () => {
     const playerNum = getState().rooms.roles.length;
     const zodiac = getState().rooms.zodiac;
 
-    let resArrArr = [[0,0],[1,0],[2,0],[3,0]];
-    for (let i=0; i<playerNum; i++) {
-      for (let j=0; j<4; j++) {
-        resArrArr[j][1] += chipRes[curRoundIndex][i][j];
-    }}
-    let chipTotalRes = [resArrArr[0][1], resArrArr[1][1], resArrArr[2][1], resArrArr[3][1]];
+    if (curRoundIndex >= 0 && chipRes) {
+      let resArrArr = [[0,0],[1,0],[2,0],[3,0]];
+      for (let i=0; i<playerNum; i++) {
+        for (let j=0; j<4; j++) {
+          resArrArr[j][1] += chipRes[curRoundIndex][i][j];
+      }}
 
-    resArrArr.sort((a, b) => b[1] - a[1]);
-    let votedZodiac = [resArrArr[0][0], resArrArr[1][0]];
-    let zodiacRes = [zodiac[curRoundIndex][votedZodiac[0]], zodiac[curRoundIndex][votedZodiac[1]]];
+      console.log('res ArrArr: ', resArrArr);
+      let chipTotalRes = [resArrArr[0][1], resArrArr[1][1], resArrArr[2][1], resArrArr[3][1]];
+
+      resArrArr.sort((a, b) => b[1] - a[1]);
+      let votedZodiac = [resArrArr[0][0], resArrArr[1][0]];
+      let zodiacRes = [zodiac[curRoundIndex][votedZodiac[0]], zodiac[curRoundIndex+1][votedZodiac[1]]];
 
 
-    docRef.update({
-      ['zodiacRes.'+ curRoundIndex]: zodiacRes,
-      ['votedZodiac.' + curRoundIndex]: votedZodiac,
-      ['chipTotalRes.' + curRoundIndex]: chipTotalRes,
-      ['voted.' + curRoundIndex]: true
-    })
-    .catch(error => console.log('error calculating votes, ', error))
+      docRef.update({
+        ['zodiacRes.'+ curRoundIndex]: zodiacRes,
+        ['votedZodiac.' + curRoundIndex]: votedZodiac,
+        ['chipTotalRes.' + curRoundIndex]: chipTotalRes,
+        ['voted.' + curRoundIndex]: true
+      })
+      .catch(error => console.log('error calculating votes, ', error))
+    }
+
   }
 }
+
+export const evalEnd = () => {
+  return (dispatch, getState) => {
+    const roomid = getState().rooms.room;
+    const docRef = database.collection('rooms').doc(roomid);
+    let zodiacRes = {...getState().game.zodiacRes};
+    let zodiacScore = getState().game.score;
+    Object.keys(zodiacRes).forEach(key => {
+      zodiacScore += zodiacRes[key].filter(el => el === true).length;
+    });
+
+    docRef.update({
+      evalEnd: true,
+      score: zodiacScore
+    })
+  }
+}
+
+export const calRecRes = (recRes, curRole) => {
+  return (dispatch, getState) => {
+    const roomid = getState().rooms.room;
+    const docRef = database.collection('rooms').doc(roomid);
+    const playerIndex = getState().rooms.playerIndex;
+
+    if (curRole === "老朝奉") {
+      docRef.update({
+        ['gameStates.'+playerIndex]: "已指认",
+        recXuyuan: recRes
+      })
+    } else if (curRole === "药不然") {
+        docRef.update({
+          ['gameStates.'+playerIndex]: "已指认",
+          recFangzhen: recRes
+        })
+    } else if (curRole === "许愿"){
+      docRef.update({
+        ['gameStates.'+playerIndex]: "已指认",
+        ['recLaochaofeng.' + curRole]: recRes ? 1.5 : 0
+      })
+    } else {
+      docRef.update({
+        ['gameStates.'+playerIndex]: "已指认",
+        ['recLaochaofeng.' + curRole]: recRes ? 1 : 0
+      })
+    }
+    }
+  }
+
+export const calFinalRes = () => {
+  return (dispatch, getState) => {
+    const roomid = getState().rooms.room;
+    const docRef = database.collection('rooms').doc(roomid);
+
+    let recFangzhen = getState().game.recFangzhen;
+    let recXuyuan = getState().game.recXuyuan;
+    let recLaochaofeng = getState().game.recLaochaofeng;
+    let score = getState().game.score;
+
+    if (!recFangzhen) { score += 1};
+    if (!recXuyuan) { score += 2};
+    if (Object.values(recLaochaofeng).reduce((acc, curr) => acc+curr) > 2) { score += 1};
+
+    docRef.update({
+      score,
+      finalRes: score >= 6 ? "好人阵营获胜" : "坏人阵营获胜"
+    })
+    }
+}
+
+
+
+export const newGame = () => {
+  return (dispatch, getState) => {
+    const roomid = getState().rooms.room;
+    const docRef = database.collection('rooms').doc(roomid);
+    const playerIndex = getState().rooms.playerIndex;
+
+    docRef.update({
+      ['gameStates.'+playerIndex]: "等待中"
+    })
+  }
+}
+
 
 export const updateGameStates = (data) => {
   console.log('update the game state in redux', data);

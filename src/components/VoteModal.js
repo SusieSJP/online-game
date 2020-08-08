@@ -93,11 +93,13 @@ class VoteModal extends Component {
           <div className={styles.Chips}>
             剩余元宝:
             {
+              this.state.remainingChips ?
               Array(this.state.remainingChips).fill(1).map((el, index) => {
                 return (
                   <img key={index} className={styles.Chip} src={chip}></img>
                 )
-              })
+              }) :
+              0
             }
           </div>
           <button className={styles.Button} onClick={() => this.props.closeVote(this.state.counter)}>确认并结束</button>

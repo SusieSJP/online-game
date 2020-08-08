@@ -31,7 +31,7 @@ class EvalModal extends Component {
       evalConfirmed: false,
       errorMsg: "",
       actionIndex: null,
-      nextIndex: null,
+      nextIndex: -1,
       actionConfirmed: false,
       nextConfirmed: false,
       tfChanged: false
@@ -122,7 +122,8 @@ class EvalModal extends Component {
     let res = true;
     let actualIndex = index < this.props.playerIndex ? index : index+1;
     let actionRole = this.props.roles[actualIndex];
-    if (actionRole in ["药不然","老朝奉","郑国渠"]) {
+    console.log('role to attack: ', actionRole)
+    if (["药不然","老朝奉","郑国渠"].indexOf(actionRole) > -1) {
       res = false
     }
     this.setState({
@@ -133,7 +134,7 @@ class EvalModal extends Component {
   }
 
   handleNext = () => {
-    if (Object.values(this.props.gameStates).indexOf("未鉴宝") >= 0 && !this.state.nextIndex) {
+    if (Object.values(this.props.gameStates).indexOf("未鉴宝") >= 0 && this.state.nextIndex === -1) {
       this.setState({
         errorMsg: "请选择下一位玩家进行鉴宝"
       })
@@ -236,6 +237,7 @@ class EvalModal extends Component {
                     <div className={styles.PlayerIndex}>{actualIndex + 1}</div>
                     {
                       this.props.role === "方震" && this.state.actionConfirmed &&
+                      this.state.actionIndex === index &&
                       <div className={this.state.playerRes ? styles.True : styles.False}>{this.state.playerRes ? "好人" : "坏人"}</div>
                     }
                   </div>
@@ -255,7 +257,7 @@ class EvalModal extends Component {
             <div className={styles.ImgSet}>
               <span className={styles.Option}>不发动</span>
               <input className={`${styles.tgl} ${styles.tgllight}`} id="switch" onChange={this.handleSwitchChange} type="checkbox"/>
-              <label for="switch" className={styles.tglbtn}></label>
+              <label htmlFor="switch" className={styles.tglbtn}></label>
               <span className={styles.Option}>发动</span>
             </div>
           </div>
