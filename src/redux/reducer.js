@@ -130,12 +130,12 @@ const gameInitState = {
     2: []
   },
   votedZodiac: {
-    0: [1,2],
+    0: [],
     1: [],
     2: []
   },
   zodiacRes: {
-    0: [true, false],
+    0: [],
     1: [],
     2: []
   },
@@ -199,7 +199,8 @@ export const gameReducer = (state = gameInitState, action) => {
         score: action.score ? action.score : state.score,
         recFangzhen: action.recFangzhen ? action.recFangzhen : state.recFangzhen,
         recLaochaofeng: action.recLaochaofeng ? action.recLaochaofeng : state.recLaochaofeng,
-        recXuyuan: action.recXuyuan ? action.recXuyuan : state.recXuyuan
+        recXuyuan: action.recXuyuan ? action.recXuyuan : state.recXuyuan,
+        recEnd: action.recEnd,
       }
     default:
       return state

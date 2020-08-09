@@ -263,6 +263,7 @@ export const leaveRoom = () => {
 }
 
 export const startLeaveRoom = () => {
+  console.log('start leave!')
   return (dispatch, getState) => {
     let curRoom = getState().rooms.room;
     let playerIndex = getState().rooms.playerIndex;
@@ -450,6 +451,19 @@ export const setNextToEval = (index) => {
   }
 }
 
+export const setEvalDone = () => {
+  return (dispatch, getState) => {
+    const roomid = getState().rooms.room;
+    const docRef = database.collection('rooms').doc(roomid);
+    const roles = getState().rooms.roles;
+
+
+    docRef.update({
+      gameStates: Object.fromEntries(roles.map((el, index) => [index, "未发言"])),
+      })
+    }
+}
+
 
 // 5. startAttack
 export const startAttack = (indice, num) => {
@@ -500,7 +514,7 @@ export const setChatOrder = (index) => {
     const docRef = database.collection('rooms').doc(roomid);
     const playerNum = getState().rooms.roles.length;
 
-    let order = [...Array(playerNum).keys()].revserse();
+    let order = [...Array(playerNum).keys()].reverse();
     const cutPos = playerNum - index;
     let newOrder = order.slice(cutPos).concat(order.slice(0, cutPos));
 
@@ -595,6 +609,8 @@ export const setVoted = () => {
     const playerNum = getState().rooms.roles.length;
     const zodiac = getState().rooms.zodiac;
 
+    console.log('setVoted!')
+
     if (curRoundIndex >= 0 && chipRes) {
       let resArrArr = [[0,0],[1,0],[2,0],[3,0]];
       for (let i=0; i<playerNum; i++) {
@@ -685,9 +701,9 @@ export const calFinalRes = () => {
 
     docRef.update({
       score,
-      finalRes: score >= 6 ? "好人阵营获胜" : "坏人阵营获胜"
-    })
-    }
+      finalRes: score >= 6 ? "好人阵营获胜" : "坏人阵营获胜",
+      recEnd: true
+    })}
 }
 
 

@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "antiques-game"
+    "default": "antiques-game",
+    "gameV1": "antiques-game"
   }
 }
