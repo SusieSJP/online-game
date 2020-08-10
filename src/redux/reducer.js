@@ -27,7 +27,7 @@ const roomInitState = {
   availableRooms: {},
   curRound: 0,
   zodiac: {},
-  redirectTo: null
+  redirectTo: null,
 }
 
 export const roomReducer = (state = roomInitState, action) => {
@@ -118,6 +118,7 @@ const gameInitState = {
   recXuyuan: null,
   recFangzhen: null,
   finalRes: null,
+  doneViewModal: {},
 
   voted: {
     0: false,
@@ -201,6 +202,8 @@ export const gameReducer = (state = gameInitState, action) => {
         recLaochaofeng: action.recLaochaofeng ? action.recLaochaofeng : state.recLaochaofeng,
         recXuyuan: action.recXuyuan ? action.recXuyuan : state.recXuyuan,
         recEnd: action.recEnd,
+        doneViewModal: action.doneViewModal ? action.doneViewModal : state.doneViewModal,
+        chipRes: action.chipRes ? action.chipRes : state.chipRes,
       }
     default:
       return state

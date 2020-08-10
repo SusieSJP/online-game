@@ -4,10 +4,10 @@ import { database } from '../firebase/firebase';
 import styles from './GameRoom.module.css';
 
 import {
-    startLeaveRoom, startGetReady, startNotReady, startGetStart,
+    startLeaveRoom, startGetReady, startNotReady, startGetStart, resetViewDone,
     updateGameStates, setFirstToEval, startAttack, resetCanEval,
     setNextToEval, setTFChanged, setChatOrder, setEvalDone, startVote, setVoted, calVoteRes,
-    newGame, calFinalRes, calRecRes, evalEnd, setChatDone, startReplay } from '../redux/action';
+    newGame, calFinalRes, calRecRes, evalEnd, setChatDone, startReplay, setViewDone } from '../redux/action';
 import InfoBoard from './InfoBoard';
 import RoleModal from './RoleModal';
 import EvalModal from './EvalModal';
@@ -44,7 +44,6 @@ class GameRoom extends Component {
       showVote: false,
       resStarting: false,
       showRes: false,
-      newRoundStarting: false,
       finalVoteStarting: false,
       showRecgonize: false,
       finalResSstarting: false,
@@ -89,24 +88,64 @@ class GameRoom extends Component {
       this.startAudio.play();
       this.setState({ loading: true })
       setTimeout(() => {
-        this.setState({ showModal: true, loading: false})
+        this.setState({ showModal: true, loading: false })
       }, 1500)
     }
 
-    if (prevProps.game.gameStates && this.props.game.gameStates[this.props.room.playerIndex] === "鉴宝中" && prevProps.game.gameStates[this.props.room.playerIndex] === "未鉴宝") {
-      setTimeout(() => {
-        this.setState({ showEval: true })
-      }, 1000)
+    if (this.props.room.roles.length > 0 &&
+        Object.values(this.props.game.doneViewModal).reduce((acc, curr) => acc+curr, 0) === this.props.room.roles.length &&
+        Object.values(this.props.game.gameStates).filer(el => el === "未鉴宝").length === this.props.room.roles.length) {
+          // start the first round
+          this.setState({ roundStarting: true });
+          this.startAudio.play();
+
+          setTimeout(() => {
+            this.setState({ roundStarting: false });
+            this.props.setFirstToEval(this.props.room.curRound+1);
+            this.props.resetViewDone();
+          }, 1500)
     }
 
-    if (prevProps.game.gameStates && this.props.game.gameStates[this.props.room.playerIndex] === "未发言" && !prevProps.game.gameStates[this.props.room.playerIndex] === "未发言") {
-      this.setState({ chatStarting: true });
-      this.startAudio.play();
-      setTimeout(() => {
-        this.setState({ chatStarting: false });
-      }, 1500)
+    if (this.props.room.roles.length > 0 &&
+      Object.values(this.props.game.doneViewModal).reduce((acc, curr) => acc+curr, 0) === this.props.room.roles.length &&
+      Object.values(this.props.game.gameStates).filer(el => el === "已投票").length === this.props.room.roles.length) {
+        // all three round ended and players has closed the res modal
+        this.setState({ finalVoteStarting: true });
+        this.startAudio.play();
+
+        setTimeout(() => {
+          this.setState({ finalVoteStarting: false });
+          this.props.evalEnd();
+          this.props.resetViewDone();
+        }, 1500)
+  }
+
+
+    if (prevProps.game.gameStates &&
+        this.props.game.gameStates[this.props.room.playerIndex] === "鉴宝中" &&
+        prevProps.game.gameStates[this.props.room.playerIndex] === "未鉴宝") {
+          setTimeout(() => {
+            this.setState({ showEval: true })
+          }, 1000)
     }
 
+    if (prevProps.game.gameStates && this.props.game.gameStates[this.props.room.playerIndex] === "未发言" &&
+        !prevProps.game.gameStates[this.props.room.playerIndex] === "未发言") {
+          this.setState({ chatStarting: true });
+          this.startAudio.play();
+          setTimeout(() => {
+            this.setState({ chatStarting: false });
+            this.props.setChatOrder();
+          }, 1500)
+    }
+
+    if (prevProps.game.gameStates &&
+      this.props.game.gameStates[this.props.room.playerIndex] === "投票中" &&
+      prevProps.game.gameStates[this.props.room.playerIndex] === ("发言中" || "已发言")) {
+        setTimeout(() => {
+          this.setState({ showVote: true })
+        }, 1000)
+  }
 
     if (prevProps.game.gameStates && prevProps.room.roles.length > 0 &&
         Object.values(this.props.game.gameStates).filter(el => el === "已投票").length === this.props.room.roles.length &&
@@ -114,16 +153,19 @@ class GameRoom extends Component {
           this.props.setVoted();
     }
 
-    if (!prevProps.game.voted[this.props.curRound-1] && this.props.game.voted[this.props.curRound-1]) {
-      this.setState({
-        resStarting: true
-      })
-      setTimeout(() => {
-        this.setState({
-          resStarting: false,
-          showRes: true
-        })
-      })
+    if (this.props.room.curRound > 0 &&
+        !prevProps.game.voted[this.props.curRound-1] &&
+        this.props.game.voted[this.props.curRound-1]) {
+          this.setState({
+            resStarting: true
+          })
+          setTimeout(() => {
+            this.setState({
+              resStarting: false,
+              showRes: true
+            });
+            if (this.props.room.curRound < 3) {this.props.startGetStart();}
+          }, 1500);
     }
 
     if (!prevProps.game.evalEnd && this.props.game.evalEnd) {
@@ -141,11 +183,13 @@ class GameRoom extends Component {
     }
 
     if (this.props.game.finalRes && !prevProps.game.finalRes) {
-      this.setState ({
+      setTimeout(() => {
+        this.setState ({
         finalResSstarting: false,
         showFinalRes: true
       })
-    }
+    }, 1500)}
+
   }
 
   handleReady = () => {
@@ -167,13 +211,8 @@ class GameRoom extends Component {
   }
 
   handleCloseModal = () => {
-    this.setState({ showModal: false, roundStarting: true });
-    this.startAudio.play();
-
-    setTimeout(() => {
-      this.setState({ roundStarting: false });
-      this.props.setFirstToEval(1);
-    }, 1500)
+    this.setState({ showModal: false });
+    this.props.setViewDone();
   }
 
   handleAttack = (index) => {
@@ -205,7 +244,6 @@ class GameRoom extends Component {
     } else {
       // all players have evaluated
       this.props.setEvalDone();
-      this.props.setChatOrder(this.props.room.playerIndex);
     }
 
   }
@@ -217,7 +255,7 @@ class GameRoom extends Component {
       this.startAudio.play();
 
       setTimeout(() => {
-        this.setState({ voteStarting: false, showVote: true });
+        this.setState({ voteStarting: false });
         this.props.startVote();
       }, 1500)
 
@@ -247,23 +285,8 @@ class GameRoom extends Component {
   }
 
   handleCloseRes = () => {
-    if (this.props.room.curRound === 3) {
-      // time to end the game
-      this.setState({ showRes: false, finalVoteStarting: true});
-      setTimeout(() => {
-        this.setState({ finalVoteStarting: false});
-        this.props.evalEnd();
-      })
-
-    } else {
-      this.setState({ showRes: false, roundStarting: true });
-      this.props.startGetStart();
-
-      setTimeout(() => {
-        this.setState({ roundStarting: false });
-        this.props.setFirstToEval(this.props.room.curRound+1);
-      })
-    }
+      this.setState({ showRes: false });
+      this.props.setViewDone();
   }
 
   handleCloseRec = (recIndex) => {
@@ -331,6 +354,7 @@ class GameRoom extends Component {
                   <p className={styles.Name}>{this.props.game.names[i]}</p>
                   <div className={styles.Chips}>
                   {
+                    this.props.game.chips[i] &&
                     Array(this.props.game.chips[i]).fill(1).map((el, index) => {
                       return (
                         <img key={index} className={styles.Chip} src={chip}></img>
@@ -407,10 +431,13 @@ class GameRoom extends Component {
             />
           }
           {this.createItems()}
-          <div className={this.props.game.started ? `${styles.ButtonArea} ${styles.Hidden}` : styles.ButtonArea}>
-            <div className={this.state.isReady ? styles.ButtonNoReady : styles.ButtonReady} onClick={this.handleReady}>准备</div>
+          <div
+            className={this.props.game.started ? `${styles.ButtonArea} ${styles.Hidden}` : styles.ButtonArea}>
+            <div
+              className={this.state.isReady ? styles.ButtonNoReady : styles.ButtonReady}
+              onClick={this.handleReady}>准备
+            </div>
             {
-
               Object.values(this.props.game.players).findIndex(el => el !== "") === this.props.room.playerIndex &&
               <button className={styles.StartButton}
                 disabled={!this.props.game.canStart}
@@ -421,6 +448,7 @@ class GameRoom extends Component {
             }
           </div>
           {
+            this.props.room.roles.length > 0 &&
             Object.values(this.props.game.gameStates).filter(el => el === "等待中").length === this.props.room.roles.length &&
             Object.values(this.props.game.players).findIndex(el => el !== "") === this.props.room.playerIndex &&
             <div className={styles.ButtonArea}>
@@ -440,7 +468,9 @@ class GameRoom extends Component {
             </div>
           }
           {
-            (this.state.loading || this.state.roundStarting || this.state.chatStarting) &&
+            (this.state.loading || this.state.roundStarting || this.state.chatStarting ||
+             this.state.voteStarting || this.state.resStarting || this.state.finalVoteStarting ||
+             this.state.finalResSstarting) &&
             <img className={styles.Loading} src={loading}/>
           }
           {
@@ -580,7 +610,7 @@ const mapDispatchToProps = (dispatch) => {
     resetCanEval: () => dispatch(resetCanEval()),
     setNextToEval: (index) => dispatch(setNextToEval(index)),
     setTFChanged: () => dispatch(setTFChanged()),
-    setChatOrder: (index) => dispatch(setChatOrder(index)),
+    setChatOrder: () => dispatch(setChatOrder()),
     startVote: () => dispatch(startVote()),
     setVoted: () => dispatch(setVoted()),
     calVoteRes: (counter) => dispatch(calVoteRes(counter)),
@@ -590,7 +620,9 @@ const mapDispatchToProps = (dispatch) => {
     evalEnd: () => dispatch(evalEnd()),
     setChatDone: () => dispatch(setChatDone()),
     startReplay: () => dispatch(startReplay()),
-    setEvalDone: () => dispatch(setEvalDone())
+    setEvalDone: () => dispatch(setEvalDone()),
+    setViewDone: () => dispatch(setViewDone()),
+    resetViewDone: () => dispatch(resetViewDone()),
   }
 }
 

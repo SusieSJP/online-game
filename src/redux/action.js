@@ -214,7 +214,7 @@ export const startReplay = () => {
 
     let dummyArr = new Array(playerNum).fill(1);
 
-    let chips = Object.fromEntries(dummyArr.map((el, index) => [index, 2]));
+    let chips = Object.fromEntries(dummyArr.map((el, index) => [index, 0]));
     let gameStates = Object.fromEntries(dummyArr.map((el, index) => [index, "未准备"]));
     // can eval = 1, randomly cannot = 2, attacked = 3
     let canEval = Object.fromEntries(dummyArr.map((el, index) => [index, 1]));
@@ -387,6 +387,30 @@ export const startGetStart = () => {
   }
 }
 
+export const setViewDone = () => {
+  return (dispatch, getState) => {
+    const roomid = getState().rooms.room;
+    const docRef = database.collection('rooms').doc(roomid);
+    const playerNum = getState().rooms.playerIndex;
+
+    docRef.update({
+      ['doneViewModal.' + playerNum]: 1,
+    })
+  }
+}
+
+export const resetViewDone  = () => {
+  return (dispatch, getState) => {
+    const roomid = getState().rooms.room;
+    const docRef = database.collection('rooms').doc(roomid);
+    const roles = getState().rooms.roles;
+
+    docRef.update({
+      doneViewModal: Object.fromEntries(roles.map((el, index) => [index, 0])),
+    })
+  }
+}
+
 // 4. set the first person to evaluate
 export const setNextRound = (nextRound) => {
   return {
@@ -403,8 +427,7 @@ export const setFirstToEval = (nextRound) => {
     let index;
     const playerNum = getState().rooms.roles.length;
     if (nextRound === 1) {
-      // index = Math.floor(Math.random()*playerNum);
-      index = 0;
+      index = Math.floor(Math.random()*playerNum);
       console.log('first to eval at round 1: ', index)
     } else {
       index = getState().game.evalOrder[nextRound-1][playerNum - 1];
@@ -457,7 +480,6 @@ export const setEvalDone = () => {
     const docRef = database.collection('rooms').doc(roomid);
     const roles = getState().rooms.roles;
 
-
     docRef.update({
       gameStates: Object.fromEntries(roles.map((el, index) => [index, "未发言"])),
       })
@@ -508,11 +530,12 @@ export const setTFChanged = () => {
 }
 
 
-export const setChatOrder = (index) => {
+export const setChatOrder = () => {
   return (dispatch, getState) => {
     const roomid = getState().rooms.room;
     const docRef = database.collection('rooms').doc(roomid);
     const playerNum = getState().rooms.roles.length;
+    const index = getState().game.evalOrder[playerNum-1];
 
     let order = [...Array(playerNum).keys()].reverse();
     const cutPos = playerNum - index;
@@ -546,16 +569,21 @@ export const startVote = () => {
     const roomid = getState().rooms.room;
     const docRef = database.collection('rooms').doc(roomid);
     const playerNum = getState().rooms.roles.length;
+    const curRoundIndex = getState().rooms.curRound - 1;
 
-    let newGameStates = {};
+    let newGameStates = {}, newChipRes = {};
     // every player has done chat
     for (let i=0; i<playerNum; i++) {
       newGameStates[i] = "投票中"
     }
+    for (let j=0; j<playerNum; j++) {
+      newChipRes[i] = [0,0,0,0];
+    }
     docRef.update({
       gameStates: newGameStates,
       chatOrder: [],
-      curChatIndex: null
+      curChatIndex: null,
+      ['chipRes.'+ curRoundIndex]: newChipRes
     }).catch(error => console.log('error start voting, ', error))
 
   }
@@ -571,26 +599,6 @@ export const calVoteRes = (counter) => {
     const chips = getState().game.chips[playerIndex];
     let chipUsed = counter.reduce((acc,curr) => acc+curr);
 
-    // return database.runTransaction(transaction => {
-    //   return transaction.get(docRef).then(doc => {
-    //     let newChipCount0 = doc.data().chipRes[curRoundIndex][0] + counter[0];
-    //     let newChipCount1 = doc.data().chipRes[curRoundIndex][1] + counter[1];
-    //     let newChipCount2 = doc.data().chipRes[curRoundIndex][2] + counter[2];
-    //     let newChipCount3 = doc.data().chipRes[curRoundIndex][3] + counter[3];
-
-    //     let isAllVoted = Object.values(doc.data().gameStates).filter(el => el === "已投票").length === playerNum - 1;
-
-    //     transaction.update({
-    //       ['gameStates.'+ playerIndex]: "已投票",
-    //       ['chipRes.' + curRoundIndex + '.0']: newChipCount0,
-    //       ['chipRes.' + curRoundIndex + '.1']: newChipCount1,
-    //       ['chipRes.' + curRoundIndex + '.2']: newChipCount2,
-    //       ['chipRes.' + curRoundIndex + '.3']: newChipCount3,
-    //       voted: isAllVoted
-    //     })
-    //   })
-    // })
-    // .catch(error => console.log('error calculating votes, ', error))
     docRef.update({
       ['gameStates.'+ playerIndex]: "已投票",
       ['chipRes.' + curRoundIndex + '.' + playerIndex]: counter,
@@ -609,7 +617,11 @@ export const setVoted = () => {
     const playerNum = getState().rooms.roles.length;
     const zodiac = getState().rooms.zodiac;
 
-    console.log('setVoted!')
+    console.log('setVoted!');
+    console.log({
+      chipRes,
+      zodiac
+    })
 
     if (curRoundIndex >= 0 && chipRes) {
       let resArrArr = [[0,0],[1,0],[2,0],[3,0]];
@@ -715,7 +727,7 @@ export const newGame = () => {
     const playerIndex = getState().rooms.playerIndex;
 
     docRef.update({
-      ['gameStates.'+playerIndex]: "等待中"
+      ['gameStates.'+ playerIndex]: "等待中"
     })
   }
 }
