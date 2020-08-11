@@ -94,7 +94,7 @@ class GameRoom extends Component {
 
     if (this.props.room.roles.length > 0 &&
         Object.values(this.props.game.doneViewModal).reduce((acc, curr) => acc+curr, 0) === this.props.room.roles.length &&
-        Object.values(this.props.game.gameStates).filer(el => el === "未鉴宝").length === this.props.room.roles.length) {
+        Object.values(this.props.game.gameStates).filter(el => el === "未鉴宝").length === this.props.room.roles.length) {
           // start the first round
           this.setState({ roundStarting: true });
           this.startAudio.play();
@@ -108,7 +108,7 @@ class GameRoom extends Component {
 
     if (this.props.room.roles.length > 0 &&
       Object.values(this.props.game.doneViewModal).reduce((acc, curr) => acc+curr, 0) === this.props.room.roles.length &&
-      Object.values(this.props.game.gameStates).filer(el => el === "已投票").length === this.props.room.roles.length) {
+      Object.values(this.props.game.gameStates).filter(el => el === "已投票").length === this.props.room.roles.length) {
         // all three round ended and players has closed the res modal
         this.setState({ finalVoteStarting: true });
         this.startAudio.play();

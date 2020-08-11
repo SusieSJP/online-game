@@ -577,7 +577,7 @@ export const startVote = () => {
       newGameStates[i] = "投票中"
     }
     for (let j=0; j<playerNum; j++) {
-      newChipRes[i] = [0,0,0,0];
+      newChipRes[j] = [0,0,0,0];
     }
     docRef.update({
       gameStates: newGameStates,
