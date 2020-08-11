@@ -93,13 +93,16 @@ class GameRoom extends Component {
     }
 
     if (this.props.room.roles.length > 0 &&
+        Object.values(prevProps.game.doneViewModal).reduce((acc, curr) => acc+curr, 0) < this.props.room.roles.length &&
         Object.values(this.props.game.doneViewModal).reduce((acc, curr) => acc+curr, 0) === this.props.room.roles.length &&
         Object.values(this.props.game.gameStates).filter(el => el === "未鉴宝").length === this.props.room.roles.length) {
           // start the first round
+          console.log('set first to eval');
           this.setState({ roundStarting: true });
           this.startAudio.play();
 
           setTimeout(() => {
+            console.log(this.props.room.curRound+1);
             this.setState({ roundStarting: false });
             this.props.setFirstToEval(this.props.room.curRound+1);
             this.props.resetViewDone();
@@ -107,6 +110,7 @@ class GameRoom extends Component {
     }
 
     if (this.props.room.roles.length > 0 &&
+      Object.values(prevProps.game.doneViewModal).reduce((acc, curr) => acc+curr, 0) < this.props.room.roles.length &&
       Object.values(this.props.game.doneViewModal).reduce((acc, curr) => acc+curr, 0) === this.props.room.roles.length &&
       Object.values(this.props.game.gameStates).filter(el => el === "已投票").length === this.props.room.roles.length) {
         // all three round ended and players has closed the res modal
@@ -173,6 +177,7 @@ class GameRoom extends Component {
     }
 
     if (prevProps.game.gameStates && this.props.room.roles > 0 &&
+        Object.values(prevProps.game.gameState).filter(el => el === "已指认").length < this.props.room.roles.length &&
         Object.values(this.props.game.gameStates).filter(el => el === "已指认").length === this.props.room.roles.length &&
         !this.props.game.recEnd) {
       console.log('cal Final Res!', Object.values(this.props.game.gameStates).filter(el => el === "已指认").length === this.props.room.roles.length);

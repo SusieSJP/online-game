@@ -422,6 +422,7 @@ export const setNextRound = (nextRound) => {
 export const setFirstToEval = (nextRound) => {
   return (dispatch, getState) => {
     const roomid = getState().rooms.room;
+    console.log('set first to eval action:', roomid)
     const docRef = database.collection('rooms').doc(roomid);
 
     let index;
