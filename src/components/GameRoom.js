@@ -158,7 +158,8 @@ class GameRoom extends Component {
 
     if (prevProps.game.gameStates &&
       this.props.game.gameStates[this.props.room.playerIndex] === "投票中" &&
-      prevProps.game.gameStates[this.props.room.playerIndex] === ("发言中" || "已发言")) {
+      (prevProps.game.gameStates[this.props.room.playerIndex] === "发言中" ||
+      prevProps.game.gameStates[this.props.room.playerIndex] === "已发言")) {
         setTimeout(() => {
           this.setState({ showVote: true })
         }, 1000)
@@ -483,7 +484,7 @@ class GameRoom extends Component {
             this.props.game.gameStates[this.props.room.playerIndex] === "发言中" &&
             <div className={styles.ButtonArea}>
               <button
-                className={this.state.chatDone ? styles.ButtonNoReady : styles.ButtonReday}
+                className={styles.ButtonReady}
                 onClick={this.handleChatDone}>结束发言</button>
             </div>
           }
@@ -499,7 +500,7 @@ class GameRoom extends Component {
           }
           {
             this.state.roundStarting &&
-            <div className={styles.LoadingText}>开始第 {this.props.room.curRound + 1} 轮</div>
+            <div className={styles.LoadingText}>开始第 {this.props.game.curRound + 1} 轮</div>
           }
           {
             this.state.chatStarting &&

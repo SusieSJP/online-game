@@ -540,11 +540,14 @@ export const setChatOrder = () => {
     const roomid = getState().rooms.room;
     const docRef = database.collection('rooms').doc(roomid);
     const playerNum = getState().rooms.roles.length;
-    const index = getState().game.evalOrder[playerNum-1];
+    const curRoundIndex = getState().game.curRound - 1;
+    const index = getState().game.evalOrder[curRoundIndex][playerNum-1];
+    console.log('index to split the evalorder to form chat order: ', index)
 
     let order = [...Array(playerNum).keys()].reverse();
     const cutPos = playerNum - index;
     let newOrder = order.slice(cutPos).concat(order.slice(0, cutPos));
+    console.log('new chat order:', newOrder)
 
     docRef.update({
       chatOrder: newOrder,

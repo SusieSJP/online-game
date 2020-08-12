@@ -283,7 +283,7 @@ class EvalModal extends Component {
                     onClick={() => this.handleSelectNext(index)}
                     >
                       <img src={el}></img>
-                      <div className={styles.PlayerIndex}>{actualIndex + 1}</div>
+                      <div className={this.props.gameStates[actualIndex] === "已鉴宝" ? styles.PlayerIndexDisabled : styles.PlayerIndex}>{actualIndex + 1}</div>
                   </div>
                 )
               })
