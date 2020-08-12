@@ -148,7 +148,7 @@ export const startCreateRoom = ({newId, newPwd, roles, roomType} = {}) => {
     let players = Object.fromEntries(dummyArr.map((el, index) => [index, ""]));
     let names = Object.fromEntries(dummyArr.map((el, index) => [index, "玩家"]));
     let photos = Object.fromEntries(dummyArr.map((el, index) => [index, ""]));
-    let chips = Object.fromEntries(dummyArr.map((el, index) => [index, 2]));
+    let chips = Object.fromEntries(dummyArr.map((el, index) => [index, 0]));
     let gameStates = Object.fromEntries(dummyArr.map((el, index) => [index, "未准备"]));
     // can eval = 1, randomly cannot = 2, attacked = 3
     let canEval = Object.fromEntries(dummyArr.map((el, index) => [index, 1]));
@@ -162,7 +162,7 @@ export const startCreateRoom = ({newId, newPwd, roles, roomType} = {}) => {
     names[0] = curName;
     photos[0] = curUserPhotoURL;
 
-    console.log('data to create new room:',
+    console.log('data to CREATE new room:',
       {
         players,
         names,
@@ -225,7 +225,7 @@ export const startReplay = () => {
     const zodiac = zodiacGenerator();
 
 
-    console.log('data to play new game:',
+    console.log('data to create new game - replay:',
       {
         newRoles,
         chips,
@@ -400,6 +400,7 @@ export const setViewDone = () => {
 }
 
 export const resetViewDone  = () => {
+  console.log('reset view done being called')
   return (dispatch, getState) => {
     const roomid = getState().rooms.room;
     const docRef = database.collection('rooms').doc(roomid);

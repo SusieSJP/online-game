@@ -97,15 +97,17 @@ class GameRoom extends Component {
         Object.values(this.props.game.doneViewModal).reduce((acc, curr) => acc+curr, 0) === this.props.room.roles.length &&
         Object.values(this.props.game.gameStates).filter(el => el === "未鉴宝").length === this.props.room.roles.length) {
           // start the first round
-          console.log('set first to eval');
+          console.log('set first to eval, from playIndex: ', this.props.room.playerIndex);
           this.setState({ roundStarting: true });
           this.startAudio.play();
+          const isHost = this.props.room.playerIndex === Object.values(this.props.game.players).findIndex(el => el !== "");
 
           setTimeout(() => {
-            console.log(this.props.room.curRound+1);
             this.setState({ roundStarting: false });
-            this.props.setFirstToEval(this.props.room.curRound+1);
-            this.props.resetViewDone();
+            if (isHost) {
+              this.props.setFirstToEval(this.props.room.curRound+1);
+              this.props.resetViewDone();
+            }
           }, 1500)
     }
 
@@ -116,11 +118,15 @@ class GameRoom extends Component {
         // all three round ended and players has closed the res modal
         this.setState({ finalVoteStarting: true });
         this.startAudio.play();
+        const isHost = this.props.room.playerIndex === Object.values(this.props.game.players).findIndex(el => el !== "");
+
 
         setTimeout(() => {
           this.setState({ finalVoteStarting: false });
-          this.props.evalEnd();
-          this.props.resetViewDone();
+          if (isHost) {
+            this.props.evalEnd();
+            this.props.resetViewDone();
+          }
         }, 1500)
   }
 
@@ -137,9 +143,13 @@ class GameRoom extends Component {
         !prevProps.game.gameStates[this.props.room.playerIndex] === "未发言") {
           this.setState({ chatStarting: true });
           this.startAudio.play();
+          const isHost = this.props.room.playerIndex === Object.values(this.props.game.players).findIndex(el => el !== "");
+
           setTimeout(() => {
             this.setState({ chatStarting: false });
-            this.props.setChatOrder();
+            if (isHost) {
+              this.props.setChatOrder();
+            }
           }, 1500)
     }
 
@@ -153,7 +163,8 @@ class GameRoom extends Component {
 
     if (prevProps.game.gameStates && prevProps.room.roles.length > 0 &&
         Object.values(this.props.game.gameStates).filter(el => el === "已投票").length === this.props.room.roles.length &&
-        (this.props.curRound > 0 && !prevProps.game.voted[this.props.curRound-1])) {
+        this.props.curRound > 0 && !prevProps.game.voted[this.props.curRound-1] &&
+        this.props.room.playerIndex === Object.values(this.props.game.players).findIndex(el => el !== "")) {
           this.props.setVoted();
     }
 
@@ -163,12 +174,14 @@ class GameRoom extends Component {
           this.setState({
             resStarting: true
           })
+          const isHost = this.props.room.playerIndex === Object.values(this.props.game.players).findIndex(el => el !== "");
+
           setTimeout(() => {
             this.setState({
               resStarting: false,
               showRes: true
             });
-            if (this.props.room.curRound < 3) {this.props.startGetStart();}
+            if (this.props.room.curRound < 3 && isHost) {this.props.startGetStart();}
           }, 1500);
     }
 
@@ -180,11 +193,9 @@ class GameRoom extends Component {
         Object.values(prevProps.game.gameState).filter(el => el === "已指认").length < this.props.room.roles.length &&
         Object.values(this.props.game.gameStates).filter(el => el === "已指认").length === this.props.room.roles.length &&
         !this.props.game.recEnd) {
-      console.log('cal Final Res!', Object.values(this.props.game.gameStates).filter(el => el === "已指认").length === this.props.room.roles.length);
-      console.log('cal Final Res!', Object.values(this.props.game.gameStates).filter(el => el === "已指认").length, this.props.room.roles.length);
-
-      this.props.calFinalRes();
-      this.setState({ finalResSstarting: true })
+          const isHost = this.props.room.playerIndex === Object.values(this.props.game.players).findIndex(el => el !== "");
+          if (isHost) { this.props.calFinalRes() };
+          this.setState({ finalResSstarting: true })
     }
 
     if (this.props.game.finalRes && !prevProps.game.finalRes) {
@@ -359,7 +370,7 @@ class GameRoom extends Component {
                   <p className={styles.Name}>{this.props.game.names[i]}</p>
                   <div className={styles.Chips}>
                   {
-                    this.props.game.chips[i] &&
+                    this.props.game.chips[i] > 0 &&
                     Array(this.props.game.chips[i]).fill(1).map((el, index) => {
                       return (
                         <img key={index} className={styles.Chip} src={chip}></img>
@@ -392,6 +403,7 @@ class GameRoom extends Component {
                   <p className={styles.Name}>{this.props.game.names[secondIndex]}</p>
                   <div className={styles.Chips}>
                   {
+                    this.props.game.chips[i] > 0 &&
                     Array(this.props.game.chips[secondIndex]).fill(1).map((el, index) => {
                       return (
                         <img key={index} className={styles.Chip} src={chip}></img>
