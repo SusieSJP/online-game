@@ -25,7 +25,7 @@ const roomInitState = {
   roles: [],
   roomPwdPairs: {},
   availableRooms: {},
-  curRound: 0,
+  // curRound: 0,
   zodiac: {},
   redirectTo: null,
 }
@@ -60,8 +60,7 @@ export const roomReducer = (state = roomInitState, action) => {
       return {
         ...state,
         roles: action.roles,
-        zodiac: action.zodiac,
-        curRound: 0
+        zodiac: action.zodiac
       }
     case 'LEAVE_ROOM':
       return {
@@ -98,11 +97,11 @@ export const roomReducer = (state = roomInitState, action) => {
         started: true,
         // curRound: 1
       }
-    case 'SET_NEXT_ROUND':
-      return {
-        ...state,
-        curRound: action.nextRound
-      }
+    // case 'SET_NEXT_ROUND':
+    //   return {
+    //     ...state,
+    //     curRound: action.nextRound
+    //   }
     default:
       return state;
   }
@@ -111,6 +110,7 @@ export const roomReducer = (state = roomInitState, action) => {
 
 // ************ game reducer
 const gameInitState = {
+  curRound: 0,
   score: 0,
   evalEnd: false,
   recEnd: false,
@@ -178,6 +178,7 @@ export const gameReducer = (state = gameInitState, action) => {
     case 'UPDATE_GAME_STATES':
       return {
         ...state,
+        curRound: action.curRound ? action.curRound : state.curRound,
         gameStates: action.gameStates,
         players: action.players,
         photos: action.photos,

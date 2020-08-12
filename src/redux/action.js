@@ -190,7 +190,8 @@ export const startCreateRoom = ({newId, newPwd, roles, roomType} = {}) => {
       canEval,
       tfChanged: false,
       loseEvalHuang,
-      loseEvalMuhu
+      loseEvalMuhu,
+      curRound: 0
     }).then(() => {
       console.log('finish add new room')
       dispatch(redirectTo(newId))
@@ -246,7 +247,8 @@ export const startReplay = () => {
       canEval,
       tfChanged: false,
       loseEvalHuang,
-      loseEvalMuhu
+      loseEvalMuhu,
+      curRound: 0
     }).then(() => {
       console.log('finish start new game')
       dispatch(replay(newRoles, zodiac))
@@ -320,9 +322,9 @@ export const startEnterRoom = (roomid, pwd) => {
           playerIndex: playerIndex,
           roles,
           zodiac,
-          tfChanged,
-          loseEvalHuang,
-          loseEvalMuhu
+          // tfChanged,
+          // loseEvalHuang,
+          // loseEvalMuhu
         }))
       }).catch(error => console.log('error finding the room to enter: ', error))
     })
@@ -413,12 +415,12 @@ export const resetViewDone  = () => {
 }
 
 // 4. set the first person to evaluate
-export const setNextRound = (nextRound) => {
-  return {
-    type: 'SET_NEXT_ROUND',
-    nextRound
-  }
-}
+// export const setNextRound = (nextRound) => {
+//   return {
+//     type: 'SET_NEXT_ROUND',
+//     nextRound
+//   }
+// }
 
 export const setFirstToEval = (nextRound) => {
   return (dispatch, getState) => {
@@ -440,8 +442,9 @@ export const setFirstToEval = (nextRound) => {
     docRef.update({
       ['gameStates.' + index]: "鉴宝中",
       ['evalOrder.'+ (nextRound-1)]: [index],
-      tfChanged: false
-    }).then(() => dispatch(setNextRound(nextRound)));
+      tfChanged: false,
+      curRound: nextRound
+    });
   }
 }
 
@@ -450,7 +453,7 @@ export const setNextToEval = (index) => {
     const roomid = getState().rooms.room;
     const playerIndex = getState().rooms.playerIndex;
     const docRef = database.collection('rooms').doc(roomid);
-    const curRoundIndex = getState().rooms.curRound - 1;
+    const curRoundIndex = getState().game.curRound - 1;
     const newEvalOrder = getState().game.evalOrder[curRoundIndex].slice();
 
     // docRef.get().then(doc => {
@@ -571,7 +574,7 @@ export const startVote = () => {
     const roomid = getState().rooms.room;
     const docRef = database.collection('rooms').doc(roomid);
     const playerNum = getState().rooms.roles.length;
-    const curRoundIndex = getState().rooms.curRound - 1;
+    const curRoundIndex = getState().game.curRound - 1;
 
     let newGameStates = {}, newChipRes = {};
     // every player has done chat
@@ -595,7 +598,7 @@ export const calVoteRes = (counter) => {
   return (dispatch, getState) => {
     const roomid = getState().rooms.room;
     const docRef = database.collection('rooms').doc(roomid);
-    const curRoundIndex = getState().rooms.curRound - 1;
+    const curRoundIndex = getState().game.curRound - 1;
     const playerIndex = getState().rooms.playerIndex;
     // const playerNum = getState().rooms.roles.length;
     const chips = getState().game.chips[playerIndex];
@@ -614,7 +617,7 @@ export const setVoted = () => {
   return (dispatch, getState) => {
     const roomid = getState().rooms.room;
     const docRef = database.collection('rooms').doc(roomid);
-    const curRoundIndex = getState().rooms.curRound - 1;
+    const curRoundIndex = getState().game.curRound - 1;
     const chipRes = getState().game.chipRes;
     const playerNum = getState().rooms.roles.length;
     const zodiac = getState().rooms.zodiac;

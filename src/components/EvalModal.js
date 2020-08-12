@@ -247,6 +247,10 @@ class EvalModal extends Component {
             }
             </div>
             <button className={styles.Button} onClick={() => this.handleAttack(this.state.actionIndex)} disabled={this.state.actionConfirmed}>确认</button>
+            {
+              this.props.role === "方震" && canEval === 3 &&
+              <div className={styles.DisabledMsg}>{canEval === 2 ? "您本轮技能失效，不能查验" : "您被药不然偷袭了，不能查验"}</div>
+            }
           </div>
         }
 

@@ -105,7 +105,7 @@ class GameRoom extends Component {
           setTimeout(() => {
             this.setState({ roundStarting: false });
             if (isHost) {
-              this.props.setFirstToEval(this.props.room.curRound+1);
+              this.props.setFirstToEval(this.props.game.curRound+1);
               this.props.resetViewDone();
             }
           }, 1500)
@@ -134,13 +134,15 @@ class GameRoom extends Component {
     if (prevProps.game.gameStates &&
         this.props.game.gameStates[this.props.room.playerIndex] === "鉴宝中" &&
         prevProps.game.gameStates[this.props.room.playerIndex] === "未鉴宝") {
+          console.log('show eval modal because i am now jianbaozhong...')
           setTimeout(() => {
             this.setState({ showEval: true })
           }, 1000)
     }
 
     if (prevProps.game.gameStates && this.props.game.gameStates[this.props.room.playerIndex] === "未发言" &&
-        !prevProps.game.gameStates[this.props.room.playerIndex] === "未发言") {
+        prevProps.game.gameStates[this.props.room.playerIndex] !== "未发言") {
+          console.log('state changes to "未发言"');
           this.setState({ chatStarting: true });
           this.startAudio.play();
           const isHost = this.props.room.playerIndex === Object.values(this.props.game.players).findIndex(el => el !== "");
@@ -163,14 +165,14 @@ class GameRoom extends Component {
 
     if (prevProps.game.gameStates && prevProps.room.roles.length > 0 &&
         Object.values(this.props.game.gameStates).filter(el => el === "已投票").length === this.props.room.roles.length &&
-        this.props.curRound > 0 && !prevProps.game.voted[this.props.curRound-1] &&
+        this.props.game.curRound > 0 && !prevProps.game.voted[this.props.game.curRound-1] &&
         this.props.room.playerIndex === Object.values(this.props.game.players).findIndex(el => el !== "")) {
           this.props.setVoted();
     }
 
-    if (this.props.room.curRound > 0 &&
-        !prevProps.game.voted[this.props.curRound-1] &&
-        this.props.game.voted[this.props.curRound-1]) {
+    if (this.props.game.curRound > 0 &&
+        !prevProps.game.voted[this.props.game.curRound-1] &&
+        this.props.game.voted[this.props.game.curRound-1]) {
           this.setState({
             resStarting: true
           })
@@ -181,7 +183,7 @@ class GameRoom extends Component {
               resStarting: false,
               showRes: true
             });
-            if (this.props.room.curRound < 3 && isHost) {this.props.startGetStart();}
+            if (this.props.game.curRound < 3 && isHost) {this.props.startGetStart();}
           }, 1500);
     }
 
@@ -429,13 +431,13 @@ class GameRoom extends Component {
       this.state.isFetching ? <img className={styles.Loading} src={spinner}/> :
         <div className={styles.GameRoomContainer}>
           {
-            this.props.room.curRound > 0 &&
+            this.props.game.curRound > 0 &&
             <img className={styles.InfoButton} src={info} onClick={this.handleShowInfo}></img>
           }
           {
-            this.props.room.curRound > 0 &&
+            this.props.game.curRound > 0 &&
             <InfoBoard
-              curRound={this.props.room.curRound}
+              curRound={this.props.game.curRound}
               evalOrder={this.props.game.evalOrder}
               photos={this.props.game.photos}
               voted={this.props.game.voted}
@@ -529,13 +531,13 @@ class GameRoom extends Component {
           />
 
           {
-            this.props.room.curRound > 0 &&
+            this.props.game.curRound > 0 &&
             <EvalModal
               showEval={this.state.showEval}
-              curRound={this.props.room.curRound}
+              curRound={this.props.game.curRound}
               playerIndex = {this.props.room.playerIndex}
               role={this.props.room.roles[this.props.room.playerIndex]}
-              zodiacGroup={this.props.room.zodiac[this.props.room.curRound]}
+              zodiacGroup={this.props.room.zodiac[this.props.game.curRound]}
               canEval={this.props.game.canEval[this.props.room.playerIndex]}
               photos={this.props.game.photos}
               handleAttack={this.handleAttack}
@@ -549,27 +551,27 @@ class GameRoom extends Component {
           }
 
           {
-            this.props.room.curRound > 0 &&
+            this.props.game.curRound > 0 &&
             <VoteModal
                 showVote={this.state.showVote}
                 closeVote={this.handleCloseVote}
-                curRound={this.props.room.curRound}
+                curRound={this.props.game.curRound}
                 chips={this.props.game.chips[this.props.room.playerIndex]}
             />
           }
 
           {
-            this.props.room.curRound > 0 &&
+            this.props.game.curRound > 0 &&
             <VoteResModal
               showRes={this.state.showRes}
               // showRes={true}
               closeRes={this.handleCloseRes}
-              zodiacRes={this.props.game.zodiacRes[this.props.room.curRound-1]}
+              zodiacRes={this.props.game.zodiacRes[this.props.game.curRound-1]}
               // zodiacRes={this.props.game.zodiacRes[0]}
               // votedZodiac={this.props.game.votedZodiac[0]}
               // curRound={1}
-              votedZodiac={this.props.game.votedZodiac[this.props.room.curRound-1]}
-              curRound={this.props.room.curRound}
+              votedZodiac={this.props.game.votedZodiac[this.props.game.curRound-1]}
+              curRound={this.props.game.curRound}
             />
           }
           <RecModal
