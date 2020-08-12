@@ -567,7 +567,7 @@ class GameRoom extends Component {
             <VoteResModal
               showRes={this.state.showRes}
               // showRes={true}
-              closeRes={this.handleCloseRes}
+              handleCloseRes={this.handleCloseRes}
               zodiacRes={this.props.game.zodiacRes[this.props.game.curRound-1]}
               // zodiacRes={this.props.game.zodiacRes[0]}
               // votedZodiac={this.props.game.votedZodiac[0]}
