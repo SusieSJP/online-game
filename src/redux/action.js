@@ -643,7 +643,8 @@ export const setVoted = () => {
 
       resArrArr.sort((a, b) => b[1] - a[1]);
       let votedZodiac = [resArrArr[0][0], resArrArr[1][0]];
-      let zodiacRes = [zodiac[curRoundIndex][votedZodiac[0]], zodiac[curRoundIndex+1][votedZodiac[1]]];
+      console.log('voted zodiac: ', votedZodiac)
+      let zodiacRes = [zodiac[curRoundIndex+1][votedZodiac[0]], zodiac[curRoundIndex+1][votedZodiac[1]]];
 
 
       docRef.update({
