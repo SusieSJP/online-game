@@ -143,6 +143,7 @@ class GameRoom extends Component {
     if (prevProps.game.gameStates && this.props.game.gameStates[this.props.room.playerIndex] === "未发言" &&
         prevProps.game.gameStates[this.props.room.playerIndex] !== "未发言") {
           console.log('state changes to "未发言"');
+
           this.setState({ chatStarting: true });
           this.startAudio.play();
           const isHost = this.props.room.playerIndex === Object.values(this.props.game.players).findIndex(el => el !== "");
