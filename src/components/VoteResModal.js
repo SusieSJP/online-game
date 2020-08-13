@@ -35,11 +35,11 @@ const VoteResModal = (props) => {
           <div className={styles.ResGroup}>
 
             <div className={ styles.Unknown }>
-              <img src={zodiacImg[props.curRound][0]} alt=""></img>
+              <img src={zodiacImg[props.curRound][votedZodiac[0]]} alt=""></img>
             </div>
 
             <div className={ props.zodiacRes[1] ? styles.EvalTrue : styles.EvalFalse }>
-              <img src={zodiacImg[props.curRound][1]} alt=""></img>
+              <img src={zodiacImg[props.curRound][votedZodiac[1]]} alt=""></img>
               <div className={props.zodiacRes[1] ? styles.True : styles.False}>{props.zodiacRes[1] ? "真" : "假"}</div>
             </div>
 

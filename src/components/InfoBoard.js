@@ -116,16 +116,19 @@ class InfoBoard extends Component {
                           )
                         })
                       }
-                      <tr>
-                        {
-                          this.props.chipTotalRes &&
-                          this.props.chipTotalRes[index].map((total, ind) => {
-                            return (
-                              <td  key={'chip-total-'+ind}>{total}</td>
-                            )
-                          })
-                        }
-                      </tr>
+                      {
+                        this.props.chipTotalRes &&
+                        <tr>
+                          <td>&nbsp;</td>
+                          {
+                            this.props.chipTotalRes[index].map((total, ind) => {
+                              return (
+                                <td  key={'chip-total-'+ind}>{total}</td>
+                              )
+                            })
+                          }
+                        </tr>
+                      }
                       </tbody>
                     </table>
                   </div>
@@ -135,9 +138,9 @@ class InfoBoard extends Component {
                     {
                       this.props.voted[index] ?
                       <div className={styles.Order}>
-                        <div className={styles.EvalImgChecked}><img src={this.props.votedZodiac[index][0]}/></div>
+                        <div className={styles.EvalImgChecked}><img src={zodiacImg[index+1][this.props.votedZodiac[index][0]]}/></div>
                         <div className={this.props.zodiacRes[index][1] ? styles.EvalTrue : styles.EvalFalse }>
-                          <img src={this.props.votedZodiac[index][1]}/>
+                          <img src={zodiacImg[index+1][this.props.votedZodiac[index][1]]}/>
                           <div className={this.props.zodiacRes[index][1] ? styles.True : styles.False}>{
                             this.props.zodiacRes[index][1] ? "真" : "假"
                           }</div>

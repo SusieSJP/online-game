@@ -101,6 +101,7 @@ class GameRoom extends Component {
           this.setState({ roundStarting: true });
           this.startAudio.play();
           const isHost = this.props.room.playerIndex === Object.values(this.props.game.players).findIndex(el => el !== "");
+          console.log(isHost);
 
           setTimeout(() => {
             this.setState({ roundStarting: false });

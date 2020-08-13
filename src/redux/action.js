@@ -434,7 +434,7 @@ export const setFirstToEval = (nextRound) => {
       index = Math.floor(Math.random()*playerNum);
       console.log('first to eval at round 1: ', index)
     } else {
-      index = getState().game.evalOrder[nextRound-1][playerNum - 1];
+      index = getState().game.evalOrder[nextRound-2][playerNum - 1];
       console.log('first to eval at round 2 or 3: ', index)
     }
 
