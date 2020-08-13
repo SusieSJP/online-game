@@ -212,6 +212,10 @@ export const startReplay = () => {
     let playerNum = getState().rooms.roles.length;
     let newRoles = rolesGenerator(playerNum);
     let roomid = getState().rooms.room;
+    let names = getState().game.names;
+    let players = getState().game.players;
+    let photos = getState().game.photos;
+    let pwd = getState().rooms.pwd;
 
     let dummyArr = new Array(playerNum).fill(1);
 
@@ -237,7 +241,7 @@ export const startReplay = () => {
         zodiac
       })
 
-    database.collection('rooms').doc(roomid).update({
+    database.collection('rooms').doc(roomid).set({
       roles: newRoles,
       chips,
       gameStates,
@@ -248,7 +252,11 @@ export const startReplay = () => {
       tfChanged: false,
       loseEvalHuang,
       loseEvalMuhu,
-      curRound: 0
+      curRound: 0,
+      pwd,
+      players,
+      names,
+      photos
     }).then(() => {
       console.log('finish start new game')
       dispatch(replay(newRoles, zodiac))

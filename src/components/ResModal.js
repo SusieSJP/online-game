@@ -64,11 +64,11 @@ const ResModal = (props) => {
 
            <div className={styles.ImgGroup}>
               <div>老朝奉指认许愿 {props.recXuyuan ? "成功" : "失败"}</div>
-              { !props.recXuyuan  && <div className={styles.plusRes}>+2</div> }
+              { !props.recXuyuan  && <div className={styles.PlusRes}>+2</div> }
            </div>
            <div className={styles.ImgGroup}>
-              <div>药不然指认许愿 {props.recFangzhen ? "成功" : "失败"}</div>
-              { !props.recFangzhen  && <div className={styles.plusRes}>+1</div> }
+              <div>药不然指认方震 {props.recFangzhen ? "成功" : "失败"}</div>
+              { !props.recFangzhen  && <div className={styles.PlusRes}>+1</div> }
            </div>
            <div className={styles.ImgGroup}>
               <div>好人阵营指认老朝奉 {Object.values(props.recLaochaofeng).reduce((acc, curr) => acc+curr) > 2 ? "成功" : "失败"}</div>
