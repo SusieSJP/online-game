@@ -718,7 +718,14 @@ export const calFinalRes = () => {
 
     if (!recFangzhen) { score += 1};
     if (!recXuyuan) { score += 2};
-    if (Object.values(recLaochaofeng).reduce((acc, curr) => acc+curr) > 2) { score += 1};
+    if (Object.values(recLaochaofeng).reduce((acc, curr) => acc+curr, 0) > 2) { score += 1};
+
+    console.log('cal final res:', {
+      recFangzhen,
+      recXuyuan,
+      recLaochaofeng,
+      score
+    })
 
     docRef.update({
       score,

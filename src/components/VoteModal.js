@@ -61,8 +61,11 @@ class VoteModal extends Component {
 
   handleClose = () => {
     const counterRes = this.state.counter;
-    this.setState({
-      counter: [0,0,0,0],
+    this.setState((prevState) => {
+      return {
+        counter: [0,0,0,0],
+        remainingChips: prevState.remainingChips + 2
+      }
     })
     this.props.closeVote(counterRes)
   }

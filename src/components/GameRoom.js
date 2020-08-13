@@ -194,10 +194,11 @@ class GameRoom extends Component {
       this.setState({ showRecgonize: true })
     }
 
-    if (prevProps.game.gameStates && this.props.room.roles > 0 &&
-        Object.values(prevProps.game.gameState).filter(el => el === "已指认").length < this.props.room.roles.length &&
-        Object.values(this.props.game.gameStates).filter(el => el === "已指认").length === this.props.room.roles.length &&
-        !this.props.game.recEnd) {
+    if (prevProps.game.gameStates && this.props.room.roles.length > 0 &&
+        Object.values(prevProps.game.gameStates).filter(el => el === "已指认").length < this.props.room.roles.length &&
+        Object.values(this.props.game.gameStates).filter(el => el === "已指认").length === this.props.room.roles.length) {
+          // console.log(this.props.game.recEnd, !this.props.game.recEnd, typeof this.props.game.recEnd, this.props.game.recEnd == null, this.props.game.recEnd == undefined);
+          console.log('all players has done rec')
           const isHost = this.props.room.playerIndex === Object.values(this.props.game.players).findIndex(el => el !== "");
           if (isHost) { this.props.calFinalRes() };
           this.setState({ finalResSstarting: true })
@@ -312,6 +313,9 @@ class GameRoom extends Component {
 
   handleCloseRec = (recIndex) => {
     console.log('call handleCloseRec')
+    this.setState({
+      showRecgonize: false
+    });
     let recRes = false;
     let curRole = this.props.room.roles[this.props.room.playerIndex];
     if (curRole === "药不然") {
