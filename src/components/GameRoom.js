@@ -565,6 +565,8 @@ class GameRoom extends Component {
 
           {
             this.props.game.curRound > 0 &&
+            this.props.game.zodiacRes[this.props.game.curRound-1] &&
+            this.props.game.votedZodiac[this.props.game.curRound-1] &&
             <VoteResModal
               showRes={this.state.showRes}
               // showRes={true}

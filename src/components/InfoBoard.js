@@ -69,7 +69,9 @@ class InfoBoard extends Component {
                   </div>
                 </div>
 
-                <div className={styles.InfoCard}>
+                {
+                  chipRes[index] &&
+                  <div className={styles.InfoCard}>
                     <h1>第 {index+1} 轮投票情况</h1>
                     <table>
                       <thead>
@@ -132,6 +134,7 @@ class InfoBoard extends Component {
                       </tbody>
                     </table>
                   </div>
+                }
 
                   <div className={styles.InfoCard}>
                     <h1>第 {index+1} 轮入选兽首</h1>
