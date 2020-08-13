@@ -139,10 +139,26 @@ class EvalModal extends Component {
         errorMsg: "请选择下一位玩家进行鉴宝"
       })
     } else {
-      this.setState({
-        nextConfirmed: true
-      });
-      this.props.handleNext(this.state.nextIndex, this.state.tfChanged)
+      // reset the state when close the modal
+      const nextIndex = this.state.nextIndex;
+      const tfChanged = this.state.tfChanged;
+      this.setState(
+        {
+          isChecked: [false, false, false, false], // for zodiac
+          isSelected: [false, false, false, false, false], // for players to take action
+          isNext: [false, false, false, false, false],
+          showResult: ["","","",""],
+          playerRes: null,
+          evalConfirmed: false,
+          errorMsg: "",
+          actionIndex: null,
+          nextIndex: -1,
+          actionConfirmed: false,
+          nextConfirmed: false,
+          tfChanged: false
+        }
+      )
+      this.props.handleNext(nextIndex, tfChanged);
     }
 
   }

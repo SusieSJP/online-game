@@ -59,6 +59,15 @@ class VoteModal extends Component {
     })
   }
 
+  handleClose = () => {
+    const counterRes = this.state.counter;
+    this.setState({
+      counter: [0,0,0,0],
+    })
+    this.props.closeVote(counterRes)
+  }
+
+
   render() {
     const zodiacImg = {
       1: [rat, cow, tiger, rabbit],
@@ -102,7 +111,7 @@ class VoteModal extends Component {
               0
             }
           </div>
-          <button className={styles.Button} onClick={() => this.props.closeVote(this.state.counter)}>确认并结束</button>
+          <button className={styles.Button} onClick={this.handleClose}>确认并结束</button>
         </Modal>
     )
   }
