@@ -16,7 +16,7 @@ import chicken from '../assets/chicken.svg';
 import dog from '../assets/dog.svg';
 import pig from '../assets/pig.svg';
 
-Modal.setAppElement('#gameRoom');
+// Modal.setAppElement('#gameRoom');
 
 const VoteResModal = (props) => {
     const zodiacImg = {

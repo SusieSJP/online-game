@@ -3,7 +3,6 @@ import Modal from 'react-modal';
 
 import styles from './RecModal.module.css';
 
-Modal.setAppElement('#gameRoom');
 
 class RecModal extends Component {
   constructor(props) {

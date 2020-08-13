@@ -11,7 +11,7 @@ import xuyuan from '../assets/xuyuan.svg';
 
 
 // Make sure to bind modal to your appElement (http://reactcommunity.org/react-modal/accessibility/)
-Modal.setAppElement('#gameRoom');
+// Modal.setAppElement('#gameRoom');
 
 const RoleModal = (props) => {
   let roleImg;

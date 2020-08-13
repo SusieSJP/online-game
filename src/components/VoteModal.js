@@ -21,7 +21,7 @@ import chip from '../assets/chip.svg';
 
 
 // Make sure to bind modal to your appElement (http://reactcommunity.org/react-modal/accessibility/)
-Modal.setAppElement('#gameRoom');
+// Modal.setAppElement('#gameRoom');
 
 class VoteModal extends Component {
   constructor(props) {
