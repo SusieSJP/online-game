@@ -119,7 +119,7 @@ class InfoBoard extends Component {
                         })
                       }
                       {
-                        this.props.chipTotalRes &&
+                        this.props.chipTotalRes[index] &&
                         <tr>
                           <td>&nbsp;</td>
                           {
