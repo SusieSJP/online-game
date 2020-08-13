@@ -49,12 +49,11 @@ class InfoBoard extends Component {
       >
         {
           new Array(this.props.curRound).fill(1).map((el, index) => {
-            console.log('evalorder for round', index+1, ': ',this.props.evalOrder[index])
             return (
               <div key={index} id={'info-'+index} className={styles.InfoGroup}>
                 <h1>第 {index+1} 轮公共信息</h1>
                 <div className={styles.InfoCard}>
-                  <h1>第 {this.props.curRound} 轮鉴宝顺序</h1>
+                  <h1>第 {index+1} 轮鉴宝顺序</h1>
                   <div className={styles.Order}>
                     {
                       this.props.evalOrder[index].map((el, index) => {
@@ -89,7 +88,6 @@ class InfoBoard extends Component {
                       <tbody>
                       {
                         Object.keys(chipRes[index]).map((el) => {
-                          console.log(el)
                           return (
                             <tr key={'chip-res-'+el}>
                                 <td><img src={this.props.photos[el]} alt=""/><span>{parseInt(el)+1}</span></td>

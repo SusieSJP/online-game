@@ -199,12 +199,13 @@ export const gameReducer = (state = gameInitState, action) => {
         chipTotalRes: action.chipTotalRes ? action.chipTotalRes : state.chipTotalRes,
         evalEnd: action.evalEnd ? action.evalEnd : state.evalEnd,
         score: action.score ? action.score : state.score,
-        recFangzhen: action.recFangzhen ? action.recFangzhen : state.recFangzhen,
+        recFangzhen: action.recFangzhen,
         recLaochaofeng: action.recLaochaofeng ? action.recLaochaofeng : state.recLaochaofeng,
-        recXuyuan: action.recXuyuan ? action.recXuyuan : state.recXuyuan,
+        recXuyuan: action.recXuyuan,
         recEnd: action.recEnd,
         doneViewModal: action.doneViewModal ? action.doneViewModal : state.doneViewModal,
         chipRes: action.chipRes ? action.chipRes : state.chipRes,
+        finalRes: action.finalRes
       }
     default:
       return state

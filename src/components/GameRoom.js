@@ -436,7 +436,7 @@ class GameRoom extends Component {
 
     return (
       this.state.isFetching ? <img className={styles.Loading} src={spinner}/> :
-        <div className={styles.GameRoomContainer}>
+        <div className={styles.GameRoomContainer} id="gameRoom">
           {
             this.props.game.curRound > 0 &&
             <img className={styles.InfoButton} src={info} onClick={this.handleShowInfo}></img>

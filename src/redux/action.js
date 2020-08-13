@@ -715,6 +715,7 @@ export const calFinalRes = () => {
     let recXuyuan = getState().game.recXuyuan;
     let recLaochaofeng = getState().game.recLaochaofeng;
     let score = getState().game.score;
+    console.log('rec results and prev eval res: ', recFangzhen, recXuyuan, recLaochaofeng, score);
 
     if (!recFangzhen) { score += 1};
     if (!recXuyuan) { score += 2};
