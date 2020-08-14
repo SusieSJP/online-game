@@ -250,6 +250,7 @@ export const startReplay = () => {
       zodiac, // object of mapping round to true false
       canEval,
       tfChanged: false,
+      protectedZodiac: null,
       loseEvalHuang,
       loseEvalMuhu,
       curRound: 0,
@@ -308,14 +309,14 @@ export const startEnterRoom = (roomid, pwd) => {
     const userName = getState().users.name;
 
     return database.runTransaction((transaction) => {
-      let playerIndex, roles, zodiac, tfChanged, loseEvalHuang, loseEvalMuhu;
+      let playerIndex, roles, zodiac;
       return transaction.get(docRef).then(doc => {
         roles = doc.data().roles;
         zodiac = doc.data().zodiac;
         playerIndex = Object.values(doc.data().players).findIndex(el => el === "");
-        tfChanged = doc.data().tfChanged;
-        loseEvalHuang = doc.data().loseEvalHuang;
-        loseEvalMuhu = doc.data().loseEvalMuhu;
+        // tfChanged = doc.data().tfChanged;
+        // loseEvalHuang = doc.data().loseEvalHuang;
+        // loseEvalMuhu = doc.data().loseEvalMuhu;
 
         transaction.update(docRef, {
           ['players.' + playerIndex]: curUser,
@@ -452,6 +453,7 @@ export const setFirstToEval = (nextRound) => {
       ['gameStates.' + index]: "鉴宝中",
       ['evalOrder.'+ (nextRound-1)]: [index],
       tfChanged: false,
+      protectedZodiac: null,
       curRound: nextRound
     });
   }
@@ -539,6 +541,17 @@ export const setTFChanged = () => {
     const docRef = database.collection('rooms').doc(roomid);
     docRef.update({
       tfChanged: true
+    })
+  }
+}
+
+export const setProtect = (zodiacIndex) => {
+  console.log('set zoidac to be protected', zodiacIndex)
+  return (dispatch, getState) => {
+    const roomid = getState().rooms.room;
+    const docRef = database.collection('rooms').doc(roomid);
+    docRef.update({
+      protectedZodiac: zodiacIndex
     })
   }
 }

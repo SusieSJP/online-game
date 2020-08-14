@@ -52,6 +52,24 @@ class RoomSelect extends Component {
         </div>
         <div className={styles.Card}>
           <div className={styles.Title}>
+            <h3>普通7人局</h3>
+            <div className={styles.Button} onClick={() => this.handleSelect(7)}>建房</div>
+          </div>
+          <div className={styles.VSbackground}>
+            <div className={styles.Group}>
+              <h3>好人阵营：4人 </h3>
+              <p><span className={styles.Rolename}>许愿</span><span className={styles.Rolename}>黄烟烟</span></p>
+              <p><span className={styles.Rolename}>木户加奈</span><span className={styles.Rolename}>方震</span></p>
+            </div>
+            <div className={styles.Group}>
+              <h3>坏人阵营：3人 </h3>
+              <span className={styles.Rolename}>老朝奉</span>
+              <p><span className={styles.Rolename}>药不然</span><span className={styles.Rolename}>郑国渠</span></p>
+            </div>
+          </div>
+        </div>
+        <div className={styles.Card}>
+          <div className={styles.Title}>
             <h3>普通8人局</h3>
             <div className={styles.Button} onClick={() => this.handleSelect(8)}>建房</div>
           </div>

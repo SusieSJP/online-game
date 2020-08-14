@@ -8,6 +8,7 @@ export const roomIdGenerator = (roomPairs) => {
 
 export const rolesGenerator = (roomType) => {
   let standard6 = ["黄烟烟", "药不然", "木户加奈", "老朝奉", "许愿", "方震"];
+  let standard7 = ["黄烟烟", "药不然", "木户加奈", "老朝奉", "许愿", "方震", "郑国渠"];
   let standard8 = ["黄烟烟", "药不然", "木户加奈", "老朝奉", "许愿", "方震", "郑国渠", "姬云浮"];
   let res;
 
@@ -15,6 +16,15 @@ export const rolesGenerator = (roomType) => {
     case 6:
       res = standard6.slice();
       for (let i = 5; i > 0; i--) {
+        const j = Math.floor(Math.random() * i);
+        const temp = res[i];
+        res[i] = res[j];
+        res[j] = temp;
+      };
+      break;
+    case 7:
+      res = standard7.slice();
+      for (let i = 6; i > 0; i--) {
         const j = Math.floor(Math.random() * i);
         const temp = res[i];
         res[i] = res[j];

@@ -24,12 +24,16 @@ class EvalModal extends Component {
 
     this.state = {
       isChecked: [false, false, false, false], // for zodiac
-      isSelected: [false, false, false, false, false], // for players to take action
-      isNext: [false, false, false, false, false],
+      isSelected: new Array(this.props.roles.length-1).fill(false), // for players to take action
+      isProtected: [false, false, false, false], // for zodiac
+      isNext: new Array(this.props.roles.length-1).fill(false),
       showResult: ["","","",""],
       playerRes: null,
       evalConfirmed: false,
+      protectConfirmed: false,
+      protectZodiac: null,
       errorMsg: "",
+      errMsg: "",
       actionIndex: null,
       nextIndex: -1,
       actionConfirmed: false,
@@ -38,6 +42,7 @@ class EvalModal extends Component {
     }
   }
 
+  // evaluate the zodiac - true or false
   handleCheck = (index) => {
     if (this.props.role === "许愿") {
       if (!this.state.isChecked[index] && this.state.isChecked.filter((el) => el === true).length === 2) {
@@ -69,7 +74,7 @@ class EvalModal extends Component {
   handleSelect = (index) => {
     console.log("handle select to action", index)
     this.setState(() => {
-      let newSelected = [false, false, false, false, false];
+      let newSelected = new Array(this.props.roles.length-1).fill(false);
       newSelected[index] = true
       return {
         isSelected: newSelected,
@@ -82,6 +87,8 @@ class EvalModal extends Component {
   handleEvalResult = () => {
     // 1. check how many zodiac player checked
     let checkedNum = this.state.isChecked.filter(el => el === true).length;
+    let errMsg = "";
+
     if ((this.props.role === "许愿" && checkedNum !== 2) || (this.props.role !== "许愿" && checkedNum !== 1)) {
       this.setState({
         errorMsg: "请您查验对应数量的兽首，调整后再次点击确认"
@@ -89,6 +96,9 @@ class EvalModal extends Component {
     } else {
       let newRes = this.state.isChecked.map((el, index) => {
         if (!el) {
+          return ""
+        } else if (this.props.role !== "药不然" && this.props.role !== "老朝奉" && this.props.protectedZodiac === index) {
+          errMsg = "兽首已被隐藏，无法查验";
           return ""
         } else if (this.props.role === "药不然" || this.props.role === "老朝奉" || !this.props.tfChanged) {
           return this.props.zodiacGroup[index]
@@ -99,7 +109,7 @@ class EvalModal extends Component {
       console.log('zodiac eval result:',newRes)
       this.setState({
         showResult: newRes,
-        errMsg: "",
+        errorMsg: errMsg,
         evalConfirmed: true
       })
     }
@@ -108,7 +118,7 @@ class EvalModal extends Component {
   handleSelectNext = (index) => {
     console.log("handle select next", index)
     this.setState(() => {
-      let newIsNext = [false, false, false, false, false];
+      let newIsNext = new Array(this.props.roles.length-1).fill(false);
       newIsNext[index] = true
       return {
         isNext: newIsNext,
@@ -116,6 +126,25 @@ class EvalModal extends Component {
         nextIndex: index
       }
     })
+  }
+
+  handleProtect = (index) => {
+    console.log('handle protect', index)
+    this.setState(() => {
+      let newIsProtected = new Array(this.props.roles.length-1).fill(false);
+      newIsProtected[index] = true
+      return {
+        isProtected: newIsProtected,
+        protectZodiac: index
+      }
+    })
+  }
+
+  handleProtectConfirm = () => {
+    this.setState({
+      protectConfirmed: true
+    })
+    this.props.handleProtect(this.state.protectZodiac)
   }
 
   handleAttack = (index) => {
@@ -136,7 +165,7 @@ class EvalModal extends Component {
   handleNext = () => {
     if (Object.values(this.props.gameStates).indexOf("未鉴宝") >= 0 && this.state.nextIndex === -1) {
       this.setState({
-        errorMsg: "请选择下一位玩家进行鉴宝"
+        errMsg: "请选择下一位玩家进行鉴宝"
       })
     } else {
       // reset the state when close the modal
@@ -145,12 +174,15 @@ class EvalModal extends Component {
       this.setState(
         {
           isChecked: [false, false, false, false], // for zodiac
-          isSelected: [false, false, false, false, false], // for players to take action
-          isNext: [false, false, false, false, false],
+          isSelected: new Array(this.props.roles.length-1).fill(false), // for players to take action
+          isNext: new Array(this.props.roles.length-1).fill(false),
+          isProtected: new Array(this.props.roles.length-1).fill(false),
           showResult: ["","","",""],
           playerRes: null,
           evalConfirmed: false,
+          protectConfirmed: false,
           errorMsg: "",
+          errMsg: "",
           actionIndex: null,
           nextIndex: -1,
           actionConfirmed: false,
@@ -219,7 +251,7 @@ class EvalModal extends Component {
                   <div key={index} className={ ImgBgStyles } onClick={() => this.handleCheck(index)}>
                     <img src={zodiac}></img>
                     {
-                      this.state.evalConfirmed && this.state.isChecked[index] &&
+                      this.state.evalConfirmed && this.state.showResult[index] !== "" &&
                       <div className={this.state.showResult[index] ? styles.True : styles.False}>{this.state.showResult[index] ? "真" : "假"}</div>
                     }
                   </div>
@@ -250,7 +282,10 @@ class EvalModal extends Component {
                 return (
                   <div key={index} className={this.state.isSelected[index] ? styles.EvalImgSelected : styles.EvalNextImg} onClick={() => this.handleSelect(index)}>
                     <img src={el}></img>
-                    <div className={styles.PlayerIndex}>{actualIndex + 1}</div>
+                    <div
+                      className={this.props.roles[actualIndex] === "老朝奉" && this.props.role === "药不然" ? styles.PlayerIndexDisabled : styles.PlayerIndex}>
+                      {actualIndex + 1}
+                    </div>
                     {
                       this.props.role === "方震" && this.state.actionConfirmed &&
                       this.state.actionIndex === index &&
@@ -266,6 +301,31 @@ class EvalModal extends Component {
             {
               this.props.role === "方震" && canEval === 3 &&
               <div className={styles.DisabledMsg}>{canEval === 2 ? "您本轮技能失效，不能查验" : "您被药不然偷袭了，不能查验"}</div>
+            }
+          </div>
+        }
+
+        {
+          this.props.role === "郑国渠" &&
+          <div className={(this.state.protectConfirmed || canEval === 3) ? styles.GroupCardDisabled : styles.GroupCard} key={"card-4"}>
+            <h1>请选择1个兽首进行隐藏</h1>
+            <div className={styles.ImgSet} key={"cardDiv-4"}>
+            {
+              zodiacImg[this.props.curRound].map((zodiac, index) => {
+                let ImgBgStyles = this.state.isProtected[index] ? styles.EvalImgChecked : styles.EvalImg;
+
+                return (
+                  <div key={index} className={ ImgBgStyles } onClick={() => this.handleProtect(index)}>
+                    <img src={zodiac}></img>
+                  </div>
+                )
+              })
+            }
+            </div>
+            <button className={styles.Button} onClick={this.handleProtectConfirm} disabled={this.state.protectConfirmed}>确认</button>
+            {
+              canEval === 3 &&
+              <div className={styles.DisabledMsg}>"您被药不然偷袭了，不能查验"</div>
             }
           </div>
         }
@@ -303,6 +363,10 @@ class EvalModal extends Component {
                   </div>
                 )
               })
+            }
+            {
+              this.state.errMsg &&
+              <div className={styles.ErrorMsg}>{this.state.errMsg}</div>
             }
             </div>
           </div>

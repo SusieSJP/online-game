@@ -8,6 +8,7 @@ import {
     updateGameStates, setFirstToEval, startAttack, resetCanEval,
     setNextToEval, setTFChanged, setChatOrder, setEvalDone, startVote, setVoted, calVoteRes,
     newGame, calFinalRes, calRecRes, evalEnd, setChatDone, startReplay, setViewDone } from '../redux/action';
+
 import InfoBoard from './InfoBoard';
 import RoleModal from './RoleModal';
 import EvalModal from './EvalModal';
@@ -83,6 +84,7 @@ class GameRoom extends Component {
   }
 
   componentDidUpdate(prevProps) {
+    console.log('game room component update: ', this.props, this.state, prevProps)
     if (this.props.game.started && !prevProps.game.started) {
       // const startAudio = new Audio(game_start);
       this.startAudio.play();
@@ -249,6 +251,9 @@ class GameRoom extends Component {
     }
   }
 
+  handleProtect = (index) => {
+    if (index) { this.props.setProtect(index) }
+  }
   handleNext = (index, tfChanged) => {
     console.log('close evaluation');
     this.setState({ showEval: false })
@@ -341,8 +346,8 @@ class GameRoom extends Component {
     let host = Object.values(this.props.game.players).findIndex(el => el !== "");
     let items = [];
 
-    for (let i = 0; i < Math.floor(playerNum/2); i++) {
-      const secondIndex = i + Math.floor(playerNum/2);
+    for (let i = 0; i < Math.ceil(playerNum/2); i++) {
+      const secondIndex = i + Math.ceil(playerNum/2);
       let stateButtonStyle = {
         '已准备': styles.ButtonGreen,
         '未准备': styles.Button,
@@ -392,39 +397,43 @@ class GameRoom extends Component {
               </div>
             </div>
           </div>
-          <div className={styles.Player}>
-            {
-              host === secondIndex &&
-              <img className={styles.HostRight} src={hat}></img>
-            }
-            <div className={styles.SelfieRight}>
-              <img src={this.props.game.photos[secondIndex]} alt=""></img>
-              { this.props.game.gameStates[secondIndex] === "鉴宝中" && <img className={styles.Eval} src={check}></img>}
-              { this.props.game.gameStates[secondIndex] === "发言中" && <img className={styles.Eval} src={chat}></img>}
-            </div>
-            <div className={styles.GameInfoRight}>
-              <div className={stateButtonStyle[this.props.game.gameStates[secondIndex]]}>
-                {this.props.game.gameStates[secondIndex]}
+          {
+            secondIndex < playerNum &&
+            <div className={styles.Player}>
+              {
+                host === secondIndex &&
+                <img className={styles.HostRight} src={hat}></img>
+              }
+              <div className={styles.SelfieRight}>
+                <img src={this.props.game.photos[secondIndex]} alt=""></img>
+                { this.props.game.gameStates[secondIndex] === "鉴宝中" && <img className={styles.Eval} src={check}></img>}
+                { this.props.game.gameStates[secondIndex] === "发言中" && <img className={styles.Eval} src={chat}></img>}
               </div>
-              <div className={styles.NameTagRight}>
-                <div className={styles.Num}>{secondIndex+1}</div>
-                <div className={styles.TagInfoRight}>
-                  <p className={styles.Name}>{this.props.game.names[secondIndex]}</p>
-                  <div className={styles.Chips}>
-                  {
-                    this.props.game.chips[i] > 0 &&
-                    Array(this.props.game.chips[secondIndex]).fill(1).map((el, index) => {
-                      return (
-                        <img key={index} className={styles.Chip} src={chip}></img>
-                      )
-                    })
-                  }
-                  </div>
+              <div className={styles.GameInfoRight}>
+                <div className={stateButtonStyle[this.props.game.gameStates[secondIndex]]}>
+                  {this.props.game.gameStates[secondIndex]}
                 </div>
+                <div className={styles.NameTagRight}>
+                  <div className={styles.Num}>{secondIndex+1}</div>
+                  <div className={styles.TagInfoRight}>
+                    <p className={styles.Name}>{this.props.game.names[secondIndex]}</p>
+                    <div className={styles.Chips}>
+                    {
+                      this.props.game.chips[i] > 0 &&
+                      Array(this.props.game.chips[secondIndex]).fill(1).map((el, index) => {
+                        return (
+                          <img key={index} className={styles.Chip} src={chip}></img>
+                        )
+                      })
+                    }
+                    </div>
+                  </div>
 
+                </div>
               </div>
             </div>
-          </div>
+          }
+
         </div>
       )
     }
@@ -549,7 +558,9 @@ class GameRoom extends Component {
               photos={this.props.game.photos}
               handleAttack={this.handleAttack}
               handleNext={this.handleNext}
+              handleProtect={this.handleProtect}
               tfChanged={this.props.game.tfChanged}
+              protectedZodiac={this.props.game.protectedZodiac}
               gameStates={this.props.game.gameStates}
               loseEvalHuang={this.props.game.loseEvalHuang}
               loseEvalMuhu={this.props.game.loseEvalMuhu}
@@ -583,14 +594,17 @@ class GameRoom extends Component {
               curRound={this.props.game.curRound}
             />
           }
-          <RecModal
-            showRec={this.state.showRecgonize}
-            // showRec={true}
-            closeRec={this.handleCloseRec}
-            roles={this.props.room.roles}
-            playerIndex={this.props.room.playerIndex}
-            photos={this.props.game.photos}
-          />
+          {
+            this.props.room.roles[this.props.room.playerIndex] !== "郑国渠" &&
+              <RecModal
+                showRec={this.state.showRecgonize}
+                // showRec={true}
+                closeRec={this.handleCloseRec}
+                roles={this.props.room.roles}
+                playerIndex={this.props.room.playerIndex}
+                photos={this.props.game.photos}
+              />
+          }
           {
             this.props.game.finalRes &&
             <ResModal

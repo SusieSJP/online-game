@@ -8,6 +8,8 @@ import fangzhen from '../assets/fangzhen.svg';
 import yaoburan from '../assets/yaoburan.svg';
 import muhujianai from '../assets/muhujianai.svg';
 import xuyuan from '../assets/xuyuan.svg';
+import zhengguoqu from '../assets/zhengguoqu.svg';
+import jiyunfu from '../assets/jiyunfu.svg';
 
 
 // Make sure to bind modal to your appElement (http://reactcommunity.org/react-modal/accessibility/)
@@ -35,6 +37,12 @@ const RoleModal = (props) => {
       break;
     case '木户加奈':
       roleImg = muhujianai;
+      break;
+    case '郑国渠':
+      roleImg = zhengguoqu;
+      break;
+    case '姬云浮':
+      roleImg = jiyunfu;
       break;
     default:
       roleImg = "";

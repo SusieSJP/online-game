@@ -206,7 +206,8 @@ export const gameReducer = (state = gameInitState, action) => {
         recEnd: action.recEnd,
         doneViewModal: action.doneViewModal ? action.doneViewModal : gameInitState.doneViewModal,
         chipRes: action.chipRes ? action.chipRes : gameInitState.chipRes,
-        finalRes: action.finalRes
+        finalRes: action.finalRes,
+        protectedZodiac: action.protectedZodiac
       }
     default:
       return state
