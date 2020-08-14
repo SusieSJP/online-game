@@ -141,32 +141,32 @@ const gameInitState = {
     1: [],
     2: []
   },
-  chipRes: {
-    0: {
-      0: [0,0,0,0],
-      1: [0,0,0,0],
-      2: [0,0,0,0],
-      3: [0,0,0,0],
-      4: [0,0,0,0],
-      5: [0,0,0,0],
-    },
-    1: {
-      0: [0,0,0,0],
-      1: [0,0,0,0],
-      2: [0,0,0,0],
-      3: [0,0,0,0],
-      4: [0,0,0,0],
-      5: [0,0,0,0],
-    },
-    2: {
-      0: [0,0,0,0],
-      1: [0,0,0,0],
-      2: [0,0,0,0],
-      3: [0,0,0,0],
-      4: [0,0,0,0],
-      5: [0,0,0,0],
-    }
-  },
+  // chipRes: {
+  //   0: {
+  //     0: [0,0,0,0],
+  //     1: [0,0,0,0],
+  //     2: [0,0,0,0],
+  //     3: [0,0,0,0],
+  //     4: [0,0,0,0],
+  //     5: [0,0,0,0],
+  //   },
+  //   1: {
+  //     0: [0,0,0,0],
+  //     1: [0,0,0,0],
+  //     2: [0,0,0,0],
+  //     3: [0,0,0,0],
+  //     4: [0,0,0,0],
+  //     5: [0,0,0,0],
+  //   },
+  //   2: {
+  //     0: [0,0,0,0],
+  //     1: [0,0,0,0],
+  //     2: [0,0,0,0],
+  //     3: [0,0,0,0],
+  //     4: [0,0,0,0],
+  //     5: [0,0,0,0],
+  //   }
+  // },
   chipTotalRes: {
     0: [],
     1: [],
@@ -205,7 +205,7 @@ export const gameReducer = (state = gameInitState, action) => {
         recXuyuan: action.recXuyuan,
         recEnd: action.recEnd,
         doneViewModal: action.doneViewModal ? action.doneViewModal : gameInitState.doneViewModal,
-        chipRes: action.chipRes ? action.chipRes : gameInitState.chipRes,
+        chipRes: action.chipRes,
         finalRes: action.finalRes,
         protectedZodiac: action.protectedZodiac
       }
