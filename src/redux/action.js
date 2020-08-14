@@ -1,5 +1,5 @@
 import { database, auth, provider, storage } from '../firebase/firebase';
-import { zodiacGenerator, rolesGenerator } from '../utilities';
+import { zodiacGenerator, rolesGenerator, chipResGenerator } from '../utilities';
 
 
 /*
@@ -144,6 +144,7 @@ export const startCreateRoom = ({newId, newPwd, roles, roomType} = {}) => {
     let curUserPhotoURL = getState().users.photo;
 
     let dummyArr = new Array(roomType).fill(1);
+    const chipRes = chipResGenerator(roomType);
 
     let players = Object.fromEntries(dummyArr.map((el, index) => [index, ""]));
     let names = Object.fromEntries(dummyArr.map((el, index) => [index, "玩家"]));
@@ -173,7 +174,8 @@ export const startCreateRoom = ({newId, newPwd, roles, roomType} = {}) => {
         photos,
         newId,
         gameStates,
-        zodiac
+        zodiac,
+        chipRes
       })
 
     database.collection('rooms').doc(newId).set({
@@ -191,7 +193,8 @@ export const startCreateRoom = ({newId, newPwd, roles, roomType} = {}) => {
       tfChanged: false,
       loseEvalHuang,
       loseEvalMuhu,
-      curRound: 0
+      curRound: 0,
+      chipRes
     }).then(() => {
       console.log('finish add new room')
       dispatch(redirectTo(newId))
@@ -601,19 +604,17 @@ export const startVote = () => {
     const playerNum = getState().rooms.roles.length;
     const curRoundIndex = getState().game.curRound - 1;
 
-    let newGameStates = {}, newChipRes = {};
+    let newGameStates = {};
     // every player has done chat
     for (let i=0; i<playerNum; i++) {
       newGameStates[i] = "投票中"
     }
-    for (let j=0; j<playerNum; j++) {
-      newChipRes[j] = [0,0,0,0];
-    }
+
     docRef.update({
       gameStates: newGameStates,
       chatOrder: [],
       curChatIndex: null,
-      ['chipRes.'+ curRoundIndex]: newChipRes
+      // ['chipRes.'+ curRoundIndex]: newChipRes
     }).catch(error => console.log('error start voting, ', error))
 
   }
