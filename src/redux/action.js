@@ -431,6 +431,7 @@ export const resetViewDone  = () => {
 // }
 
 export const setFirstToEval = (nextRound) => {
+  console.log('set firsst to eval,', nextRound)
   return (dispatch, getState) => {
     const roomid = getState().rooms.room;
     console.log('set first to eval action:', roomid)
@@ -650,7 +651,14 @@ export const setVoted = () => {
       let chipTotalRes = [resArrArr[0][1], resArrArr[1][1], resArrArr[2][1], resArrArr[3][1]];
 
       resArrArr.sort((a, b) => b[1] - a[1]);
-      let votedZodiac = [resArrArr[0][0], resArrArr[1][0]];
+      // if only one animal is voted, the second one is the one next to it
+      let firstZodiac = resArrArr[0][0];
+      let secZodiac = resArrArr[1][0];
+      if (resArrArr[1][1] === 0) {
+        secZodiac = (firstZodiac+1) % 4;
+      }
+      // let votedZodiac = [resArrArr[0][0], resArrArr[1][0]];
+      let votedZodiac = [firstZodiac, secZodiac]
       console.log('voted zodiac: ', votedZodiac)
       let zodiacRes = [zodiac[curRoundIndex+1][votedZodiac[0]], zodiac[curRoundIndex+1][votedZodiac[1]]];
 
