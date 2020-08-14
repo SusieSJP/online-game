@@ -25,7 +25,18 @@ class RecModal extends Component {
     })
   }
 
+  handleClose = () => {
+    const recIndex = this.state.recIndex;
+    this.setState({
+      isSelected:[false, false, false, false, false],
+      recIndex: 0
+    })
+    this.props.closeRec(recIndex);
+  }
+
   render() {
+    console.log('props in rec modal: ', this.props, this.state)
+
     let recRole = "老朝奉";
     switch (this.props.roles[this.props.playerIndex]) {
       case '药不然':
@@ -63,7 +74,7 @@ class RecModal extends Component {
               })
             }
           </div>
-          <button className={styles.Button} onClick={() => this.props.closeRec(this.state.recIndex)}>确认并结束</button>
+          <button className={styles.Button} onClick={this.handleClose}>确认并结束</button>
 
 
       </Modal>

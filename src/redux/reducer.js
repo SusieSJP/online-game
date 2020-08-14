@@ -57,6 +57,7 @@ export const roomReducer = (state = roomInitState, action) => {
         zodiac: action.zodiac
       }
     case 'REPLAY':
+      console.log('replay to update the rooms state:', action.roles, action.zodiac)
       return {
         ...state,
         roles: action.roles,

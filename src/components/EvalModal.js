@@ -314,6 +314,7 @@ class EvalModal extends Component {
   }
 
   render() {
+    console.log('props received in EvalModal:', this.props, this.state)
     return (
         <Modal
           isOpen={this.props.showEval}

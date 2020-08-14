@@ -78,6 +78,8 @@ class VoteModal extends Component {
       3: [monkey, chicken, dog, pig]
     };
 
+    console.log('props in vote modal:', this.props, this.state)
+
     return (
         <Modal
           isOpen={this.props.showVote}

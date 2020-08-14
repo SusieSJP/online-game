@@ -21,11 +21,6 @@ import pig from '../assets/pig.svg';
 class InfoBoard extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      totalRound: this.props.curRound,
-      current: this.props.curRound-1,
-      isNext: true
-    }
   }
 
   render() {

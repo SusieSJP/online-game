@@ -72,7 +72,7 @@ const ResModal = (props) => {
            </div>
            <div className={styles.ImgGroup}>
               <div>好人阵营指认老朝奉 {Object.values(props.recLaochaofeng).reduce((acc, curr) => acc+curr) > 2 ? "成功" : "失败"}</div>
-              { Object.values(props.recLaochaofeng).reduce((acc, curr) => acc+curr) > 2  && <div className={styles.plusRes}>+1</div> }
+              { Object.values(props.recLaochaofeng).reduce((acc, curr) => acc+curr) > 2  && <div className={styles.PlusRes}>+1</div> }
            </div>
            <div className={styles.ImgGroup}>
             {

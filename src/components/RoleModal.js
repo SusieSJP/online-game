@@ -14,8 +14,10 @@ import xuyuan from '../assets/xuyuan.svg';
 // Modal.setAppElement('#gameRoom');
 
 const RoleModal = (props) => {
+  console.log('props received in RoleModal:', props)
   let roleImg;
-  switch (props.role) {
+  let role = props.roles[props.playerIndex];
+  switch (role) {
     case '药不然':
       roleImg = yaoburan;
       break;
@@ -47,13 +49,13 @@ const RoleModal = (props) => {
         contentLabel="Search Room"
       >
         <img src={roleImg} />
-        <div className={styles.Role}>{props.role}</div>
+        <div className={styles.Role}>{role}</div>
         {
-          props.role === "药不然" &&
+          role === "药不然" &&
           <div className={styles.Notes}>您的队友老朝奉为 {props.roles.findIndex(el => el === "老朝奉")+1} 号</div>
         }
         {
-          props.role === "老朝奉" &&
+          role === "老朝奉" &&
           <div className={styles.Notes}>您的队友药不然为 {props.roles.findIndex(el => el === "药不然")+1} 号</div>
         }
         <button className={styles.Button} onClick={props.closeModal}>确认</button>

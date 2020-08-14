@@ -533,7 +533,7 @@ class GameRoom extends Component {
           <RoleModal
             showModal={this.state.showModal}
             closeModal={this.handleCloseModal}
-            role={this.props.room.roles[this.props.room.playerIndex]}
+            playerIndex = {this.props.room.playerIndex}
             roles={this.props.room.roles}
           />
 

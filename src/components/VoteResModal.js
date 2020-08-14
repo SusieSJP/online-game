@@ -25,6 +25,8 @@ const VoteResModal = (props) => {
       3: [monkey, chicken, dog, pig]
     }
 
+    console.log('props in vote res modal:', props)
+
     return (
       <Modal
         isOpen={props.showRes}
