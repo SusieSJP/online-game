@@ -22,11 +22,9 @@ const roomInitState = {
   room: null,
   playerIndex: null,
   pwd: null,
-  roles: [],
   roomPwdPairs: {},
   availableRooms: {},
   // curRound: 0,
-  zodiac: {},
   redirectTo: null,
 }
 
@@ -53,23 +51,20 @@ export const roomReducer = (state = roomInitState, action) => {
         room: action.roomid,
         playerIndex: 0,
         pwd: action.pwd,
-        roles: action.roles,
-        zodiac: action.zodiac
       }
-    case 'REPLAY':
-      console.log('replay to update the rooms state:', action.roles, action.zodiac)
-      return {
-        ...state,
-        roles: action.roles,
-        zodiac: action.zodiac
-      }
+    // case 'REPLAY':
+    //   console.log('replay to update the rooms state:', action.roles, action.zodiac)
+    //   return {
+    //     ...state,
+    //     roles: action.roles,
+    //     zodiac: action.zodiac
+    //   }
     case 'LEAVE_ROOM':
       return {
         ...state,
         room: null,
         playerIndex: null,
         pwd: null,
-        roles: [],
       }
     case 'ENTER_ROOM':
       return {
@@ -77,8 +72,6 @@ export const roomReducer = (state = roomInitState, action) => {
         room: action.room,
         pwd: action.pwd,
         playerIndex: action.playerIndex,
-        roles: action.roles,
-        zodiac: action.zodiac
       }
     case 'GET_READY':
       return {
@@ -179,6 +172,8 @@ export const gameReducer = (state = gameInitState, action) => {
     case 'UPDATE_GAME_STATES':
       return {
         ...state,
+        roles: action.roles,
+        zodiac: action.zodiac,
         curRound: action.curRound,
         gameStates: action.gameStates,
         players: action.players,

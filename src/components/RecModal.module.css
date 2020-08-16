@@ -135,3 +135,12 @@
   border: none;
 }
 
+.ErrorMsg {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 16px;
+  text-align: center;
+  color: black;
+  padding: 10px;
+  background-color: whitesmoke;
+  margin-bottom: 15px;
+}

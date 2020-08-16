@@ -45,6 +45,9 @@ class RecModal extends Component {
       case '老朝奉':
         recRole = "许愿";
         break;
+      case '郑国渠':
+        recRole = "";
+        break;
       default:
         break;
     }
@@ -61,7 +64,10 @@ class RecModal extends Component {
         contentLabel="Res"
       >
           <h1 className={styles.Title}>请指认 {recRole}</h1>
-          <div className={styles.ResGroup}>
+          {
+            this.props.roles[this.props.playerIndex] === "郑国渠" ?
+            <div className={styles.ErrorMsg}>您是郑国渠，不需要指认</div> :
+            <div className={styles.ResGroup}>
             {
               otherPlayers.map((el, index) => {
                 let actualIndex = index < this.props.playerIndex ? index : index+1;
@@ -73,7 +79,9 @@ class RecModal extends Component {
                 )
               })
             }
-          </div>
+            </div>
+          }
+
           <button className={styles.Button} onClick={this.handleClose}>确认并结束</button>
 
 

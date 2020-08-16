@@ -100,7 +100,7 @@ class EvalModal extends Component {
         } else if (this.props.role !== "药不然" && this.props.role !== "老朝奉" && this.props.protectedZodiac === index) {
           errMsg = "兽首已被隐藏，无法查验";
           return ""
-        } else if (this.props.role === "药不然" || this.props.role === "老朝奉" || !this.props.tfChanged) {
+        } else if (this.props.role === "药不然" || this.props.role === "老朝奉" || this.props.role === "郑国渠" || !this.props.tfChanged) {
           return this.props.zodiacGroup[index]
         } else {
           return !this.props.zodiacGroup[index]
@@ -325,7 +325,7 @@ class EvalModal extends Component {
             <button className={styles.Button} onClick={this.handleProtectConfirm} disabled={this.state.protectConfirmed}>确认</button>
             {
               canEval === 3 &&
-              <div className={styles.DisabledMsg}>"您被药不然偷袭了，不能查验"</div>
+              <div className={styles.DisabledMsg}>您被药不然偷袭了，不能隐藏</div>
             }
           </div>
         }

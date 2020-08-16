@@ -7,7 +7,7 @@ import {
     startLeaveRoom, startGetReady, startNotReady, startGetStart, resetViewDone,
     updateGameStates, setFirstToEval, startAttack, resetCanEval,
     setNextToEval, setTFChanged, setChatOrder, setEvalDone, startVote, setVoted, calVoteRes,
-    newGame, calFinalRes, calRecRes, evalEnd, setChatDone, startReplay, setViewDone } from '../redux/action';
+    newGame, calFinalRes, calRecRes, evalEnd, setChatDone, startReplay, setViewDone, setProtect } from '../redux/action';
 
 import InfoBoard from './InfoBoard';
 import RoleModal from './RoleModal';
@@ -39,7 +39,7 @@ class GameRoom extends Component {
       roundStarting: false,
       nextRoundStartNum: null,
       chatStarting: false,
-      chatDone: false,
+      // chatDone: false,
       showInfo: false,
       voteStarting: false,
       showVote: false,
@@ -94,10 +94,10 @@ class GameRoom extends Component {
       }, 1500)
     }
 
-    if (this.props.room.roles.length > 0 &&
-        Object.values(prevProps.game.doneViewModal).reduce((acc, curr) => acc+curr, 0) < this.props.room.roles.length &&
-        Object.values(this.props.game.doneViewModal).reduce((acc, curr) => acc+curr, 0) === this.props.room.roles.length &&
-        Object.values(this.props.game.gameStates).filter(el => el === "未鉴宝").length === this.props.room.roles.length) {
+    if (this.props.game.roles && this.props.game.roles.length > 0 &&
+        Object.values(prevProps.game.doneViewModal).reduce((acc, curr) => acc+curr, 0) < this.props.game.roles.length &&
+        Object.values(this.props.game.doneViewModal).reduce((acc, curr) => acc+curr, 0) === this.props.game.roles.length &&
+        Object.values(this.props.game.gameStates).filter(el => el === "未鉴宝").length === this.props.game.roles.length) {
           // start the first round
           console.log('set first to eval, from playIndex: ', this.props.room.playerIndex);
           this.setState({ roundStarting: true });
@@ -114,10 +114,10 @@ class GameRoom extends Component {
           }, 1500)
     }
 
-    if (this.props.room.roles.length > 0 &&
-      Object.values(prevProps.game.doneViewModal).reduce((acc, curr) => acc+curr, 0) < this.props.room.roles.length &&
-      Object.values(this.props.game.doneViewModal).reduce((acc, curr) => acc+curr, 0) === this.props.room.roles.length &&
-      Object.values(this.props.game.gameStates).filter(el => el === "已投票").length === this.props.room.roles.length) {
+    if (this.props.game.roles && this.props.game.roles.length > 0 &&
+      Object.values(prevProps.game.doneViewModal).reduce((acc, curr) => acc+curr, 0) < this.props.game.roles.length &&
+      Object.values(this.props.game.doneViewModal).reduce((acc, curr) => acc+curr, 0) === this.props.game.roles.length &&
+      Object.values(this.props.game.gameStates).filter(el => el === "已投票").length === this.props.game.roles.length) {
         // all three round ended and players has closed the res modal
         this.setState({ finalVoteStarting: true });
         this.startAudio.play();
@@ -168,8 +168,8 @@ class GameRoom extends Component {
         }, 1000)
   }
 
-    if (prevProps.game.gameStates && prevProps.room.roles.length > 0 &&
-        Object.values(this.props.game.gameStates).filter(el => el === "已投票").length === this.props.room.roles.length &&
+    if (prevProps.game.gameStates && prevProps.game.roles && prevProps.game.roles.length > 0 &&
+        Object.values(this.props.game.gameStates).filter(el => el === "已投票").length === this.props.game.roles.length &&
         this.props.game.curRound > 0 && !prevProps.game.voted[this.props.game.curRound-1] &&
         this.props.room.playerIndex === Object.values(this.props.game.players).findIndex(el => el !== "")) {
           this.props.setVoted();
@@ -196,9 +196,9 @@ class GameRoom extends Component {
       this.setState({ showRecgonize: true })
     }
 
-    if (prevProps.game.gameStates && this.props.room.roles.length > 0 &&
-        Object.values(prevProps.game.gameStates).filter(el => el === "已指认").length < this.props.room.roles.length &&
-        Object.values(this.props.game.gameStates).filter(el => el === "已指认").length === this.props.room.roles.length) {
+    if (prevProps.game.gameStates && this.props.game.roles && this.props.game.roles.length > 0 &&
+        Object.values(prevProps.game.gameStates).filter(el => el === "已指认").length < this.props.game.roles.length &&
+        Object.values(this.props.game.gameStates).filter(el => el === "已指认").length === this.props.game.roles.length) {
           // console.log(this.props.game.recEnd, !this.props.game.recEnd, typeof this.props.game.recEnd, this.props.game.recEnd == null, this.props.game.recEnd == undefined);
           console.log('all players has done rec')
           const isHost = this.props.room.playerIndex === Object.values(this.props.game.players).findIndex(el => el !== "");
@@ -231,6 +231,9 @@ class GameRoom extends Component {
   }
 
   handleStart = () => {
+    this.setState({
+      isReady: false
+    })
     this.props.startGetStart();
   }
 
@@ -241,9 +244,9 @@ class GameRoom extends Component {
 
   handleAttack = (index) => {
     let actualIndex = index < this.props.room.playerIndex ? index : index+1;
-    if (this.props.room.roles[this.props.room.playerIndex] === "药不然") {
-      if (this.props.room.roles[actualIndex] === "方震") {
-        let involvedIndex = this.props.room.roles.findIndex(el => el === "许愿");
+    if (this.props.game.roles[this.props.room.playerIndex] === "药不然") {
+      if (this.props.game.roles[actualIndex] === "方震") {
+        let involvedIndex = this.props.game.roles.findIndex(el => el === "许愿");
         this.props.startAttack([actualIndex, involvedIndex], 2);
       } else {
         this.props.startAttack([actualIndex], 1);
@@ -276,7 +279,7 @@ class GameRoom extends Component {
   }
 
   handleChatDone = () => {
-    if (this.props.game.curChatIndex && this.props.game.curChatIndex === this.props.room.roles.length-1) {
+    if (this.props.game.curChatIndex && this.props.game.curChatIndex === this.props.game.roles.length-1) {
       // last one to complete chat
       this.setState({ voteStarting: true })
       this.startAudio.play();
@@ -287,9 +290,9 @@ class GameRoom extends Component {
       }, 1500)
 
     } else {
-      this.setState({
-        chatDone: true
-      })
+      // this.setState({
+      //   chatDone: true
+      // })
       this.props.setChatDone()
     }
   }
@@ -322,13 +325,13 @@ class GameRoom extends Component {
       showRecgonize: false
     });
     let recRes = false;
-    let curRole = this.props.room.roles[this.props.room.playerIndex];
+    let curRole = this.props.game.roles[this.props.room.playerIndex];
     if (curRole === "药不然") {
-      recRes = this.props.room.roles[recIndex] === "方震";
+      recRes = this.props.game.roles[recIndex] === "方震";
     } else if (curRole === "老朝奉") {
-      recRes = this.props.room.roles[recIndex] === "许愿"
+      recRes = this.props.game.roles[recIndex] === "许愿"
     } else {
-      recRes = this.props.room.roles[recIndex] === "老朝奉";
+      recRes = this.props.game.roles[recIndex] === "老朝奉";
     }
 
     this.props.calRecRes(recRes, curRole);
@@ -483,8 +486,8 @@ class GameRoom extends Component {
             }
           </div>
           {
-            this.props.room.roles.length > 0 &&
-            Object.values(this.props.game.gameStates).filter(el => el === "等待中").length === this.props.room.roles.length &&
+            this.props.game.roles.length > 0 &&
+            Object.values(this.props.game.gameStates).filter(el => el === "等待中").length === this.props.game.roles.length &&
             Object.values(this.props.game.players).findIndex(el => el !== "") === this.props.room.playerIndex &&
             <div className={styles.ButtonArea}>
               <button className={styles.StartButton}
@@ -543,7 +546,7 @@ class GameRoom extends Component {
             showModal={this.state.showModal}
             closeModal={this.handleCloseModal}
             playerIndex = {this.props.room.playerIndex}
-            roles={this.props.room.roles}
+            roles={this.props.game.roles}
           />
 
           {
@@ -552,8 +555,8 @@ class GameRoom extends Component {
               showEval={this.state.showEval}
               curRound={this.props.game.curRound}
               playerIndex = {this.props.room.playerIndex}
-              role={this.props.room.roles[this.props.room.playerIndex]}
-              zodiacGroup={this.props.room.zodiac[this.props.game.curRound]}
+              role={this.props.game.roles[this.props.room.playerIndex]}
+              zodiacGroup={this.props.game.zodiac[this.props.game.curRound]}
               canEval={this.props.game.canEval[this.props.room.playerIndex]}
               photos={this.props.game.photos}
               handleAttack={this.handleAttack}
@@ -564,7 +567,7 @@ class GameRoom extends Component {
               gameStates={this.props.game.gameStates}
               loseEvalHuang={this.props.game.loseEvalHuang}
               loseEvalMuhu={this.props.game.loseEvalMuhu}
-              roles={this.props.room.roles}
+              roles={this.props.game.roles}
            />
           }
 
@@ -594,17 +597,16 @@ class GameRoom extends Component {
               curRound={this.props.game.curRound}
             />
           }
-          {
-            this.props.room.roles[this.props.room.playerIndex] !== "郑国渠" &&
-              <RecModal
-                showRec={this.state.showRecgonize}
-                // showRec={true}
-                closeRec={this.handleCloseRec}
-                roles={this.props.room.roles}
-                playerIndex={this.props.room.playerIndex}
-                photos={this.props.game.photos}
-              />
-          }
+
+          <RecModal
+            showRec={this.state.showRecgonize}
+            // showRec={true}
+            closeRec={this.handleCloseRec}
+            roles={this.props.game.roles}
+            playerIndex={this.props.room.playerIndex}
+            photos={this.props.game.photos}
+          />
+
           {
             this.props.game.finalRes &&
             <ResModal
@@ -616,7 +618,7 @@ class GameRoom extends Component {
               recFangzhen={this.props.game.recFangzhen}
               recXuyuan={this.props.game.recXuyuan}
               recLaochaofeng={this.props.game.recLaochaofeng}
-              roles={this.props.room.roles}
+              roles={this.props.game.roles}
               photos={this.props.game.photos}
             />
           }
@@ -665,6 +667,7 @@ const mapDispatchToProps = (dispatch) => {
     setEvalDone: () => dispatch(setEvalDone()),
     setViewDone: () => dispatch(setViewDone()),
     resetViewDone: () => dispatch(resetViewDone()),
+    setProtect: (index) => dispatch(setProtect(index)),
   }
 }
 
