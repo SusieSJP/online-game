@@ -51,7 +51,6 @@ const RoleModal = (props) => {
     <div>
       <Modal
         isOpen={props.showModal}
-        onRequestClose={props.closeModal}
         className={styles.Modal}
         overlayClassName={styles.Overlay}
         contentLabel="Search Room"

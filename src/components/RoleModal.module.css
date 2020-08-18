@@ -49,7 +49,6 @@
 }
 
 .Button {
-  padding: 5px 10px;
   background-color: white;
   border: none;
   border-radius: 50px;
@@ -72,4 +71,30 @@
 .Button:active, .Button:focus {
   outline: none;
   border: none;
+}
+
+
+@media (max-width: 600px) {
+  .Modal {
+    height: 375px;
+    width: 250px;
+    border-radius: 25px;
+  }
+
+  .Modal > img {
+    width: 150px;
+    height: 150px;
+    border-radius: 75px;
+  }
+
+  .Role {
+    font-size: 30px;
+  }
+
+  .Button {
+    padding: 5px 10px;
+    font-size: 14px;
+    margin: 25px 0 0;
+  }
+
 }

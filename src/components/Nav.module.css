@@ -8,8 +8,9 @@
 .WidePadding {
   padding: 5%;
   justify-content: center;
-  font-size: 28px;
+  font-size: 3rem;
 }
+
 
 .NarrowPadding {
   padding: 2%;
@@ -18,6 +19,7 @@
   margin-bottom: 5%;
   font-size: 20px;
 }
+
 
 
 .Title {
@@ -34,7 +36,7 @@
   display: inline-block;
   background-color: white;
   border-radius: 50px;
-  padding: 2% 5%;
+  padding: 2% 0;
   font-size: 14px;
   text-align: center;
   width: 165px;
@@ -46,4 +48,37 @@
   font-family: 'Red Rose', cursive;
   font-size: 14px;
   margin-left: 4px;
+}
+
+
+/* mobile styles */
+@media (max-width: 600px) {
+  .WidePadding {
+    padding-top: 10%;
+    padding-bottom: 0;
+    font-size: 1.8rem;
+  }
+
+  .NarrowPadding {
+    padding: 2rem;
+    justify-content: space-evenly;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1.4rem;
+  }
+
+  .RoomInfo {
+    margin-top: 1rem;
+  }
+
+  .Subtitle {
+    font-size: 1.2rem;
+    width: 14rem;
+  }
+
+  .Subtitle > span {
+    font-size: 1.2rem;
+    margin-left: 2px;
+  }
+
 }

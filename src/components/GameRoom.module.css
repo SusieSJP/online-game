@@ -121,7 +121,7 @@
   background-color: white;
   color: black;
   text-align: end;
-  margin-left: 30px;
+  /* margin-left: 30px; */
   margin-top: 10px;
   display: flex;
   justify-content: flex-end;
@@ -131,11 +131,11 @@
 }
 
 .NameTagRight {
-  height: 50px;
+  height: 50%;
   background-color: white;
   color: black;
   text-align: end;
-  margin-right: 30px;
+  /* margin-right: 30px; */
   margin-top: 10px;
   display: flex;
   justify-content: flex-start;
@@ -162,7 +162,6 @@
 }
 
 .Name {
-  margin: 0 0 2px;
   font-family: 'Ma Shan Zheng', cursive;
   font-size: 20px;
 }
@@ -187,10 +186,10 @@
 .Button {
   background-color: white;
   border-radius: 50px;
-  padding: 3% 5%;
+  padding: 3% 6%;
   font-size: 14px;
   text-align: center;
-  width: 60px;
+  /* width: 60px; */
   margin-left: 4%;
   letter-spacing: 2px;
   font-family: 'Ma Shan Zheng', cursive;
@@ -203,7 +202,7 @@
   padding: 3% 5%;
   font-size: 14px;
   text-align: center;
-  width: 60px;
+  /* width: 60px; */
   margin-left: 4%;
   letter-spacing: 2px;
   font-family: 'Ma Shan Zheng', cursive;
@@ -217,7 +216,7 @@
   padding: 3% 5%;
   font-size: 14px;
   text-align: center;
-  width: 60px;
+  /* width: 60px; */
   margin-left: 4%;
   letter-spacing: 2px;
   font-family: 'Ma Shan Zheng', cursive;
@@ -316,4 +315,283 @@
   font-weight: bolder;
   background-color: rgba(255,255,255, 0.2);
   padding: 15px 30px;
+}
+
+
+@media (max-width: 900px) {
+  .InfoButton {
+    position: fixed;
+    top: 10%;
+    left: 10%;
+    width: 20px;
+  }
+
+  .Row {
+    width: 100%;
+  }
+
+  .Player {
+    width: 40%;
+    height: 130px;
+    margin-bottom: 10%;
+  }
+
+  .HostLeft {
+    position: absolute;
+    top: -25px;
+    left: 20px;
+    width: 40px;
+    z-index: 1;
+  }
+
+  .HostRight {
+    position: absolute;
+    top: -25px;
+    right: 20px;
+    width: 40px;
+    z-index: 1;
+  }
+
+  .SelfieLeft {
+    height: 120px;
+    width: 120px;
+  }
+
+  .SelfieRight {
+    height: 120px;
+    width: 120px;
+  }
+
+  .GameInfoLeft {
+    height: 100px;
+    margin-left: 45px; /* the selfie radius */
+    margin-bottom: 10px;
+  }
+
+  .GameInfoRight {
+    height: 100px;
+    margin-right: 45px; /* the selfie radius */
+    margin-bottom: 10px;
+  }
+
+  .NameTagLeft {
+    margin-top: 8px;
+    padding-right: 10px;
+  }
+
+  .NameTagRight {
+    margin-top: 8px;
+    padding-left: 10px;
+  }
+
+  .TagInfoLeft {
+    margin-right: 10px;
+  }
+
+  .TagInfoRight {
+    margin-left: 10px;
+  }
+
+  .Name {
+    font-size: 1.6rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .Num {
+    font-size: 4rem;
+  }
+
+  .Chip {
+    height: 16px;
+    width: 16px;
+    /* background-color: green; */
+    margin: 0 1px;
+  }
+
+  .Button {
+    font-size: 1.1rem;
+  }
+
+  .ButtonGreen {
+    font-size: 1.1rem;
+  }
+
+
+  .ButtonGrey {
+    font-size: 1.1rem;
+  }
+
+  .Hidden {
+    display: none;
+  }
+
+  .ButtonReady {
+    border: solid 2px white;
+    padding: 1.5% 3%;
+    font-size: 1.4rem;
+    font-weight: bold;
+  }
+
+  .ButtonNoReady {
+    border: solid 2px white;
+    padding: 1.5% 3%;
+    font-size: 1.4rem;
+    font-weight: bold;
+  }
+
+  .StartButton {
+    border: solid 2px white;
+    padding: 1.5% 3%;
+    font-size: 1.4rem;
+    font-weight: bold;
+  }
+
+  .LoadingText {
+    font-size: 2.4rem;
+  }
+}
+
+
+
+@media (max-width: 600px) {
+  .InfoButton {
+    position: fixed;
+    top: 10%;
+    left: 10%;
+    width: 20px;
+  }
+
+  .Row {
+    width: 85%;
+  }
+
+  .Player {
+    width: 45%;
+    height: 100px;
+    margin-bottom: 10%;
+  }
+
+  .HostLeft {
+    position: absolute;
+    top: -25px;
+    left: 20px;
+    width: 40px;
+    z-index: 1;
+  }
+
+  .HostRight {
+    position: absolute;
+    top: -25px;
+    right: 20px;
+    width: 40px;
+    z-index: 1;
+  }
+
+  .SelfieLeft {
+    height: 80px;
+    width: 80px;
+  }
+
+  .SelfieRight {
+    height: 80px;
+    width: 80px;
+  }
+
+  .GameInfoLeft {
+    height: 75px;
+    margin-left: 45px; /* the selfie radius */
+    margin-bottom: 10px;
+  }
+
+  .GameInfoRight {
+    height: 75px;
+    margin-right: 45px; /* the selfie radius */
+    margin-bottom: 10px;
+  }
+
+  .NameTagLeft {
+    margin-top: 5px;
+    padding-right: 5px;
+  }
+
+  .NameTagRight {
+    margin-top: 5px;
+    padding-left: 5px;
+  }
+
+  .TagInfoLeft {
+    margin-right: 5px;
+  }
+
+  .TagInfoRight {
+    margin-left: 5px;
+  }
+
+  .Name {
+    font-size: 1.2rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .Num {
+    font-size: 3rem;
+  }
+
+  .Chip {
+    height: 10px;
+    width: 10px;
+    /* background-color: green; */
+    margin: 0 1px;
+  }
+
+  .Button {
+    font-size: 0.9rem;
+  }
+
+  .ButtonGreen {
+    font-size: 0.9rem;
+  }
+
+
+  .ButtonGrey {
+    font-size: 0.9rem;
+  }
+
+  .ButtonArea {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+    width: 100%;
+  }
+
+  .Hidden {
+    display: none;
+  }
+
+  .ButtonReady {
+    border: solid 2px white;
+    padding: 1.5% 3%;
+    font-size: 1.4rem;
+    font-weight: bold;
+  }
+
+  .ButtonNoReady {
+    border: solid 2px white;
+    padding: 1.5% 3%;
+    font-size: 1.4rem;
+    font-weight: bold;
+  }
+
+  .StartButton {
+    border: solid 2px white;
+    padding: 1.5% 3%;
+    font-size: 1.4rem;
+    font-weight: bold;
+  }
+
+  .LoadingText {
+    font-size: 2.4rem;
+  }
 }

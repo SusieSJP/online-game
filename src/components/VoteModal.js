@@ -83,7 +83,6 @@ class VoteModal extends Component {
     return (
         <Modal
           isOpen={this.props.showVote}
-          onRequestClose={this.props.closeVote}
           className={styles.Modal}
           overlayClassName={styles.Overlay}
           contentLabel="Vote"

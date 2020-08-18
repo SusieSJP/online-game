@@ -88,10 +88,7 @@ const ResModal = (props) => {
            </div>
 
           </div>
-
-
       </Modal>
-
     )
   }
 
