@@ -108,3 +108,49 @@
   right: -15px;
   color: darkred;
 }
+
+@media (max-width: 600px) {
+  .Modal {
+    padding: 20px 0;
+    width: 300px;
+    border-radius: 20px;
+  }
+
+  .Title {
+    font-size: 24px;
+  }
+
+  .Unknown {
+    width: 65px;
+    height: 65px;
+  }
+
+  .EvalTrue {
+    width: 65px;
+    height: 65px;
+  }
+
+
+  .EvalFalse {
+    width: 65px;
+    height: 65px;
+  }
+
+  .Unknown > img, .EvalTrue > img, .EvalFalse > img {
+    width: 65px;
+    height: 65px;
+  }
+
+  .True {
+    font-size: large;
+    top: -10px;
+    right: -10px;
+  }
+
+
+  .False {
+    font-size: large;
+    top: -10px;
+    right: -10px;
+  }
+}

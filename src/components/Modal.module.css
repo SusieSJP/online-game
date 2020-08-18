@@ -81,3 +81,24 @@
   outline: none;
   border: none;
 }
+
+@media (max-width: 600px) {
+  .Modal {
+    padding: 20px 30px;
+    font-size: 16px;
+  }
+
+  label {
+    width: 70px;
+  }
+
+  .Notes {
+    font-size: 12px;
+    font-family: 'Ma Shan Zheng', cursive;
+  }
+
+  .Button {
+    font-size: 16px;
+  }
+
+}

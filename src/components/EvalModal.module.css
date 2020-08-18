@@ -428,3 +428,291 @@
   border: solid 2px grey;
   color: white;
 }
+
+
+@media (max-width: 900px) {
+  .Modal {
+    padding: 20px;
+  }
+
+  .Title {
+    font-size: 28px;
+  }
+
+  .DisabledMsg {
+    font-size: 28px;
+  }
+
+  .ErrorMsg {
+    font-size: 16px;
+  }
+
+  .GroupCard > h1, .GroupCardDisabled > h1 {
+    font-size: 20px;
+  }
+
+  .Option {
+    font-size: 14px;
+  }
+
+
+  /* for zodiac animals */
+  .EvalImg {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background-color: transparent;
+    border: solid 2px lightgray;
+    margin: 10px;
+    position: relative;
+  }
+
+  .EvalImg > img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+  }
+
+  .EvalImg > img:hover {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+  }
+
+  .EvalImgChecked {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background-color: lightgray;
+    border: solid 2px lightgray;
+    margin: 10px;
+    position: relative
+  }
+
+  .EvalImgChecked > img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+  }
+
+  /* for selecting players */
+
+  .EvalNextImg {
+    width: 85px;
+    height: 85px;
+    margin: 5px 10px;
+  }
+
+  .EvalNextImg > img {
+    width: 85px;
+    height: 85px;
+  }
+
+  .EvalImgSelected {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+  }
+
+  .EvalImgSelected > img, .EvalImgDisabled > img {
+    width: 85px;
+    height:85px;
+  }
+
+  .EvalImgDisabled {
+    width: 85px;
+    height: 85px;
+  }
+
+  .EvalTrue {
+    width: 85px;
+    height: 85px;
+  }
+
+
+  .EvalFalse {
+    width: 85px;
+    height: 85px;
+  }
+
+  .EvalTrue > img, .EvalFalse > img {
+    width: 85px;
+    height: 85px;
+  }
+
+  .PlayerIndex {
+    width: 85px;
+    height: 85px;
+  }
+
+  .PlayerIndexDisabled {
+    width: 85px;
+    height: 85px;
+  }
+
+  .True {
+    font-size: large;
+  }
+
+
+  .False {
+    font-size: large;
+  }
+
+
+  .Button {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .Modal {
+    padding: 10px;
+  }
+
+  .Title {
+    font-size: 20px;
+    margin: 10px 0;
+  }
+
+  .DisabledMsg {
+    font-size: 16px;
+  }
+
+  .ErrorMsg {
+    font-size: 12px;
+    padding: 5px;
+  }
+
+  .GroupCard, .GroupCardDisabled {
+    margin: 10px 0;
+  }
+
+  .GroupCard > h1, .GroupCardDisabled > h1 {
+    font-size: 16px;
+  }
+
+
+  .ImgSet {
+    margin: 10px 0;
+  }
+
+  .Option {
+    font-size: 14px;
+    padding: 0 5px;
+  }
+
+
+  /* for zodiac animals */
+  .EvalImg {
+    width: 50px;
+    height: 50px;
+    border: solid 1px lightgray;
+  }
+
+  .EvalImg > img {
+    width: 65px;
+    height: 65px;
+  }
+
+  .EvalImgChecked {
+    width: 50px;
+    height: 50px;
+  }
+
+  .EvalImgChecked > img {
+    width: 50px;
+    height: 50px;
+  }
+
+  /* for selecting players */
+
+  .EvalNextImg {
+    width: 50px;
+    height: 50px;
+    margin: 5px;
+  }
+
+  .EvalNextImg > img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .EvalImgSelected {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
+
+  .EvalImgSelected > img, .EvalImgDisabled > img {
+    width: 60px;
+    height: 60px;
+    margin: 5px;
+    border: 2px solid #d3d3d3;
+  }
+
+  .EvalImgDisabled {
+    width: 50px;
+    height: 50px;
+  }
+
+  .EvalTrue {
+    width: 50px;
+    height: 50px;
+  }
+
+
+  .EvalFalse {
+    width: 50px;
+    height: 50px;
+  }
+
+  .EvalTrue > img, .EvalFalse > img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .PlayerIndex {
+    width: 50px;
+    height: 50px;
+    font-size: 25px;
+  }
+
+  .PlayerIndexDisabled {
+    width: 50px;
+    height: 50px;
+    font-size: 25px;
+  }
+
+  .True {
+    font-size: medium;
+    top: -10px;
+    right: -10px;
+  }
+
+
+  .False {
+    font-size: medium;
+    top: -10px;
+    right: -10px;
+  }
+
+
+  .Button {
+    font-size: 12px;
+    margin: 3px 0 10px;
+    padding: 6px 15px;
+  }
+}

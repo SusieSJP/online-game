@@ -111,6 +111,61 @@
   border: none;
 }
 
+@media (max-width: 600px) {
+  .Modal {
+    padding: 40px 20px;
+    width: 300px;
+    height: 200px;
+    border-radius: 20px;
+  }
+
+  .ImgCounter {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+  }
+
+  .CounterGroup {
+    width: 25%;
+    font-size: 16px;
+  }
+
+  .CounterGroup > img {
+    width: 65px;
+  }
+
+  .Counter {
+    margin: 5px 0;
+  }
+
+  .Counter > img {
+    width: 15px;
+  }
+
+  .Counter > img:active {
+    width: 15px;
+  }
+
+
+  .Chips {
+    font-size: 14px;
+  }
+
+  .Chip {
+    height: 15px;
+    width: 15px;
+    margin-left: 5px;
+  }
+
+
+  .Button {
+    font-size: 14px;
+    padding: 5px 12px;
+    margin: 0;
+  }
+}
+
 
 
 
