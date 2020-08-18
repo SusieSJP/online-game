@@ -144,3 +144,53 @@
   background-color: whitesmoke;
   margin-bottom: 15px;
 }
+
+@media (max-width: 600px) {
+  .Modal {
+    padding: 20px;
+    border-radius: 20px;
+  }
+
+  .Title {
+    font-size: 24px;
+  }
+
+  .EvalNextImg {
+    width: 60px;
+    height: 60px;
+    margin: 5px;
+  }
+
+  .EvalNextImg > img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .EvalImgSelected {
+    width: 70px;
+    height: 70px;
+  }
+
+  .EvalImgSelected > img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .PlayerIndex {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+  }
+
+  .Button {
+    font-size: 12px;
+    margin: 15px 0;
+    padding: 5px 12px;
+    border: solid 2px grey;
+  }
+
+  .ErrorMsg {
+    font-size: 12px;
+  }
+}

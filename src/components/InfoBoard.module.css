@@ -26,12 +26,12 @@
   background-color: rgba(0,0,0,0.7);
 }
 
-.Container > h1 {
+/* .Container > h1 {
   color: Black;
   font-family: 'Ma Shan Zheng', cursive;
   font-size: 24px;
   letter-spacing: 1px;
-}
+} */
 
 .InfoGroup {
   width: 90%;
@@ -253,7 +253,7 @@ tbody tr:hover {
 }
 
 
-
+/*
 
 
 .ButtonNext {
@@ -274,40 +274,6 @@ tbody tr:hover {
   padding-right: 12px;
   outline: none;
 }
-/*
-.ButtonPrev {
-  position: absolute;
-  z-index: 2;
-  top: 0;
-  height: 100%;
-  display: block;
-  background-color: rgba(0, 0, 0, 0.1);
-  border: 0;
-  padding: 0 5px;
-  width: 10%;
-  overflow: hidden;
-  -webkit-transition: background-color 300ms ease;
-  transition: background-color 300ms ease;
-  cursor: pointer;
-  right: 0;
-  padding-right: 12px;
-  outline: none;
-}
-
-.ButtonPrev > span {
-  display: inline-block;
-  width: 15px;
-  height: 15px;
-  position: relative;
-  box-sizing: border-box;
-  opacity: 0.65;
-  border-bottom: 4px solid white;
-  border-left: 4px solid white;
-  -webkit-transition: opacity 300ms ease;
-  transition: opacity 300ms ease;
-  -webkit-transform: rotate(45deg);
-          transform: rotate(45deg);
-} */
 
 .ButtonNext > span {
   display: inline-block;
@@ -331,111 +297,6 @@ tbody tr:hover {
 
 .ButtonPrev:hover > span, .ButtonNext:hover > span {
   opacity: 0.95
-}
-
-.Leave {
-  -webkit-transform: translateX(0);
-          transform: translateX(0);
-}
-
-.EnterActive.EnterNext, .EnterActive.EnterPrev {
-  -webkit-transform: translateX(0);
-          transform: translateX(0);
-  -webkit-transition: -webkit-transform 500ms linear;
-  transition: -webkit-transform 500ms linear;
-  transition: transform 500ms linear;
-  transition: transform 500ms linear, -webkit-transform 500ms linear;
-}
-
-.EnterNext {
-  -webkit-transform: translateX(100%);
-          transform: translateX(100%);
-}
-
-.EnterPrev {
-  -webkit-transform: translateX(-100%);
-          transform: translateX(-100%);
-  -webkit-transition: -webkit-transform 500ms linear;
-  transition: -webkit-transform 500ms linear;
-  transition: transform 500ms linear;
-  transition: transform 500ms linear, -webkit-transform 500ms linear;
-}
-
-.LeaveActivePrev {
-  -webkit-transform: translateX(100%);
-          transform: translateX(100%);
-  -webkit-transition: -webkit-transform 500ms linear;
-  transition: -webkit-transform 500ms linear;
-  transition: transform 500ms linear;
-  transition: transform 500ms linear, -webkit-transform 500ms linear;
-}
-
-.LeaveActiveNext {
-  -webkit-transform: translateX(-100%);
-          transform: translateX(-100%);
-  -webkit-transition: -webkit-transform 500ms linear;
-  transition: -webkit-transform 500ms linear;
-  transition: transform 500ms linear;
-  transition: transform 500ms linear, -webkit-transform 500ms linear;
-}
-
-.Leave.LeaveActiveNext {
-  -webkit-transform: translateX(100%);
-  transform: translateX(100%);
-  -webkit-transition: -webkit-transform 500ms linear;
-  transition: -webkit-transform 500ms linear;
-  transition: transform 500ms linear;
-  transition: transform 500ms linear, -webkit-transform 500ms linear;
-}
-
-.Goto {
-  position: absolute;
-  z-index: 2;
-  bottom: 10px;
-  width: 50%;
-  left: 50%;
-  -webkit-transform: translateX(-50%);
-          transform: translateX(-50%);
-}
-
-.Goto > ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: -webkit-box;
-  display: flex;
-  -webkit-box-pack: center;
-          justify-content: center;
-  height: 3px;
-}
-
-.Goto ul li {
-  width: 15%;
-  box-sizing: border-box;
-  height: inherit;
-  position: relative;
-}
-
-.Goto ul li:not(:last-of-type) {
-  margin-right: 5%;
-}
-
-.Goto ul li button {
-  border: none;
-  outline: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-  background-color: rgba(255, 255, 255, 0.5);
-  width: 100%;
-  height: 100%;
-  cursor: pointer;
-  -webkit-transition: background-color 300ms ease;
-  transition: background-color 300ms ease;
-}
-
-.Gotoul li button.active {
-  background-color: rgba(255, 255, 255, 0.95);
 }
 
 .Button {
@@ -462,4 +323,120 @@ tbody tr:hover {
 .Button:active, .Button:focus {
   outline: none;
   border: none;
+} */
+
+@media (max-width: 900px) {
+  .Container {
+    width: 90vw;
+  }
+}
+
+
+@media (max-width: 600px) {
+  .Container {
+    width: 90vw;
+  }
+
+  .InfoGroup {
+    margin: 20px;
+  }
+
+  .InfoGroup > h1 {
+    font-size: 18px;
+  }
+
+  .InfoCard {
+    margin: 5px;
+  }
+
+  .InfoCard > h1 {
+    font-size: 14px;
+  }
+
+  .PlayerPhoto {
+    width: 40px;
+    margin: 5px;
+  }
+
+  .Img {
+    width: 40px;
+    height: 40px;
+    border: none;
+  }
+
+  .PlayerIndex {
+    font-size: 16px;
+  }
+
+  .EvalImg {
+    width: 70px;
+    height: 70px;
+  }
+
+
+  .EvalImg > img, .EvalImgChecked > img, .EvalFalse > img, .EvalTrue > img {
+    width: 70px;
+    height: 70px;
+  }
+
+
+  .EvalImgChecked {
+    width: 70px;
+    height: 70px;
+  }
+
+
+  .EvalTrue {
+    width: 70px;
+    height: 70px;
+  }
+
+
+  .EvalFalse {
+    width: 70px;
+    height: 70px;
+  }
+
+
+  .True {
+    font-size: medium;
+    top: -10px;
+    right: -10px;
+  }
+
+
+  .False {
+    font-size: medium;
+    top: -10px;
+    right: -10px;
+  }
+
+  th, td {
+    width: 60px;
+  }
+
+  th > img {
+    width: 40px;
+    height: 40px;
+  }
+
+  td > img {
+    width: 30px;
+    height: 30px;
+    margin: 5px 5px 5px 0;
+  }
+
+  td {
+    font-size: 14px;
+  }
+
+
+  tbody {
+    border-bottom: none;
+  }
+
+  .Chip {
+    height: 10px;
+    width: 10px;
+  }
 }

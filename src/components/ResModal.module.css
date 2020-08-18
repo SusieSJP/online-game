@@ -81,7 +81,7 @@
   justify-content: center;
   margin-bottom: 3px;
 }
-
+/*
 .Imgs {
   display: flex;
   align-items: center;
@@ -93,7 +93,7 @@
   height: 100px;
   border-radius: 50%;
   margin-bottom: 15px;
-}
+} */
 
 .PlusRes {
   color: green;
@@ -199,4 +199,138 @@
   font-size: 20px;
   font-family: 'Red Rose', cursive;
   font-weight: bolder;
+}
+
+@media (max-width: 900px) {
+  .Modal {
+    padding: 0;
+    border-radius: 20px;
+  }
+
+  .InfoCard {
+    margin: 20px;
+    padding: 10px;
+  }
+
+  .PlusRes {
+    font-size: 24px;
+  }
+
+  .TransRes {
+    font-size: 24px;
+  }
+
+
+  .EvalTrue {
+    width: 70px;
+    height: 70px;
+    margin: 5px;
+  }
+
+
+  .EvalFalse {
+    width: 70px;
+    height: 70px;
+    margin: 5px;
+  }
+
+  .Unknown > img, .EvalTrue > img, .EvalFalse > img {
+    width: 70px;
+    height: 70px;
+  }
+
+  .RoleName {
+    font-size: 14px;
+  }
+
+  .RoleName > span {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .Modal {
+    padding: 0;
+    border-radius: 20px;
+    width: 365px;
+  }
+
+  .Title {
+    font-size: 24px;
+    margin: 30px 0 10px;
+  }
+
+  .PlusRes {
+    font-size: 24px;
+  }
+
+  .TransRes {
+    font-size: 24px;
+  }
+
+  .InfoCard > h1 {
+    font-size: 16px;
+    margin: 10px 0;
+  }
+
+  .ImgGroup {
+    font-size: 14px;
+    margin: 5px 2px;
+    flex-wrap: wrap;
+  }
+
+  .ZodiacRes {
+    margin: 3px;
+    padding: 10px 2px;
+  }
+
+  .EvalTrue {
+    width: 40px;
+    height: 40px;
+    margin: 2px;
+  }
+
+
+  .EvalFalse {
+    width: 40px;
+    height: 40px;
+    margin: 2px;
+  }
+
+  .Unknown > img, .EvalTrue > img, .EvalFalse > img {
+    width: 40px;
+    height: 40px;
+  }
+
+
+  .True {
+    font-size: medium;
+    top: -10px;
+    right: -5px;
+  }
+
+
+  .False {
+    font-size: medium;
+    top: -10px;
+    right: -5px;
+  }
+
+
+  .RoleName {
+    font-size: 12px;
+  }
+
+  .RoleName > span {
+    font-size: 14px;
+  }
+
+
+  .PlusRes {
+    font-size: 18px;
+  }
+
+  .TransRes {
+    font-size: 18px;
+  }
 }
