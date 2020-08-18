@@ -705,7 +705,7 @@ export const evalEnd = () => {
   }
 }
 
-export const calRecRes = (recRes, curRole) => {
+export const calRecRes = (recRes, recIndex, curRole) => {
   return (dispatch, getState) => {
     const roomid = getState().rooms.room;
     const docRef = database.collection('rooms').doc(roomid);
@@ -721,15 +721,10 @@ export const calRecRes = (recRes, curRole) => {
           ['gameStates.'+playerIndex]: "已指认",
           recFangzhen: recRes
         })
-    } else if (curRole === "许愿"){
-      docRef.update({
-        ['gameStates.'+playerIndex]: "已指认",
-        ['recLaochaofeng.' + curRole]: recRes ? 1.5 : 0
-      })
     } else {
       docRef.update({
         ['gameStates.'+playerIndex]: "已指认",
-        ['recLaochaofeng.' + curRole]: recRes ? 1 : 0
+        ['recLaochaofeng.' + curRole]: recIndex
       })
     }
     }
@@ -744,23 +739,57 @@ export const calFinalRes = () => {
     let recXuyuan = getState().game.recXuyuan;
     let recLaochaofeng = getState().game.recLaochaofeng;
     let score = getState().game.score;
+    let recLaochaofengRes;
+
     console.log('rec results and prev eval res: ', recFangzhen, recXuyuan, recLaochaofeng, score);
 
     if (!recFangzhen) { score += 1};
     if (!recXuyuan) { score += 2};
-    if (Object.values(recLaochaofeng).reduce((acc, curr) => acc+curr, 0) > 2) { score += 1};
+
+    const playerNum = getState().game.players.length;
+    const roles = getState().game.roles;
+    let recLaochaofengFreq = new Array(playerNum).fill(0).map((el, index) => {
+      return [index, el]
+    });
+
+    Object.keys(recLaochaofeng).forEach((key, index) => {
+      let voteIndex = recLaochaofeng[key];
+      recLaochaofengFreq[voteIndex][1] += 1
+    })
+
+    recLaochaofengFreq.sort((a, b) => b[1] - a[1]);
+    console.log('rec laochaofeng arr after sort: ',recLaochaofengFreq);
+
+    let firstVote = recLaochaofengFreq[0][1];
+    let secondVote = recLaochaofengFreq[1][1];
+    if (firstVote === secondVote) {
+      if (roles[recLaochaofeng["许愿"]] === "老朝奉") {
+        score += 1;
+        recLaochaofengRes = true;
+      } else {
+        recLaochaofengRes = false;
+      }
+    } else if (roles[recLaochaofengFreq[0][0]] === "老朝奉") {
+      score += 1;
+      recLaochaofengRes = true;
+    } else {
+      recLaochaofengRes = false;
+    }
+    // if (Object.values(recLaochaofeng).reduce((acc, curr) => acc+curr, 0) > 2) { score += 1};
 
     console.log('cal final res:', {
       recFangzhen,
       recXuyuan,
       recLaochaofeng,
-      score
+      score,
+      recLaochaofengRes
     })
 
     docRef.update({
       score,
       finalRes: score >= 6 ? "好人阵营获胜" : "坏人阵营获胜",
-      recEnd: true
+      recEnd: true,
+      recLaochaofengRes
     })}
 }
 

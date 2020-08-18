@@ -261,7 +261,10 @@ class GameRoom extends Component {
     console.log('close evaluation');
     this.setState({ showEval: false })
     if (this.props.game.canEval[this.props.room.playerIndex] !== 1) {
-      this.props.resetCanEval()
+      // except jiyunfu, others reset can eval to 1 after current round
+      if (this.props.game.roles[this.props.room.playerIndex] !== "姬云浮") {
+        this.props.resetCanEval()
+      }
     }
     if (tfChanged) {
       this.props.setTFChanged()
@@ -334,7 +337,7 @@ class GameRoom extends Component {
       recRes = this.props.game.roles[recIndex] === "老朝奉";
     }
 
-    this.props.calRecRes(recRes, curRole);
+    this.props.calRecRes(recRes, recIndex, curRole);
   }
 
   handleCloseFinalRes = () => {
@@ -617,7 +620,8 @@ class GameRoom extends Component {
               votedZodiac={this.props.game.votedZodiac}
               recFangzhen={this.props.game.recFangzhen}
               recXuyuan={this.props.game.recXuyuan}
-              recLaochaofeng={this.props.game.recLaochaofeng}
+              // recLaochaofeng={this.props.game.recLaochaofeng}
+              recLaochaofengRes={this.props.game.recLaochaofengRes}
               roles={this.props.game.roles}
               photos={this.props.game.photos}
             />
@@ -660,7 +664,7 @@ const mapDispatchToProps = (dispatch) => {
     calVoteRes: (counter) => dispatch(calVoteRes(counter)),
     newGame: () => dispatch(newGame()),
     calFinalRes: () => dispatch(calFinalRes()),
-    calRecRes: (recRes, curRole) => dispatch(calRecRes(recRes, curRole)),
+    calRecRes: (recRes, recIndex, curRole) => dispatch(calRecRes(recRes, recIndex, curRole)),
     evalEnd: () => dispatch(evalEnd()),
     setChatDone: () => dispatch(setChatDone()),
     startReplay: () => dispatch(startReplay()),

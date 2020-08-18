@@ -100,7 +100,7 @@ class EvalModal extends Component {
         } else if (this.props.role !== "药不然" && this.props.role !== "老朝奉" && this.props.protectedZodiac === index) {
           errMsg = "兽首已被隐藏，无法查验";
           return ""
-        } else if (this.props.role === "药不然" || this.props.role === "老朝奉" || this.props.role === "郑国渠" || !this.props.tfChanged) {
+        } else if (this.props.role === "药不然" || this.props.role === "老朝奉" || this.props.role === "郑国渠" || this.props.role === "姬云浮" || !this.props.tfChanged) {
           return this.props.zodiacGroup[index]
         } else {
           return !this.props.zodiacGroup[index]
