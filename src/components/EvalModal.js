@@ -34,6 +34,7 @@ class EvalModal extends Component {
       protectZodiac: null,
       errorMsg: "",
       errMsg: "",
+      attackErrMsg: "",
       actionIndex: null,
       nextIndex: -1,
       actionConfirmed: false,
@@ -149,17 +150,24 @@ class EvalModal extends Component {
 
   handleAttack = (index) => {
     let res = true;
-    let actualIndex = index < this.props.playerIndex ? index : index+1;
-    let actionRole = this.props.roles[actualIndex];
-    console.log('role to attack: ', actionRole)
-    if (["药不然","老朝奉","郑国渠"].indexOf(actionRole) > -1) {
-      res = false
+    if (this.props.role === "方震" && !index) {
+      this.setState({
+        attackErrMsg: "请选择一位玩家查看身份阵营"
+      })
+    } else {
+      let actualIndex = index < this.props.playerIndex ? index : index+1;
+      let actionRole = this.props.roles[actualIndex];
+      console.log('role to attack: ', actionRole)
+      if (["药不然","老朝奉","郑国渠"].indexOf(actionRole) > -1) {
+        res = false
+      }
+      this.setState({
+        actionConfirmed: true,
+        playerRes: res,
+        attackErrMsg: ""
+      });
+      this.props.handleAttack(index);
     }
-    this.setState({
-      actionConfirmed: true,
-      playerRes: res
-    });
-    this.props.handleAttack(index);
   }
 
   handleNext = () => {
@@ -240,8 +248,10 @@ class EvalModal extends Component {
                 } else if (this.state.evalConfirmed) {
                   if (this.state.showResult[index]) {
                     ImgBgStyles = styles.EvalTrue;
-                  } else {
+                  } else if (this.state.showResult[index] === false) {
                     ImgBgStyles = styles.EvalFalse;
+                  } else {
+                    ImgBgStyles = styles.EvalImgChecked
                   }
                 } else {
                   ImgBgStyles = styles.EvalImgChecked
@@ -297,6 +307,10 @@ class EvalModal extends Component {
               })
             }
             </div>
+            {
+              this.state.errorMsg &&
+              <div className={styles.ErrorMsg}>{this.state.attackErrMsg}</div>
+            }
             <button className={styles.Button} onClick={() => this.handleAttack(this.state.actionIndex)} disabled={this.state.actionConfirmed}>确认</button>
             {
               this.props.role === "方震" && canEval === 3 &&

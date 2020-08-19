@@ -580,6 +580,7 @@
 @media (max-width: 600px) {
   .Modal {
     padding: 10px;
+    width: 350px;
   }
 
   .Title {
@@ -607,6 +608,7 @@
 
   .ImgSet {
     margin: 10px 0;
+    flex-wrap: wrap;
   }
 
   .Option {
