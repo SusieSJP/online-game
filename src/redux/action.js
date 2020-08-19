@@ -746,14 +746,17 @@ export const calFinalRes = () => {
     if (!recFangzhen) { score += 1};
     if (!recXuyuan) { score += 2};
 
-    const playerNum = getState().game.players.length;
+    const playerNum = Object.keys(getState().game.players).length;
     const roles = getState().game.roles;
+
     let recLaochaofengFreq = new Array(playerNum).fill(0).map((el, index) => {
-      return [index, el]
+      return [index, 0]
     });
 
+    console.log(recLaochaofengFreq);
     Object.keys(recLaochaofeng).forEach((key, index) => {
       let voteIndex = recLaochaofeng[key];
+      console.log(voteIndex);
       recLaochaofengFreq[voteIndex][1] += 1
     })
 

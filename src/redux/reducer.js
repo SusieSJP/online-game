@@ -108,7 +108,7 @@ const gameInitState = {
   score: 0,
   evalEnd: false,
   recEnd: false,
-  recLaochaofeng: [],
+  recLaochaofeng: null,
   recXuyuan: null,
   recFangzhen: null,
   finalRes: null,

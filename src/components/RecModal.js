@@ -59,7 +59,6 @@ class RecModal extends Component {
       <Modal
         isOpen={this.props.showRec}
         className={styles.Modal}
-        onRequestClose={this.props.closeRec}
         overlayClassName={styles.Overlay}
         contentLabel="Res"
       >
