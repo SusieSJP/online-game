@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { startCreateRoom, startLoadRoom } from '../redux/action';
+import { startCreateRoom, startLoadRoom, resetRedirectTo } from '../redux/action';
 
 import { rolesGenerator, roomIdGenerator } from '../utilities';
 import styles from './RoomSelect.module.css';
@@ -26,7 +26,10 @@ class RoomSelect extends Component {
       console.log('redirect!')
       this.props.history.push('/room/' + this.props.redirectTo)
     }
+  }
 
+  componentWillUnmount() {
+    this.props.resetRedirectTo()
   }
 
   render() {
@@ -101,7 +104,8 @@ const mapStateToProps = (state, props) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     startCreateRoom: (data) => dispatch(startCreateRoom(data)),
-    startLoadRoom: () => dispatch(startLoadRoom())
+    startLoadRoom: () => dispatch(startLoadRoom()),
+    resetRedirectTo: () => dispatch(resetRedirectTo())
   }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(RoomSelect);

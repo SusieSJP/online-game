@@ -30,9 +30,9 @@ export const startSetDefaultPhoto = () => {
   return (dispatch) => {
     storage.ref('defaultPhotos/photo1.svg')
       .getDownloadURL().then(url => {
+        console.log('default photo url:', url)
         dispatch(setDefaultPhoto(url))
     })
-
   }
 }
 
@@ -40,8 +40,7 @@ export const startLogin = () => {
   return (dispatch, getState) => {
     auth.signInWithPopup(provider).then((result) => {
       console.log('user login: ', result.user);
-
-      let docRef = database.collection('users').doc(result.user.email);
+      const docRef = database.collection('users').doc(result.user.email);
       docRef.get().then(doc => {
         if (doc.exists) {
           console.log('returnning user!');
@@ -62,8 +61,6 @@ export const startLogin = () => {
       })
   })};
 }
-
-
 
 /*
 ********* room actions ***********
@@ -133,6 +130,11 @@ export const createRoom = (roomid, pwd) => ({
 export const redirectTo = (redirectTo) => ({
   type: 'REDIRECT',
   redirectTo
+})
+
+export const resetRedirectTo = () => ({
+  type: 'RESET_REDIRECT',
+  redirectTo: null
 })
 
 export const startCreateRoom = ({newId, newPwd, roles, roomType} = {}) => {
@@ -440,11 +442,15 @@ export const setFirstToEval = (nextRound) => {
     const roomid = getState().rooms.room;
     console.log('set first to eval action:', roomid)
     const docRef = database.collection('rooms').doc(roomid);
+    const players = getState().game.players;
 
     let index;
     const playerNum = getState().game.roles.length;
     if (nextRound === 1) {
-      index = Math.floor(Math.random()*playerNum);
+      index = Math.floor(Math.random() * playerNum);
+      while (players[index] === "") {
+        index = Math.floor(Math.random() * playerNum);
+      }
       console.log('first to eval at round 1: ', index)
     } else {
       index = getState().game.evalOrder[nextRound-2][playerNum - 1];
@@ -492,6 +498,20 @@ export const setNextToEval = (index) => {
         }).catch((error) => { console.log('push evalorder failed:', error)})
   }
 }
+
+export const setEvalRes = (evalRes) => {
+  return (getState) => {
+    const roomid = getState().rooms.room;
+    const docRef = database.collection('rooms').doc(roomid);
+    const playerIndex = getState().room.playerIndex;
+    const curRoundIndex = getState().game.curRound -1;
+
+    docRef.update({
+      ['evalResLog.' + curRoundIndex + '.' + playerIndex]: evalRes,
+    })
+  }
+}
+
 
 export const setEvalDone = () => {
   return (dispatch, getState) => {

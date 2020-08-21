@@ -5,7 +5,7 @@ import styles from './GameRoom.module.css';
 
 import {
     startLeaveRoom, startGetReady, startNotReady, startGetStart, resetViewDone,
-    updateGameStates, setFirstToEval, startAttack, resetCanEval,
+    updateGameStates, setFirstToEval, startAttack, resetCanEval, setEvalRes,
     setNextToEval, setTFChanged, setChatOrder, setEvalDone, startVote, setVoted, calVoteRes,
     newGame, calFinalRes, calRecRes, evalEnd, setChatDone, startReplay, setViewDone, setProtect } from '../redux/action';
 
@@ -25,6 +25,21 @@ import hat from '../assets/hat.svg';
 import check from '../assets/checking.svg';
 import chat from '../assets/chat.svg';
 import info from '../assets/info.png';
+import offline from '../assets/offline.svg';
+
+import rat from '../assets/rat.svg';
+import cow from '../assets/cow.svg';
+import tiger from '../assets/tiger.svg';
+import rabbit from '../assets/rabbit1.svg';
+import dragon from '../assets/dragon.svg';
+import snake from '../assets/snake.svg';
+import horse from '../assets/horse.svg';
+import goat from '../assets/goat.svg';
+import monkey from '../assets/monkey.svg';
+import chicken from '../assets/chicken.svg';
+import dog from '../assets/dog.svg';
+import pig from '../assets/pig.svg';
+
 
 class GameRoom extends Component {
   constructor(props) {
@@ -377,7 +392,7 @@ class GameRoom extends Component {
               <img className={styles.HostLeft} src={hat}></img>
             }
             <div className={styles.SelfieLeft}>
-              <img src={this.props.game.photos[i]} alt=""></img>
+              <img src={this.props.game.photos[i] ? this.props.game.photos[i] : this.props.game.started ? offline : ""} alt=""></img>
               { this.props.game.gameStates[i] === "鉴宝中" && <img className={styles.Eval} src={check}></img>}
               { this.props.game.gameStates[i] === "发言中" && <img className={styles.Eval} src={chat}></img>}
             </div>
@@ -411,7 +426,7 @@ class GameRoom extends Component {
                 <img className={styles.HostRight} src={hat}></img>
               }
               <div className={styles.SelfieRight}>
-                <img src={this.props.game.photos[secondIndex]} alt=""></img>
+                <img src={this.props.game.photos[secondIndex] ? this.props.game.photos[secondIndex] : this.props.game.started ? offline : ""} alt=""></img>
                 { this.props.game.gameStates[secondIndex] === "鉴宝中" && <img className={styles.Eval} src={check}></img>}
                 { this.props.game.gameStates[secondIndex] === "发言中" && <img className={styles.Eval} src={chat}></img>}
               </div>
@@ -448,6 +463,11 @@ class GameRoom extends Component {
   }
 
   render() {
+    const zodiacImg = {
+      1: [rat, cow, tiger, rabbit],
+      2: [dragon, snake, horse, goat],
+      3: [monkey, chicken, dog, pig]
+    }
 
     return (
       this.state.isFetching ? <img className={styles.Loading} src={spinner}/> :
@@ -471,6 +491,57 @@ class GameRoom extends Component {
               handleCloseInfo={this.handleCloseInfo}
             />
           }
+          {
+            this.props.game.curRound > 0 &&
+            <div className={styles.Log}>
+              <div className={styles.InfoCard}>
+                <h1>第 {this.props.game.curRound} 轮鉴宝顺序</h1>
+                <div className={styles.Order}>
+                  {
+                    this.props.game.evalOrder[this.props.game.curRound-1].map((el, index) => {
+                      return (
+                        <div key={index} className={styles.PlayerPhoto}>
+                          <img src={this.props.game.photos[el]} alt="" className={styles.Img}></img>
+                          <div className={styles.PlayerIndex}>{el+1}</div>
+                        </div>
+                      )
+                    })
+                  }
+                </div>
+              </div>
+
+              {
+                // if the player has done eval -> playerIndex in the evalOrder
+                this.props.game.evalOrder[this.props.game.curRound-1].indexOf(this.props.room.playerIndex) > -1 &&
+                <div className={styles.InfoCard}>
+                  <h1>第 {this.props.game.curRound} 轮您的鉴宝记录</h1>
+                  {
+                    this.props.game.evalResLog && this.props.game.evalResLog[this.props.game.curRound-1][this.props.room.playerIndex] ?
+                    <div className={styles.Order}>
+                    {
+                      Object.keys(this.props.game.evalResLog[this.props.game.curRound-1][this.props.room.playerIndex]).map((key, index) => {
+                        let res = this.props.game.evalResLog[this.props.game.curRound-1][this.props.room.playerIndex][key];
+
+                        return (
+                          <div className={key === 1 ? styles.EvalTrue : key === 0 ? styles.EvalFalse : styles.EvalImgChecked } key={index}>
+                            <img src={zodiacImg[this.props.game.curRound][key]}/>
+                            <div className={key === 1 ? styles.True : key === 0 ? styles.False : styles.Unknown}>{
+                              key === 1 ? "真" : key === 0 ? "假" : "隐藏"
+                            }</div>
+                          </div>
+                        )
+                      })
+                    }
+                    </div> :
+                    <div className={styles.ErrMsg}>无法鉴定或尚未鉴定</div>
+                  }
+                </div>
+              }
+
+
+
+            </div>
+          }
           {this.createItems()}
           <div
             className={this.props.game.started ? `${styles.ButtonArea} ${styles.Hidden}` : styles.ButtonArea}>
@@ -493,19 +564,19 @@ class GameRoom extends Component {
             Object.values(this.props.game.gameStates).filter(el => el === "等待中").length === this.props.game.roles.length &&
             Object.values(this.props.game.players).findIndex(el => el !== "") === this.props.room.playerIndex &&
             <div className={styles.ButtonArea}>
-              <button className={styles.StartButton}
+              <div className={styles.StartButton}
                   onClick={this.props.startReplay}
                 >
                   开始新一局
-                </button>
+                </div>
             </div>
           }
           {
             this.props.game.gameStates[this.props.room.playerIndex] === "发言中" &&
             <div className={styles.ButtonArea}>
-              <button
+              <div
                 className={styles.ButtonReady}
-                onClick={this.handleChatDone}>结束发言</button>
+                onClick={this.handleChatDone}>结束发言</div>
             </div>
           }
           {
@@ -571,6 +642,7 @@ class GameRoom extends Component {
               loseEvalHuang={this.props.game.loseEvalHuang}
               loseEvalMuhu={this.props.game.loseEvalMuhu}
               roles={this.props.game.roles}
+              evalResLog={this.props.setEvalRes}
            />
           }
 
@@ -628,9 +700,6 @@ class GameRoom extends Component {
           }
 
       }
-
-
-
         </div>
 
 
@@ -672,6 +741,7 @@ const mapDispatchToProps = (dispatch) => {
     setViewDone: () => dispatch(setViewDone()),
     resetViewDone: () => dispatch(resetViewDone()),
     setProtect: (index) => dispatch(setProtect(index)),
+    setEvalRes: (evalRes) => dispatch(setEvalRes(evalRes))
   }
 }
 

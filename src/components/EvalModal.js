@@ -15,6 +15,8 @@ import chicken from '../assets/chicken.svg';
 import dog from '../assets/dog.svg';
 import pig from '../assets/pig.svg';
 
+import offline from '../assets/offline.svg';
+
 // Make sure to bind modal to your appElement (http://reactcommunity.org/react-modal/accessibility/)
 Modal.setAppElement('#root');
 
@@ -89,6 +91,7 @@ class EvalModal extends Component {
     // 1. check how many zodiac player checked
     let checkedNum = this.state.isChecked.filter(el => el === true).length;
     let errMsg = "";
+    let resLog = {}; // -1 is protected; 1 is true; 0 is false
 
     if ((this.props.role === "许愿" && checkedNum !== 2) || (this.props.role !== "许愿" && checkedNum !== 1)) {
       this.setState({
@@ -100,14 +103,18 @@ class EvalModal extends Component {
           return ""
         } else if (this.props.role !== "药不然" && this.props.role !== "老朝奉" && this.props.protectedZodiac === index) {
           errMsg = "兽首已被隐藏，无法查验";
+          resLog[index] = -1;
           return ""
         } else if (this.props.role === "药不然" || this.props.role === "老朝奉" || this.props.role === "郑国渠" || this.props.role === "姬云浮" || !this.props.tfChanged) {
+          resLog[index] = this.props.zodiacGroup[index] ? 1 : 0;
           return this.props.zodiacGroup[index]
         } else {
+          resLog[index] = !this.props.zodiacGroup[index] ? 1 : 0;
           return !this.props.zodiacGroup[index]
         }
       });
       console.log('zodiac eval result:',newRes)
+      this.props.evalResLog(resLog);
       this.setState({
         showResult: newRes,
         errorMsg: errMsg,
@@ -291,7 +298,7 @@ class EvalModal extends Component {
                 let actualIndex = index < this.props.playerIndex ? index : index+1;
                 return (
                   <div key={index} className={this.state.isSelected[index] ? styles.EvalImgSelected : styles.EvalNextImg} onClick={() => this.handleSelect(index)}>
-                    <img src={el}></img>
+                    <img src={el ? el : offline} alt=""></img>
                     <div
                       className={this.props.roles[actualIndex] === "老朝奉" && this.props.role === "药不然" ? styles.PlayerIndexDisabled : styles.PlayerIndex}>
                       {actualIndex + 1}

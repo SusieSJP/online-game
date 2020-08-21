@@ -1,23 +1,8 @@
-// room reducer
-// const roomInitState = {
-//   room: null,
-//   players: [], // email identifiers
-//   names:[],
-//   pwd: null,
-//   roles: [],
-//   roomPwdPairs: {},
-//   availableRooms: {},
-//   chips: [],
-//   photos: [],
-//   curNum: 0,
-//   isFull: false,
-//   gameStates: {},
-//   host: null,
-//   canStart: false,
-//   started: false,
-//   curRound: 0
-// }
+import { loadSavedData } from './localStorage';
 
+const persistedData = loadSavedData();
+
+// room reducer
 const roomInitState = {
   room: null,
   playerIndex: null,
@@ -28,7 +13,7 @@ const roomInitState = {
   redirectTo: null,
 }
 
-export const roomReducer = (state = roomInitState, action) => {
+export const roomReducer = (state = persistedData.rooms, action) => {
   switch (action.type) {
     case 'LOAD_ROOMS':
       return {
@@ -41,6 +26,11 @@ export const roomReducer = (state = roomInitState, action) => {
         availableRooms: action.rooms
       }
     case 'REDIRECT':
+      return {
+        ...state,
+        redirectTo: action.redirectTo
+      }
+    case 'RESET_REDIRECT':
       return {
         ...state,
         redirectTo: action.redirectTo
@@ -203,7 +193,8 @@ export const gameReducer = (state = gameInitState, action) => {
         chipRes: action.chipRes,
         finalRes: action.finalRes,
         protectedZodiac: action.protectedZodiac,
-        recLaochaofengRes: action.recLaochaofengRes
+        recLaochaofengRes: action.recLaochaofengRes,
+        evalResLog: action.evalResLog
       }
     default:
       return state
@@ -221,7 +212,7 @@ const userInitState = {
   winGame: 0,
 }
 
-export const userReducer = (state = userInitState, action) => {
+export const userReducer = (state = persistedData.users, action) => {
   switch (action.type) {
     case 'USER_LOGIN':
       return {
