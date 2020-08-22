@@ -500,7 +500,7 @@ export const setNextToEval = (index) => {
 }
 
 export const setEvalRes = (evalRes) => {
-  return (getState) => {
+  return (dispatch, getState) => {
     const roomid = getState().rooms.room;
     const docRef = database.collection('rooms').doc(roomid);
     const playerIndex = getState().room.playerIndex;
