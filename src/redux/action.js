@@ -503,7 +503,7 @@ export const setEvalRes = (evalRes) => {
   return (dispatch, getState) => {
     const roomid = getState().rooms.room;
     const docRef = database.collection('rooms').doc(roomid);
-    const playerIndex = getState().room.playerIndex;
+    const playerIndex = getState().rooms.playerIndex;
     const curRoundIndex = getState().game.curRound -1;
 
     docRef.update({

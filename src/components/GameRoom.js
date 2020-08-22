@@ -521,12 +521,13 @@ class GameRoom extends Component {
                     {
                       Object.keys(this.props.game.evalResLog[this.props.game.curRound-1][this.props.room.playerIndex]).map((key, index) => {
                         let res = this.props.game.evalResLog[this.props.game.curRound-1][this.props.room.playerIndex][key];
+                        console.log(res);
 
                         return (
-                          <div className={key === 1 ? styles.EvalTrue : key === 0 ? styles.EvalFalse : styles.EvalImgChecked } key={index}>
+                          <div className={res === 1 ? styles.EvalTrue : res === 0 ? styles.EvalFalse : styles.EvalImgChecked } key={index}>
                             <img src={zodiacImg[this.props.game.curRound][key]}/>
-                            <div className={key === 1 ? styles.True : key === 0 ? styles.False : styles.Unknown}>{
-                              key === 1 ? "真" : key === 0 ? "假" : "隐藏"
+                            <div className={res === 1 ? styles.True : res === 0 ? styles.False : styles.Unknown}>{
+                              res === 1 ? "真" : res === 0 ? "假" : "隐藏"
                             }</div>
                           </div>
                         )
