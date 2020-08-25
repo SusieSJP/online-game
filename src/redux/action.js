@@ -813,7 +813,30 @@ export const calFinalRes = () => {
       finalRes: score >= 6 ? "好人阵营获胜" : "坏人阵营获胜",
       recEnd: true,
       recLaochaofengRes
-    })}
+    })
+
+    // uodate the game res for each player
+    const players = getState().game.players;
+    players.forEach((player, index) => {
+      // check if the player should be in good or bad group
+      const userDocRef = database.collection('users').doc(player);
+      const role = roles[index];
+      let winGame = getState().users.winGame;
+      let totalGame = getState().users.totalGame;
+
+      const badGroup = ["老朝奉", "药不然", "郑国渠"];
+      let addWin = 0;
+      if ((badGroup.indexOf(role) > -1 && score < 6) || (badGroup.indexOf(role) === -1 && score >= 6)) {
+        addWind = 1;
+      }
+
+      console.log(player,' data are: ', windGame, addWin, totalGame);
+      userDocRef.update({
+        winGame: winGame + addWin,
+        totalGame: totalGame+1
+      })
+    })
+  }
 }
 
 
