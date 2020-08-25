@@ -23,7 +23,7 @@ class RoomSelect extends Component {
   componentDidUpdate() {
     if (this.props.redirectTo) {
       // // 4. redirect to the game room
-      console.log('redirect!')
+      console.log('redirect!', this.props.history, this.props.redirectTo);
       this.props.history.push('/room/' + this.props.redirectTo)
     }
   }

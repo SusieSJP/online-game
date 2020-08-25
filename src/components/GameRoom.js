@@ -76,7 +76,7 @@ class GameRoom extends Component {
   }
 
   componentDidMount() {
-    console.log('game room mount', this.props.match.params.roomid);
+    console.log('game room mount', this.props, this.props.match.params.roomid);
     const docRef = database.collection('rooms').doc(this.props.match.params.roomid);
     this.unsubscribe = docRef.onSnapshot((doc) => {
       console.log('listen for game state change', doc.id, doc.data())

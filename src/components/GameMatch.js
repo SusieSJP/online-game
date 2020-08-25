@@ -57,8 +57,7 @@ class GameMatch extends Component {
     } else {
       // enter the room and close the modal
       this.handleCloseModal();
-      this.props.startEnterRoom(room, pwd);
-      this.props.history.push('/room/' + room);
+      this.props.startEnterRoom(room, pwd).then(() => this.props.history.push('/room/' + room));
     }
   }
 

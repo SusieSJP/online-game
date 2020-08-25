@@ -108,7 +108,6 @@ export const startLoadAvailableRoom = () => {
         if (Object.values(doc.data().players).every(el => el === "")) {
           roomsRef.doc(doc.id).delete();
         } else if (Object.values(doc.data().players).indexOf("") >= 0) {
-          console.log('active one!')
           activeRooms[doc.id] = doc.data().pwd
         }
       });
@@ -197,8 +196,8 @@ export const startCreateRoom = ({newId, newPwd, roles, roomType} = {}) => {
       chipRes
     }).then(() => {
       console.log('finish add new room')
-      dispatch(redirectTo(newId))
       dispatch(createRoom(newId, newPwd))
+      dispatch(redirectTo(newId))
     })
   }
 }

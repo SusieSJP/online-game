@@ -102,3 +102,10 @@
   }
 
 }
+
+
+@media (max-width: 900px) {
+  .Row {
+    width: 110%;
+  }
+}
