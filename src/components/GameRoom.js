@@ -412,6 +412,10 @@ class GameRoom extends Component {
                       )
                     })
                   }
+                  {
+                    !this.props.game.started && this.props.room.playerIndex === i && this.props.totalGame > 0 &&
+                    <div className={styles.GameData}>胜率：{(this.props.winGame / this.props.totalGame * 100).toFixed(2)}% - {this.props.winGame}/{this.props.totalGame}</div>
+                  }
                   </div>
                 </div>
                 <div className={styles.Num}>{i+1}</div>
@@ -446,6 +450,10 @@ class GameRoom extends Component {
                           <img key={index} className={styles.Chip} src={chip}></img>
                         )
                       })
+                    }
+                    {
+                      !this.props.game.started && this.props.room.playerIndex === secondIndex && this.props.totalGame > 0 &&
+                      <div className={styles.GameData}>胜率：{(this.props.winGame / this.props.totalGame * 100).toFixed(2)}% - {this.props.winGame}/{this.props.totalGame}</div>
                     }
                     </div>
                   </div>
@@ -712,6 +720,8 @@ const mapStateToProps = (state, props) => {
   return {
     room: state.rooms,
     user: state.users.user,
+    winGame: state.users.winGame,
+    totalGame: state.users.totalGame,
     game: state.game
   }
 }

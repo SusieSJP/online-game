@@ -827,10 +827,10 @@ export const calFinalRes = () => {
       const badGroup = ["老朝奉", "药不然", "郑国渠"];
       let addWin = 0;
       if ((badGroup.indexOf(role) > -1 && score < 6) || (badGroup.indexOf(role) === -1 && score >= 6)) {
-        addWind = 1;
+        addWin = 1;
       }
 
-      console.log(player,' data are: ', windGame, addWin, totalGame);
+      console.log(player,' data are: ', winGame, addWin, totalGame);
       userDocRef.update({
         winGame: winGame + addWin,
         totalGame: totalGame+1

@@ -168,6 +168,15 @@
   margin: 0;
 }
 
+.GameData {
+  font-family: 'Red Rose', cursive;
+  font-size: 14px;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  color: grey;
+}
+
 .Num {
   display: inline-block;
   font-family: 'Red Rose', cursive;
@@ -558,6 +567,11 @@
     padding: 0;
   }
 
+  .GameData {
+    font-size: 10px;
+  }
+
+
   .Num {
     font-size: 4rem;
   }
@@ -693,6 +707,11 @@
     margin: 0;
     padding: 0;
   }
+
+  .GameData {
+    display: none;
+  }
+
 
   .Num {
     font-size: 3rem;
