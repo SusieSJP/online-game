@@ -413,8 +413,8 @@ class GameRoom extends Component {
                     })
                   }
                   {
-                    !this.props.game.started && this.props.room.playerIndex === i && this.props.totalGame > 0 &&
-                    <div className={styles.GameData}>胜率：{(this.props.winGame / this.props.totalGame * 100).toFixed(2)}% - {this.props.winGame}/{this.props.totalGame}</div>
+                  //   !this.props.game.started && this.props.room.playerIndex === i && this.props.totalGame > 0 &&
+                  //   <div className={styles.GameData}>胜率：{(this.props.winGame / this.props.totalGame * 100).toFixed(2)}% - {this.props.winGame}/{this.props.totalGame}</div>
                   }
                   </div>
                 </div>
@@ -524,7 +524,7 @@ class GameRoom extends Component {
                 <div className={styles.InfoCard}>
                   <h1>第 {this.props.game.curRound} 轮您的鉴宝记录</h1>
                   {
-                    this.props.game.evalResLog && this.props.game.evalResLog[this.props.game.curRound-1][this.props.room.playerIndex] ?
+                    this.props.game.evalResLog && this.props.game.evalResLog[this.props.game.curRound-1] && this.props.game.evalResLog[this.props.game.curRound-1][this.props.room.playerIndex] ?
                     <div className={styles.Order}>
                     {
                       Object.keys(this.props.game.evalResLog[this.props.game.curRound-1][this.props.room.playerIndex]).map((key, index) => {
@@ -535,7 +535,7 @@ class GameRoom extends Component {
                           <div className={res === 1 ? styles.EvalTrue : res === 0 ? styles.EvalFalse : styles.EvalImgChecked } key={index}>
                             <img src={zodiacImg[this.props.game.curRound][key]}/>
                             <div className={res === 1 ? styles.True : res === 0 ? styles.False : styles.Unknown}>{
-                              res === 1 ? "真" : res === 0 ? "假" : "隐藏"
+                              res === 1 ? "真" : res === 0 ? "假" : "隐"
                             }</div>
                           </div>
                         )
