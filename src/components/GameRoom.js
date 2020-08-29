@@ -452,8 +452,8 @@ class GameRoom extends Component {
                       })
                     }
                     {
-                      !this.props.game.started && this.props.room.playerIndex === secondIndex && this.props.totalGame > 0 &&
-                      <div className={styles.GameData}>胜率：{(this.props.winGame / this.props.totalGame * 100).toFixed(2)}% - {this.props.winGame}/{this.props.totalGame}</div>
+                      // !this.props.game.started && this.props.room.playerIndex === secondIndex && this.props.totalGame > 0 &&
+                      // <div className={styles.GameData}>胜率：{(this.props.winGame / this.props.totalGame * 100).toFixed(2)}% - {this.props.winGame}/{this.props.totalGame}</div>
                     }
                     </div>
                   </div>
