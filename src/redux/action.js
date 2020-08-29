@@ -816,7 +816,7 @@ export const calFinalRes = () => {
 
     // uodate the game res for each player
     const players = getState().game.players;
-    players.forEach((player, index) => {
+    Onject.values(players).forEach((player, index) => {
       // check if the player should be in good or bad group
       const userDocRef = database.collection('users').doc(player);
       const role = roles[index];

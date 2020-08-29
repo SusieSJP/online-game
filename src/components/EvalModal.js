@@ -157,7 +157,7 @@ class EvalModal extends Component {
 
   handleAttack = (index) => {
     let res = true;
-    if (this.props.role === "方震" && !index) {
+    if (this.props.role === "方震" && index === null) {
       this.setState({
         attackErrMsg: "请选择一位玩家查看身份阵营"
       })
@@ -196,6 +196,7 @@ class EvalModal extends Component {
           playerRes: null,
           evalConfirmed: false,
           protectConfirmed: false,
+          protectZodiac: null,
           errorMsg: "",
           errMsg: "",
           actionIndex: null,
