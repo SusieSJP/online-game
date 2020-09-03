@@ -388,6 +388,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .EvalImgChecked {
@@ -635,6 +636,34 @@
     left: 10%;
     width: 30px;
   }
+  .InfoCard {
+    margin: 5px;
+  }
+  .InfoCard > h1 {
+    font-size: 14px;
+  }
+
+  .Img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+
+  .EvalImgChecked > img, .EvalFalse > img, .EvalTrue > img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .EvalImgChecked, .EvalTrue, .EvalFalse {
+    width: 50px;
+    height: 50px;
+  }
+
+  .True, .False, .Unknown {
+    font-size: medium;
+    top: -10px;
+    right: -10px;
+  }
 
   .Row {
     width: 85%;
@@ -773,6 +802,10 @@
 
   .LoadingText {
     font-size: 1.8rem;
+  }
+
+  .PlayerIndex {
+    font-size: 16px;
   }
 
 

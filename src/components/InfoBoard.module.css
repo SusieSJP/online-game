@@ -24,6 +24,7 @@
   right: 0;
   bottom: 0;
   background-color: rgba(0,0,0,0.7);
+  z-index: 2;
 }
 
 /* .Container > h1 {
@@ -32,6 +33,27 @@
   font-size: 24px;
   letter-spacing: 1px;
 } */
+
+
+.CenterDiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 30px;
+}
+
+.Button {
+  background-color: green;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 10px 0px;
+  font-size: 14px;
+  text-align: center;
+  width: 200px;
+  letter-spacing: 2px;
+  font-family: 'Ma Shan Zheng', cursive;
+}
 
 .InfoGroup {
   width: 90%;
@@ -412,7 +434,7 @@ tbody tr:hover {
   }
 
   th, td {
-    width: 60px;
+    width: 55px;
   }
 
   th > img {

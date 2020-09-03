@@ -26,6 +26,7 @@ import check from '../assets/checking.svg';
 import chat from '../assets/chat.svg';
 import info from '../assets/info.png';
 import offline from '../assets/offline.svg';
+import unknown from '../assets/unknown.svg';
 
 import rat from '../assets/rat.svg';
 import cow from '../assets/cow.svg';
@@ -481,11 +482,11 @@ class GameRoom extends Component {
       this.state.isFetching ? <img className={styles.Loading} src={spinner}/> :
         <div className={styles.GameRoomContainer}>
           {
-            this.props.game.curRound > 0 &&
+            // this.props.game.curRound > 0 &&
             <img className={styles.InfoButton} src={info} onClick={this.handleShowInfo}></img>
           }
           {
-            this.props.game.curRound > 0 &&
+            // this.props.game.curRound > 0 &&
             <InfoBoard
               curRound={this.props.game.curRound}
               evalOrder={this.props.game.evalOrder}
@@ -497,6 +498,7 @@ class GameRoom extends Component {
               chipTotalRes={this.props.game.chipTotalRes}
               showInfo={this.state.showInfo}
               handleCloseInfo={this.handleCloseInfo}
+              roles={this.props.game.roles}
             />
           }
           {
@@ -534,15 +536,17 @@ class GameRoom extends Component {
                         return (
                           <div className={res === 1 ? styles.EvalTrue : res === 0 ? styles.EvalFalse : styles.EvalImgChecked } key={index}>
                             <img src={zodiacImg[this.props.game.curRound][key]}/>
-                            <div className={res === 1 ? styles.True : res === 0 ? styles.False : styles.Unknown}>{
-                              res === 1 ? "真" : res === 0 ? "假" : "隐"
-                            }</div>
+                            <div className={res === 1 ? styles.True : res === 0 ? styles.False : styles.Unknown}>
+                            {
+                              res === 1 ? "真" : res === 0 ? "假" : <img src={unknown} style={{width: '30px'}}/>
+                            }
+                            </div>
                           </div>
                         )
                       })
                     }
                     </div> :
-                    <div className={styles.ErrMsg}>无法鉴定或尚未鉴定</div>
+                    <div className={styles.ErrMsg}>无鉴定结果</div>
                   }
                 </div>
               }
